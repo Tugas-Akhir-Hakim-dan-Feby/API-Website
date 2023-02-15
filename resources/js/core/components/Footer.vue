@@ -1,0 +1,9 @@
+<template>
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">&copy; Asosiasi Pengelasan Indonesia</div>
+            </div>
+        </div>
+    </footer>
+</template>
