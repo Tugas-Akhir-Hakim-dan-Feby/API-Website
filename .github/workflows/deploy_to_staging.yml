@@ -36,7 +36,12 @@ jobs:
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
-        run: vendor/bin/phpunit
+#         run: vendor/bin/phpunit
+        run: |
+          php artisan config:clear
+          php artisan migrate:fresh
+          php artisan db:seed --class=DatabaseTesterSeeder
+          php artisan test
       - name: Zip folder build
         run: |
           cd public/
