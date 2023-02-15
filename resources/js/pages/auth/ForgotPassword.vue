@@ -21,7 +21,7 @@ export default {
             >
                 <img
                     class="absolute-bottom-left index-2"
-                    src="../../../images/hero.png"
+                    src="../../../images/api-iws.png"
                     style="height: 100%; width: 100%"
                     alt=""
                 />

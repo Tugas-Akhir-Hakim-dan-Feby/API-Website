@@ -2,19 +2,19 @@
     <div class="leftside-menu">
         <a href="index.html" class="logo text-center logo-light">
             <span class="logo-lg">
-                <img src="assets/images/api-iws.png" alt="" height="50" />
+                <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
             <span class="logo-sm">
-                <img src="assets/images/api-iws.png" alt="" height="50" />
+                <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
         </a>
 
         <a href="index.html" class="logo text-center logo-dark">
             <span class="logo-lg">
-                <img src="assets/images/api-iws.png" alt="" height="50" />
+                <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
             <span class="logo-sm">
-                <img src="assets/images/api-iws.png" alt="" height="50" />
+                <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
         </a>
 
