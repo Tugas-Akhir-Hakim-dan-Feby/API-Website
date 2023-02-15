@@ -3,9 +3,6 @@ set -e
 
 git pull
 
-composer install
-composer update
-
 php artisan migrate
 php artisan optimize
 
