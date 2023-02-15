@@ -50,7 +50,7 @@ jobs:
           DB_DATABASE: test_db
           DB_PORT: 33306
           DB_USERNAME: user
-          DB_PASSWORD: rootpassword
+          DB_PASSWORD: password
 #         run: vendor/bin/phpunit
         run: |
           php artisan config:clear
