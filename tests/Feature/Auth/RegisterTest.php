@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
@@ -11,6 +12,8 @@ class RegisterTest extends TestCase
     /** @test */
     public function can_register_with_valid_request()
     {
+        Notification::fake();
+
         $request = [
             'name' => 'John Doe',
             'email' => 'john.doe@mailinator.com'
