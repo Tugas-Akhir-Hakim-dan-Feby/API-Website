@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Notifications\SendEmailVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -43,4 +45,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendPasswordResetNotification($token)
+    {
+        $url = url("/auth/new-password?token=$token&email=$this->email");
+
+        $this->notify(new SendEmailVerification($url));
+    }
+
+    public function sendActivationUserNotification($token)
+    {
+        $url = url("/auth/new-password?token=$token&email=$this->email");
+
+        $this->notify(new SendEmailVerification($url));
+    }
 }
