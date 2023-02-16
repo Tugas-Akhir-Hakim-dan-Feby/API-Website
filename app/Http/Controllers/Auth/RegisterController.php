@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Traits\SendEmail;
 use App\Models\Role as ModelsRole;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
@@ -13,6 +14,8 @@ use Spatie\Permission\Contracts\Role;
 
 class RegisterController extends Controller
 {
+    use SendEmail;
+
     protected $userRepository;
     protected $roleRepository;
 
@@ -33,6 +36,7 @@ class RegisterController extends Controller
             $user = $this->userRepository->create($request->all());
 
             $user->assignRole($role);
+            $this->sendEmail($user->email);
 
             return $user;
         });
