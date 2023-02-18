@@ -23,4 +23,12 @@ export default [
             // requiresAuth: false,
         },
     },
+    {
+        path: "/auth/new-password",
+        name: "New Password",
+        component: () => import("../../pages/auth/NewPassword.vue"),
+        meta: {
+            // requiresAuth: false,
+        },
+    },
 ];
