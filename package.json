@@ -12,10 +12,15 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@casl/ability": "^6.3.3",
         "@vitejs/plugin-vue": "^4.0.0",
         "@vueup/vue-quill": "^1.1.0",
+        "camelcase-keys": "^8.0.2",
+        "js-cookie": "^3.0.1",
+        "snakecase-keys": "^5.4.5",
         "vue": "^3.2.36",
         "vue-loader": "^17.0.1",
-        "vue-router": "^4.1.6"
+        "vue-router": "^4.1.6",
+        "vuex": "^4.1.0"
     }
 }

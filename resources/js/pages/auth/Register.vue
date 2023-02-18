@@ -1,104 +1,160 @@
 <script>
 import Success from "../../components/notifications/Success.vue";
-import Company from "./register/Company.vue";
-import Expert from "./register/Expert.vue";
-import Member from "./register/Member.vue";
 
 export default {
     data() {
         return {
-            roleId: null,
-            roles: [
-                {
-                    id: 1,
-                    name: "Tim Pakar",
-                },
-                {
-                    id: 2,
-                    name: "Member Perusahaan",
-                },
-                {
-                    id: 3,
-                    name: "Member Welder",
-                },
-            ],
+            form: {
+                name: "",
+                email: "",
+            },
+            errors: {},
+            isLoading: false,
+            msg: "",
         };
     },
     mounted() {},
     methods: {
-        chooseRole(event) {
-            this.roleId = event.target.value;
-        },
-        onSuccess() {
-            $("#successModal").modal("show");
+        handleSubmit() {
+            this.errors = {};
+            this.isLoading = true;
+
+            this.$store
+                .dispatch("postData", ["auth/register", this.form])
+                .then((response) => {
+                    this.isLoading = false;
+                    $("#successModal").modal("show");
+                    this.msg =
+                        "Akun anda berhasil didaftarkan, silahkan cek email anda untuk melakukan aktivasi akun.";
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
         },
     },
-    components: { Expert, Company, Member, Success },
+    components: { Success },
 };
 </script>
 <template>
-    <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xxl-4 col-lg-5">
-                    <div class="card">
-                        <div class="card-header py-3 text-center bg-primary">
-                            <h3
-                                class="text-white text-center mt-1 fw-bold text-uppercase"
-                            >
-                                Registrasi
-                            </h3>
+    <section>
+        <div class="d-flex flex-wrap align-items-stretch">
+            <div
+                class="col-lg-8 col-12 order-lg-1 order-1 min-vh-100 background-walk-y position-relative overlay-gradient-bottom"
+            >
+                <img
+                    class="p-5"
+                    style="height: 100%"
+                    src="../../../images/api-iws.png"
+                    alt=""
+                />
+            </div>
+            <div
+                class="col-lg-4 col-md-6 col-12 order-lg-2 min-vh-100 order-2 bg-white"
+            >
+                <div class="p-4 m-3">
+                    <center>
+                        <img
+                            src="https://www.api-iws.org/images/icon.jpg"
+                            alt=""
+                            style="max-height: 50px; margin-bottom: 20px"
+                        />
+                    </center>
+
+                    <h3
+                        class="text-primary font-weight-normal text-uppercase font-weight-bold text-center mb-3"
+                    >
+                        ASOSIASI pengelasan INDONESIA
+                    </h3>
+
+                    <p class="text-muted mb-3">
+                        Masukan nama dan email anda, untuk mendaftarkan akun
+                        anda.
+                    </p>
+
+                    <form
+                        @submit.prevent="handleSubmit"
+                        class="needs-validation"
+                        method="post"
+                    >
+                        <div class="mb-3">
+                            <label for="name">Nama</label>
+                            <input
+                                type="text"
+                                id="name"
+                                autofocus
+                                class="form-control"
+                                v-model="form.name"
+                                :class="{ 'is-invalid': errors.name }"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.name"
+                                v-for="(error, index) in errors.name"
+                                :key="index"
+                                v-html="error"
+                            ></div>
                         </div>
 
-                        <div class="card-body p-4">
-                            <div class="mb-2">
-                                <label>Pilih Jenis Pendaftaran</label>
-                                <select
-                                    class="form-select"
-                                    @change="chooseRole"
-                                >
-                                    <option value=""></option>
-                                    <option
-                                        v-for="role in roles"
-                                        :value="role.id"
-                                    >
-                                        {{ role.name }}
-                                    </option>
-                                </select>
-                            </div>
-                            <Expert
-                                v-if="roleId == 1"
-                                @onSuccess="onSuccess($e)"
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                class="form-control"
+                                v-model="form.email"
+                                :disabled="isLoading"
+                                :class="{ 'is-invalid': errors.email }"
                             />
-                            <Company
-                                v-else-if="roleId == 2"
-                                @onSuccess="onSuccess($e)"
-                            />
-                            <Member
-                                v-else-if="roleId == 3"
-                                @onSuccess="onSuccess($e)"
-                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.email"
+                                v-for="(error, index) in errors.email"
+                                :key="index"
+                                v-html="error"
+                            ></div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-12 text-center">
-                                <p class="text-muted">
-                                    <router-link to="/auth/login" class=""
-                                        >Sudah punya akun? silahkan
-                                        login.</router-link
-                                    >
-                                </p>
-                            </div>
+                        <div class="mb-3">
+                            <button
+                                class="btn btn-primary form-control"
+                                v-if="!isLoading"
+                            >
+                                Register
+                            </button>
+                            <button
+                                class="btn btn-primary form-control"
+                                type="button"
+                                disabled
+                                v-if="isLoading"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
                         </div>
+                    </form>
+
+                    <hr />
+                    <div class="mb-3 text-center">
+                        <router-link to="/auth/login"
+                            >Jika anda sudah punya akun, silahkan login.
+                        </router-link>
                     </div>
+                    <footer class="main-footer">
+                        <div class="text-center mt-5 text-small">
+                            Copyright &copy; 2023 Asosiasi Profesi Indonesia.
+                        </div>
+                    </footer>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <Success
-        :msg="'cek email anda untuk melakukan verifikasi.'"
-        :url="{ name: 'Login' }"
-    />
+    <Success :msg="msg" :url="{ name: 'Login' }" />
 </template>
 
 <style>
