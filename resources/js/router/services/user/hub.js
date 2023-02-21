@@ -4,7 +4,7 @@ export default [
         component: () => import("../../../pages/user/apiHub/Index.vue"),
         name: "User Hub",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         component: () => import("../../../pages/user/apiHub/Create.vue"),
         name: "User Hub Create",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -20,7 +20,7 @@ export default [
         component: () => import("../../../pages/user/apiHub/Detail.vue"),
         name: "User Hub Detail",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
         props: true,
     },
@@ -29,7 +29,7 @@ export default [
         component: () => import("../../../pages/user/apiHub/Edit.vue"),
         name: "User Hub Edit",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
         props: true,
     },

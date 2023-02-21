@@ -4,7 +4,7 @@ export default [
         component: () => import("../../pages/skill/expert/Index.vue"),
         name: "Expert Skill",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         component: () => import("../../pages/skill/welder/Index.vue"),
         name: "Welder Skill",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
 ];

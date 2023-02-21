@@ -4,7 +4,7 @@ export default [
         name: "Login",
         component: () => import("../../pages/auth/Login.vue"),
         meta: {
-            // requiresAuth: false,
+            requiresAuth: false,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         name: "Register",
         component: () => import("../../pages/auth/Register.vue"),
         meta: {
-            // requiresAuth: false,
+            requiresAuth: false,
         },
     },
     {
@@ -20,7 +20,7 @@ export default [
         name: "Forgot Password",
         component: () => import("../../pages/auth/ForgotPassword.vue"),
         meta: {
-            // requiresAuth: false,
+            requiresAuth: false,
         },
     },
     {
@@ -28,7 +28,7 @@ export default [
         name: "New Password",
         component: () => import("../../pages/auth/NewPassword.vue"),
         meta: {
-            // requiresAuth: false,
+            requiresAuth: false,
         },
     },
 ];
