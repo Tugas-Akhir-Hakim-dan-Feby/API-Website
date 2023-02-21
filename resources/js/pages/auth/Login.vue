@@ -1,10 +1,43 @@
 <script>
+import Error from "../../components/notifications/Error.vue";
+import Cookie from "js-cookie";
+
 export default {
+    data() {
+        return {
+            form: {
+                email: "",
+                password: "",
+            },
+            errors: {},
+            msg: "",
+            isLoading: false,
+        };
+    },
     methods: {
         handleSubmit() {
-            window.location.href = "/";
+            this.errors = {};
+            this.isLoading = true;
+
+            this.$store
+                .dispatch("postData", ["auth/login", this.form])
+                .then((response) => {
+                    this.isLoading = false;
+                    Cookie.set("token", response.token);
+                    window.location.replace("/");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    if (error.response.data.messages) {
+                        this.errors = error.response.data.messages;
+                    } else {
+                        $("#errorModal").modal("show");
+                        this.msg = error.response.data.message;
+                    }
+                });
         },
     },
+    components: { Error },
 };
 </script>
 <template>
@@ -43,37 +76,71 @@ export default {
                         selanjutnya.
                     </p>
 
-                    <div class="mb-3">
-                        <label for="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            autofocus
-                            class="form-control"
-                        />
-                    </div>
-                    <div class="mb-3">
-                        <label for="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            autofocus
-                            class="form-control"
-                        />
-                    </div>
-                    <div class="mb-3">
-                        <router-link to="/auth/forgot-password"
-                            >Lupa password?</router-link
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <button
-                            @click="handleSubmit"
-                            class="btn btn-primary btn-block"
-                        >
-                            Login
-                        </button>
-                    </div>
+                    <form @submit.prevent="handleSubmit" method="post">
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                autofocus
+                                v-model="form.email"
+                                :class="{ 'is-invalid': errors.email }"
+                                class="form-control"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.email"
+                                v-for="(error, index) in errors.email"
+                                :key="index"
+                                v-html="error"
+                            ></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                class="form-control"
+                                v-model="form.password"
+                                :class="{ 'is-invalid': errors.password }"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.password"
+                                v-for="(error, index) in errors.password"
+                                :key="index"
+                                v-html="error"
+                            ></div>
+                        </div>
+                        <div class="mb-3">
+                            <router-link to="/auth/forgot-password"
+                                >Lupa password?</router-link
+                            >
+                        </div>
+                        <div class="mb-3">
+                            <button
+                                class="btn btn-primary form-control"
+                                v-if="!isLoading"
+                            >
+                                Login
+                            </button>
+                            <button
+                                class="btn btn-primary form-control"
+                                type="button"
+                                disabled
+                                v-if="isLoading"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
+                        </div>
+                    </form>
                     <hr />
                     <div class="mb-3 text-center">
                         <router-link to="/auth/register"
@@ -90,6 +157,8 @@ export default {
             </div>
         </div>
     </section>
+
+    <Error :msg="msg" />
 </template>
 
 <style>

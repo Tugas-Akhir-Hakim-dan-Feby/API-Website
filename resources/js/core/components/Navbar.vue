@@ -1,3 +1,14 @@
+<script>
+export default {
+    methods: {
+        handleLogout() {
+            this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
+                window.location.replace("/auth/login");
+            });
+        },
+    },
+};
+</script>
 <template>
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
@@ -34,36 +45,13 @@
                         class="dropdown-item notify-item"
                     >
                         <i class="mdi mdi-account-circle me-1"></i>
-                        <span>My Account</span>
+                        <span>Profil Saya</span>
                     </a>
 
                     <a
-                        href="javascript:void(0);"
+                        @click="handleLogout"
                         class="dropdown-item notify-item"
-                    >
-                        <i class="mdi mdi-account-edit me-1"></i>
-                        <span>Settings</span>
-                    </a>
-
-                    <a
-                        href="javascript:void(0);"
-                        class="dropdown-item notify-item"
-                    >
-                        <i class="mdi mdi-lifebuoy me-1"></i>
-                        <span>Support</span>
-                    </a>
-
-                    <a
-                        href="javascript:void(0);"
-                        class="dropdown-item notify-item"
-                    >
-                        <i class="mdi mdi-lock-outline me-1"></i>
-                        <span>Lock Screen</span>
-                    </a>
-
-                    <a
-                        href="javascript:void(0);"
-                        class="dropdown-item notify-item"
+                        style="cursor: pointer"
                     >
                         <i class="mdi mdi-logout me-1"></i>
                         <span>Logout</span>

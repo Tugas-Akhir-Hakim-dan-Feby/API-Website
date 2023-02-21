@@ -4,7 +4,7 @@ export default [
         component: () => import("../../pages/branch/Index.vue"),
         name: "Branch",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
 ];

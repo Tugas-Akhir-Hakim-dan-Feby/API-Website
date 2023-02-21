@@ -4,7 +4,7 @@ export default [
         component: () => import("../../../pages/user/expert/Index.vue"),
         name: "User Expert",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         component: () => import("../../../pages/user/expert/Create.vue"),
         name: "User Expert Create",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -20,7 +20,7 @@ export default [
         component: () => import("../../../pages/user/expert/Edit.vue"),
         name: "User Expert Edit",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
         props: true,
     },

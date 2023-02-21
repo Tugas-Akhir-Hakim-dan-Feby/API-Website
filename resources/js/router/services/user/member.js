@@ -4,7 +4,7 @@ export default [
         component: () => import("../../../pages/user/member/Index.vue"),
         name: "User Member",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     // {

@@ -4,7 +4,7 @@ export default [
         component: () => import("../../pages/question/Index.vue"),
         name: "Question",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         component: () => import("../../pages/question/Create.vue"),
         name: "Question Create",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -20,7 +20,7 @@ export default [
         component: () => import("../../pages/question/Edit.vue"),
         name: "Question Edit",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
         props: true,
     },

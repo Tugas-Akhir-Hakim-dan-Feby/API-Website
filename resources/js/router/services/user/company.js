@@ -4,7 +4,7 @@ export default [
         component: () => import("../../../pages/user/company/Index.vue"),
         name: "User Company",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     // {

@@ -4,7 +4,7 @@ export default [
         component: () => import("../../../pages/user/apiBranch/Index.vue"),
         name: "User Branch",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -12,7 +12,7 @@ export default [
         component: () => import("../../../pages/user/apiBranch/Create.vue"),
         name: "User Branch Create",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -20,7 +20,7 @@ export default [
         component: () => import("../../../pages/user/apiBranch/Edit.vue"),
         name: "User Branch Edit",
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
         props: true,
     },
