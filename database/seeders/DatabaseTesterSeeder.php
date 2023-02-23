@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use Database\Seeders\Tests\ExpertSkillSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseTesterSeeder extends Seeder
@@ -17,6 +19,7 @@ class DatabaseTesterSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             RoleSeeder::class,
+            ExpertSkillSeeder::class
         ]);
     }
 }
