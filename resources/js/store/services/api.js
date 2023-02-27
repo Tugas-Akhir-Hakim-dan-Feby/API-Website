@@ -66,7 +66,18 @@ const Api = {
     update(resource, slug, params) {
         return axios.put(
             `${resource}/${slug}`,
-            snakecaseKeys(params, { deep: true })
+            snakecaseKeys(params, { deep: true }),
+            {
+                transformResponse: [
+                    (data) => {
+                        if (data) {
+                            return camelcaseKeys(JSON.parse(data), {
+                                deep: true,
+                            });
+                        }
+                    },
+                ],
+            }
         );
     },
     updateFormData(resource, slug, params) {

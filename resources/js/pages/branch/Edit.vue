@@ -3,13 +3,44 @@ import Success from "../../components/notifications/Success.vue";
 
 export default {
     props: ["id"],
+    data() {
+        return {
+            branch: {},
+            errors: {},
+            isLoading: false,
+        };
+    },
+    mounted() {
+        this.getBranch();
+    },
     methods: {
         onCancel() {
             this.$emit("onCancel", true);
         },
+        getBranch() {
+            this.$store
+                .dispatch("showData", ["branch", this.id])
+                .then((response) => {
+                    this.branch = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
         handleSubmit() {
-            $("#successModal").modal("show");
-            this.$emit("onCancel", true);
+            this.isLoading = true;
+            this.errors = {};
+            this.$store
+                .dispatch("updateData", ["branch", this.id, this.branch])
+                .then((response) => {
+                    this.isLoading = false;
+                    $("#successModal").modal("show");
+                    this.$emit("onCancel", true);
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
         },
     },
     components: { Success },
@@ -25,8 +56,18 @@ export default {
                         type="text"
                         class="form-control"
                         id="branchName"
-                        value="Cabang 1"
+                        v-model="branch.branchName"
+                        :class="{ 'is-invalid': errors.branchName }"
+                        :disabled="isLoading"
                     />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.branchName"
+                        v-for="(error, index) in errors.branchName"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
                 </div>
                 <div class="mb-2">
                     <label for="branchAddress">Alamat Cabang</label>
@@ -34,8 +75,18 @@ export default {
                         type="text"
                         class="form-control"
                         id="branchAddress"
-                        value="Jl. Raya No. 1"
+                        v-model="branch.branchAddress"
+                        :disabled="isLoading"
+                        :class="{ 'is-invalid': errors.branchAddress }"
                     />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.branchAddress"
+                        v-for="(error, index) in errors.branchAddress"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
                 </div>
                 <div class="mb-2">
                     <label for="branchPhone">No. Telepon Cabang</label>
@@ -43,8 +94,18 @@ export default {
                         type="text"
                         class="form-control"
                         id="branchPhone"
-                        value="081234567890"
+                        v-model="branch.branchPhone"
+                        :disabled="isLoading"
+                        :class="{ 'is-invalid': errors.branchPhone }"
                     />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.branchPhone"
+                        v-for="(error, index) in errors.branchPhone"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
@@ -52,10 +113,26 @@ export default {
                     type="button"
                     class="btn btn-secondary"
                     @click="onCancel"
+                    :disabled="isLoading"
                 >
                     Batal
                 </button>
-                <button type="submit" class="btn btn-success">Simpan</button>
+                <button class="btn btn-success" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-success"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </div>
     </form>

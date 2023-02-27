@@ -3,6 +3,7 @@ import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
+import Loader from "../../components/Loader.vue";
 import CreateBranch from "./Create.vue";
 import EditBranch from "./Edit.vue";
 
@@ -12,32 +13,38 @@ export default {
             id: null,
             msg: "",
             title: "Data Cabang",
+            isLoading: false,
             isCreate: false,
             isEdit: false,
-            branches: [
-                {
-                    id: 1,
-                    branchName: "Cabang 1",
-                    branchAddress: "Jl. Raya No. 1",
-                    branchPhone: "081234567890",
-                },
-                {
-                    id: 2,
-                    branchName: "Cabang 2",
-                    branchAddress: "Jl. Raya No. 2",
-                    branchPhone: "081234567890",
-                },
-                {
-                    id: 3,
-                    branchName: "Cabang 3",
-                    branchAddress: "Jl. Raya No. 3",
-                    branchPhone: "081234567890",
-                },
-            ],
+            branches: [],
+
+            filters: {
+                search: "",
+            },
         };
     },
+    mounted() {
+        this.getBranches();
+    },
     methods: {
+        getBranches() {
+            this.isLoading = true;
+
+            let params = [`search=${this.filters.search}`].join("&");
+
+            this.$store
+                .dispatch("getData", ["branch", params])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.branches = response.data;
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
+        },
         handleDelete(id) {
+            this.id = id;
             $("#confirmModal").modal("show");
         },
         onCreate() {
@@ -53,11 +60,23 @@ export default {
             this.title = "Data Cabang";
             this.isCreate = false;
             this.isEdit = false;
+            this.getBranches();
         },
         onDelete() {
-            $("#confirmModal").modal("hide");
-            $("#successModal").modal("show");
-            this.msg = "data berhasil dihapus.";
+            this.$store
+                .dispatch("deleteData", ["branch", this.id])
+                .then((response) => {
+                    $("#confirmModal").modal("hide");
+                    $("#successModal").modal("show");
+                    this.msg = "data berhasil dihapus.";
+                    this.getBranches();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        onSearch() {
+            this.getBranches();
         },
     },
     components: {
@@ -67,6 +86,7 @@ export default {
         EditBranch,
         Confirm,
         Success,
+        Loader,
     },
 };
 </script>
@@ -79,7 +99,8 @@ export default {
     <EditBranch v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
 
     <div class="card" v-else>
-        <div class="card-body">
+        <div class="card-body position-relative">
+            <Loader v-if="isLoading" />
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
@@ -97,6 +118,8 @@ export default {
                             type="search"
                             class="form-control"
                             placeholder="pencarian"
+                            @keyup="onSearch"
+                            v-model="filters.search"
                         />
                     </div>
 
