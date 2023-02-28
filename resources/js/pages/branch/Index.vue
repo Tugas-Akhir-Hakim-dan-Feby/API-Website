@@ -4,6 +4,7 @@ import Success from "../../components/notifications/Success.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
 import Loader from "../../components/Loader.vue";
+import PaginationUtil from "../../store/utils/pagination";
 import CreateBranch from "./Create.vue";
 import EditBranch from "./Edit.vue";
 
@@ -18,25 +19,38 @@ export default {
             isEdit: false,
             branches: [],
 
+            pagination: {
+                perPage: 10,
+                page: 1,
+            },
             filters: {
                 search: "",
             },
+            metaPagination: {},
         };
     },
     mounted() {
         this.getBranches();
     },
     methods: {
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination);
+        },
         getBranches() {
             this.isLoading = true;
 
-            let params = [`search=${this.filters.search}`].join("&");
+            let params = [
+                `per_page=${this.pagination.perPage}`,
+                `page=${this.pagination.page}`,
+                `search=${this.filters.search}`,
+            ].join("&");
 
             this.$store
                 .dispatch("getData", ["branch", params])
                 .then((response) => {
                     this.isLoading = false;
                     this.branches = response.data;
+                    this.metaPagination = response.meta;
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -76,6 +90,12 @@ export default {
                 });
         },
         onSearch() {
+            setTimeout(() => {
+                this.getBranches();
+            }, 1000);
+        },
+        onPageChange(e) {
+            this.pagination.page = e;
             this.getBranches();
         },
     },
@@ -123,7 +143,10 @@ export default {
                         />
                     </div>
 
-                    <Pagination />
+                    <Pagination
+                        :pagination="metaPagination"
+                        @onPageChange="onPageChange($event)"
+                    />
                 </div>
             </div>
 
@@ -140,7 +163,7 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-for="(branch, index) in branches" :key="index">
-                            <th v-html="index + 1"></th>
+                            <th v-html="iteration(index)"></th>
                             <td v-html="branch.branchName"></td>
                             <td v-html="branch.branchAddress"></td>
                             <td v-html="branch.branchPhone"></td>
