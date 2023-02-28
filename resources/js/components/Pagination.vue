@@ -1,12 +1,30 @@
+<script>
+export default {
+    props: ["pagination"],
+    methods: {
+        onPageChange(page) {
+            this.$emit("onPageChange", page);
+        },
+    },
+};
+</script>
+
 <template>
     <nav
         class="d-flex align-items-center justify-content-md-end justify-content-center"
     >
-        <p class="me-2 mt-2">1 - 10</p>
+        <p class="me-2 mt-2">{{ pagination.from }} - {{ pagination.to }}</p>
         <p class="me-2 mt-2">of</p>
-        <p class="mt-2">100</p>
-        <p class="mt-2">
-            <button class="btn no-border show-block">
+        <p class="mt-2">{{ pagination.total }}</p>
+        <p
+            class="mt-2"
+            :class="pagination.currentPage == 1 ? 'pointer-block' : ''"
+        >
+            <button
+                class="btn no-border show-block"
+                :disabled="pagination.currentPage == 1"
+                @click="onPageChange(pagination.currentPage - 1)"
+            >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -25,8 +43,19 @@
                 </svg>
             </button>
         </p>
-        <p class="mt-2">
-            <button class="btn show-block no-border">
+        <p
+            class="mt-2"
+            :class="
+                pagination.currentPage == pagination.lastPage
+                    ? 'pointer-block'
+                    : ''
+            "
+        >
+            <button
+                class="btn show-block no-border"
+                :disabled="pagination.currentPage == pagination.lastPage"
+                @click="onPageChange(pagination.currentPage + 1)"
+            >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -47,3 +76,15 @@
         </p>
     </nav>
 </template>
+
+<style>
+.pointer-block {
+    cursor: no-drop;
+}
+.no-border {
+    border: none;
+}
+.show-block:hover {
+    background-color: rgba(0, 0, 0, 0.035);
+}
+</style>
