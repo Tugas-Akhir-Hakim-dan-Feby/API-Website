@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Filters\Skill\Expert;
+namespace App\Http\Filters\Branch;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,8 +14,9 @@ class Search
         }
 
         $query->where(function ($query) {
-            $query->where('skill_name', 'like', '%' . request()->search . '%')
-                ->orWhere('skill_description', 'like', '%' . request()->search . '%');
+            $query->where('branch_name', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('branch_address', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('branch_phone', 'LIKE', '%' . request('search') . '%');
         });
 
         return $next($query);

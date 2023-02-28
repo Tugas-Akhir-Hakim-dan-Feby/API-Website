@@ -37,10 +37,9 @@ class MakeFilter extends Command
         $filter = $this->argument('class');
 
         if ($filter === '' || is_null($filter) || empty($filter)) {
-            $this->error('Http Search Filter Name Invalid..!');
+            $this->error('filter name invalid..!');
         }
 
-        // create if folder Searches not exists
         if (!File::exists($this->getBaseDirectory($filter))) {
             File::makeDirectory($this->getBaseDirectory($filter), 0775, true);
         }
@@ -53,7 +52,7 @@ class MakeFilter extends Command
         $filterNameSpacePath = $this->getNameSpacePath($this->getNameSpace($filterPath));
 
         if (!File::exists($filePath)) {
-            $eloquentFileContent = "<?php\nnamespace " . $filterNameSpacePath . ";\n\nuse Closure;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass " . $baseName . "\n{\n\tprotected \$" . Str::camel($baseName) . ";\n\n\tpublic function __construct(\$" . Str::camel($baseName) . ")\n\t{\n\t\t\$this->" . Str::camel($baseName) . " = \$" . Str::camel($baseName) . ";\n\t}\n\n\tpublic function handle(Builder \$query, Closure \$next)\n\t{\n\t\tif (!\$this->keyword()) {\n\t\t\treturn \$next(\$query);\n\t\t}\n\t\t\$query->where('" . Str::snake($baseName) . "', 'LIKE', '%' . \$this->" . Str::camel($baseName) . " . '%');\n\n\t\treturn \$next(\$query);\n\t}\n\n\tprotected function keyword()\n\t{\n\t\tif (\$this->" . Str::camel($baseName) . ") {\n\t\t\treturn \$this->" . Str::camel($baseName) . ";\n\t\t}\n\n\t\t\$this->" . Str::camel($baseName) . " = request('" . Str::snake($baseName) . "', null);\n\n\t\treturn request('" . Str::snake($baseName) . "');\n\t}\n}";
+            $eloquentFileContent = "<?php\nnamespace " . $filterNameSpacePath . ";\n\nuse Closure;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass " . $baseName . "\n{\n\tpublic function handle(Builder \$query, Closure \$next)\n\t{\n\t\tif (!request()->has('" . Str::snake($baseName) . "')) {\n\t\t\treturn \$next(\$query);\n\t\t}\n\t\t\$query->where('" . Str::snake($baseName) . "', 'LIKE', '%' . request('" . Str::camel($baseName) . "') . '%');\n\n\t\treturn \$next(\$query);\n\t}\n}";
 
             File::put($filePath, $eloquentFileContent);
 
