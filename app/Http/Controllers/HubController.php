@@ -22,15 +22,7 @@ class HubController extends Controller
 
     public function index(Request $request)
     {
-        $adminhubs = app(Pipeline::class)
-            ->send($this->adminhubRepository->query)
-            ->through([
-                Search::class
-            ])
-            ->thenReturn()
-            ->paginate($request->per_page);
-
-        return new HubCollection($adminhubs);
+        $adminhubs = $this->adminhubRepository->all();
     }
 
     public function store(HubRequestStore $request)

@@ -27,32 +27,32 @@ class HubRequestStore extends FormRequest
     public function rules()
     {
         return [
-            'hub_user_id' => 'required|foreignIdFor|max:255',
-            'hub_position' => 'required|string|max:255',
-            'hub_phone' => 'required|string|max:255',
-            'hub_address' => 'required|text|max:255',
-            'hub_status' => 'required|integer|max:255',
+            'user_id' => 'required|max:255',
+            'position' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'address' => 'required|text|max:255',
+            'status' => 'required|integer|max:255',
         ];
     }
 
     public function messages()
     {
         return [
-            'hub_user_id.required' => 'hub_user_id is required',
-            'hub_user_id.foreignIdFor' => 'hub_user is foreign',
-            'hub_user_id.max' => 'hub_user_id must be at less than 255 characters',
-            'hub_position.required' => 'hub_position is required',
-            'hub_position.string' => 'hub_position must be at less 255 characters',
-            'hub_position.max' => 'hub_position must be at less than 255 characters',
-            'hub_phone.required' => 'hub_phone is required',
-            'hub_phone.string' => 'hub_phone must be at less 255 characters',
-            'hub_phone.max' => 'hub_phone must be at less than 255 characters',
-            'hub_address.required' => 'hub_address is required',
-            'hub_address.string' => 'hub_address must be at less 255 characters',
-            'hub_address.max' => 'hub_address must be at less than 255 characters',
-            'hub_status.required' => 'hub_status is required',
-            'hub_status.integer' => 'hub_status must be at less than 255 characters',
-            'hub_status.max' => 'hub_status must be at less than 255 characters',
+            'user_id.required' => 'user_id is required',
+            'user_id' => 'user is foreign',
+            'user_id.max' => 'user_id must be at less than 255 characters',
+            'position.required' => 'position is required',
+            'position.string' => 'position must be at less 255 characters',
+            'position.max' => 'position must be at less than 255 characters',
+            'phone.required' => 'phone is required',
+            'phone.string' => 'phone must be at less 255 characters',
+            'phone.max' => 'phone must be at less than 255 characters',
+            'address.required' => 'address is required',
+            'address.string' => 'address must be at less 255 characters',
+            'address.max' => 'address must be at less than 255 characters',
+            'status.required' => 'status is required',
+            'status.integer' => 'status must be at less than 255 characters',
+            'status.max' => 'status must be at less than 255 characters',
         ];
     }
 
