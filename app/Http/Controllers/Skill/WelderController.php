@@ -44,4 +44,22 @@ class WelderController extends Controller
 
         return new WelderSkillDetail($welderSkill);
     }
+
+    public function update(WelderSkillRequestStore $request, $id)
+    {
+        $welderSkill = $this->welderSkillRepository->findOrFail($id);
+
+        return DB::transaction(function () use ($welderSkill, $request) {
+            return $this->welderSkillRepository->update($welderSkill->id, $request->all());
+        });
+    }
+
+    public function destroy($id)
+    {
+        $welderSkill = $this->welderSkillRepository->findOrFail($id);
+
+        return DB::transaction(function () use ($welderSkill) {
+            return $this->welderSkillRepository->delete($welderSkill->id);
+        });
+    }
 }
