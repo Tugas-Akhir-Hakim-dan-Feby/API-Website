@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Skill;
 
 use App\Http\Controllers\Controller;
+use App\Http\Filters\Skill\Welder\Search;
+use App\Http\Filters\Skill\Welder\Sort;
 use App\Http\Requests\Skill\Welder\WelderSkillRequestStore;
 use App\Http\Resources\Skill\Welder\WelderSkillCollection;
 use App\Http\Resources\Skill\Welder\WelderSkillDetail;
@@ -24,7 +26,10 @@ class WelderController extends Controller
     {
         $welderSkills = app(Pipeline::class)
             ->send($this->welderSkillRepository->query())
-            ->through([])
+            ->through([
+                Search::class,
+                Sort::class
+            ])
             ->thenReturn()
             ->paginate($request->per_page);
 
