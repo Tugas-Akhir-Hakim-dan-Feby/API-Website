@@ -10,8 +10,11 @@ class AuthenticatedController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $user = Auth::user();
+        $user->load('roles');
+
         return response()->json([
-            'user' => Auth::user(),
+            'user' => $user,
         ]);
     }
 }

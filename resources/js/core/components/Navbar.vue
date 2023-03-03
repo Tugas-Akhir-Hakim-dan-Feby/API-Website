@@ -1,5 +1,6 @@
 <script>
 export default {
+    props: ["user"],
     methods: {
         handleLogout() {
             this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
@@ -23,21 +24,27 @@ export default {
                 >
                     <span class="account-user-avatar">
                         <img
-                            src="https://ui-avatars.com/api/?background=random&size=25&rounded=true&length=2&name=Soeng Souy"
+                            :src="`https://ui-avatars.com/api/?background=random&size=25&rounded=true&length=2&name=${user.name}`"
                             alt="user-image"
                             class="rounded-circle"
                         />
                     </span>
                     <span>
-                        <span class="account-user-name">Soeng Souy</span>
-                        <span class="account-position">Founder</span>
+                        <span
+                            class="account-user-name"
+                            v-html="user.name"
+                        ></span>
+                        <span
+                            class="account-position"
+                            v-html="user.roles[0].name"
+                        ></span>
                     </span>
                 </a>
                 <div
                     class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown"
                 >
                     <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
+                        <h6 class="text-overflow m-0">Selamat Datang !</h6>
                     </div>
 
                     <a

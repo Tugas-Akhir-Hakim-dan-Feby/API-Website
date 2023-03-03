@@ -26,9 +26,7 @@ router.beforeEach((to, from, next) => {
         }
     }
 
-    document.title =
-        to.name + " - Asosiasi Pengelasan Indonesia" ||
-        "Asosiasi Pengelasan Indonesia";
+    document.title = "Asosiasi Pengelasan Indonesia";
     next();
 });
 
