@@ -21,9 +21,16 @@ class UserSeeder extends Seeder
             'role_id' => Role::ADMIN_APP,
         ]);
 
-        User::factory()->create([
+        $adminHub = User::factory()->create([
             'email' => 'admin.pusat@mailinator.com',
             'role_id' => Role::ADMIN_PUSAT,
+        ]);
+
+        $adminHub->adminHub()->create([
+            'position' => 'CEO',
+            'phone' => '12121212',
+            'address' => 'Indramayu',
+            'status' => 1
         ]);
 
         User::factory()->create([
