@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\Hub\Role;
+use App\Http\Filters\User\Hub\Search;
+use App\Http\Filters\User\Hub\Sort;
 use App\Http\Requests\User\Hub\AdminHubRequestStore;
 use App\Http\Requests\User\Hub\AdminHubRequestUpdate;
 use App\Http\Resources\User\HubCollection;
@@ -35,7 +37,9 @@ class HubController extends Controller
         $adminHubs = app(Pipeline::class)
             ->send($this->userRepository->query())
             ->through([
-                Role::class
+                Role::class,
+                Search::class,
+                Sort::class
             ])
             ->thenReturn()
             ->paginate($request->per_page);
