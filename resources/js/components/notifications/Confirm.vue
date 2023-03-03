@@ -41,7 +41,7 @@ export default {
                         type="button"
                         class="btn btn-danger"
                     >
-                        Setuju
+                        Hapus
                     </button>
                 </div>
             </div>

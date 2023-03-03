@@ -19,7 +19,7 @@ export default {
         class="d-flex align-items-center justify-content-md-end justify-content-center"
     >
         <p class="me-2 mt-2">{{ pagination.from }} - {{ pagination.to }}</p>
-        <p class="me-2 mt-2">of</p>
+        <p class="me-2 mt-2">dari</p>
         <p class="mt-2">{{ pagination.total }}</p>
         <p
             class="mt-2"
