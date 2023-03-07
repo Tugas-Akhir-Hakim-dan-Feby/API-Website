@@ -30,7 +30,7 @@ class HubRequestStore extends FormRequest
             'user_id' => 'required|max:255',
             'position' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
-            'address' => 'required|text|max:255',
+            'address' => 'required|max:255',
             'status' => 'required|integer|max:255',
         ];
     }

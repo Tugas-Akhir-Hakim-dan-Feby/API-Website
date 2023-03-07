@@ -23,6 +23,7 @@ class HubController extends Controller
     public function index(Request $request)
     {
         $adminhubs = $this->adminhubRepository->all();
+        return new HubCollection($adminhubs);
     }
 
     public function store(HubRequestStore $request)
@@ -35,7 +36,6 @@ class HubController extends Controller
     public function show($id)
     {
         $adminhubs = $this->adminhubRepository->findOrFail($id);
-
         return new HubDetail($adminhubs);
     }
 
