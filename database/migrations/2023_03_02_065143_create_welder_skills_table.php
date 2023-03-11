@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('welder_skills', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->nullable();
             $table->string('skill_name')->nullable();
             $table->text('skill_description')->nullable();
             $table->timestamps();

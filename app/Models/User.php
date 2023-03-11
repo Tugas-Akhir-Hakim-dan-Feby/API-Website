@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -28,6 +29,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'uuid',
     ];
 
     /**
@@ -36,6 +38,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'id',
         'password',
         'remember_token',
     ];
@@ -61,6 +64,11 @@ class User extends Authenticatable
         $url = url("/auth/new-password?token=$token&email=$this->email");
 
         $this->notify(new SendEmailVerification($url));
+    }
+
+    public function setUuidAttribute($uuid)
+    {
+        return $this->attributes['uuid'] = Str::uuid();
     }
 
     public function adminHub(): HasOne

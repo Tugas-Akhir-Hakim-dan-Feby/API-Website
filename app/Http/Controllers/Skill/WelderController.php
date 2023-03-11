@@ -11,6 +11,7 @@ use App\Http\Resources\Skill\Welder\WelderSkillDetail;
 use App\Repositories\WelderSkill\WelderSkillRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class WelderController extends Controller
@@ -39,6 +40,10 @@ class WelderController extends Controller
     public function store(WelderSkillRequestStore $request)
     {
         return DB::transaction(function () use ($request) {
+            $request->merge([
+                'uuid' => Str::uuid()
+            ]);
+
             return $this->welderSkillRepository->create($request->all());
         });
     }
