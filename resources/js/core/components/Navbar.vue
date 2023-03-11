@@ -36,6 +36,7 @@ export default {
                         ></span>
                         <span
                             class="account-position"
+                            v-if="user.roles"
                             v-html="user.roles[0].name"
                         ></span>
                     </span>
