@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\User;
+namespace App\Repositories\UserHub;
 
+use App\Models\User\Hub;
 use LaravelEasyRepository\Implementations\Eloquent;
-use App\Models\User;
 
-class UserRepositoryImplement extends Eloquent implements UserRepository
+class UserHubRepositoryImplement extends Eloquent implements UserHubRepository
 {
 
     /**
@@ -15,19 +15,9 @@ class UserRepositoryImplement extends Eloquent implements UserRepository
      */
     protected $model;
 
-    public function __construct(User $model)
+    public function __construct(Hub $model)
     {
         $this->model = $model;
-    }
-
-    public function findByEmail(string $email)
-    {
-        return $this->model->where('email', $email)->first();
-    }
-
-    public function findByCriteria(array $data)
-    {
-        return $this->model->where($data)->first();
     }
 
     public function query()
