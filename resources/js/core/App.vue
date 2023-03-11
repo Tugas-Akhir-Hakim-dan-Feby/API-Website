@@ -39,7 +39,7 @@ export default {
 
         <div class="content-page">
             <div class="content">
-                <Navbar :user="user" />
+                <Navbar v-if="user" :user="user" />
 
                 <div class="container-fluid">
                     <router-view></router-view>

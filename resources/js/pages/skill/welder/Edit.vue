@@ -2,7 +2,7 @@
 import Success from "../../../components/notifications/Success.vue";
 
 export default {
-    props: ["id"],
+    props: ["uuid"],
     data() {
         return {
             isLoading: false,
@@ -17,7 +17,7 @@ export default {
         getSkill() {
             this.isLoading = true;
             this.$store
-                .dispatch("showData", ["skill/welder", this.id])
+                .dispatch("showData", ["skill/welder", this.uuid])
                 .then((response) => {
                     this.isLoading = false;
                     this.skill = response.data;
@@ -34,7 +34,7 @@ export default {
             this.isLoading = true;
             this.errors = {};
             this.$store
-                .dispatch("updateData", ["skill/welder", this.id, this.skill])
+                .dispatch("updateData", ["skill/welder", this.uuid, this.skill])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
