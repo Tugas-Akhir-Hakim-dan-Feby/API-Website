@@ -12,18 +12,12 @@ class AuthenticatedController extends Controller
     public function __invoke(Request $request)
     {
         $user = Auth::user();
+
+        $user = User::where('uuid', $user->uuid)->first();
         $user->load('roles');
-
-        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
-
-        $role = $user->roles->pluck('name');
-        $token = $user->createToken('api', $role->toArray())->plainTextToken;
-
-        $user = User::where('id', $user->id)->first();
 
         return response()->json([
             'user' => $user,
-            'token' => $token
         ]);
     }
 }

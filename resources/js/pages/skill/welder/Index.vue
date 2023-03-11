@@ -12,7 +12,7 @@ export default {
     data() {
         return {
             title: "Daftar Jenis Keahlian Welder",
-            id: null,
+            uuid: null,
             msg: "",
             isCreate: false,
             isEdit: false,
@@ -57,16 +57,16 @@ export default {
                     console.log(error);
                 });
         },
-        handleDelete(id) {
-            this.id = id;
+        handleDelete(uuid) {
+            this.uuid = uuid;
             $("#confirmModal").modal("show");
         },
         onCreate() {
             this.title = "Tambah Keahlian";
             this.isCreate = true;
         },
-        onEdit(id) {
-            this.id = id;
+        onEdit(uuid) {
+            this.uuid = uuid;
             this.title = "Edit Keahlian";
             this.isEdit = true;
         },
@@ -78,7 +78,7 @@ export default {
         },
         onDelete() {
             this.$store
-                .dispatch("deleteData", ["skill/welder", this.id])
+                .dispatch("deleteData", ["skill/welder", this.uuid])
                 .then((response) => {
                     $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
@@ -115,7 +115,7 @@ export default {
 
     <CreateSkill v-if="isCreate" @onCancel="onCancel($e)" />
 
-    <EditSkill v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
+    <EditSkill v-else-if="isEdit" :uuid="uuid" @onCancel="onCancel($e)" />
 
     <div v-else class="card">
         <div class="card-body">
@@ -175,14 +175,14 @@ export default {
                             <td v-html="skill.skillDescription"></td>
                             <td>
                                 <button
-                                    @click="onEdit(skill.id)"
+                                    @click="onEdit(skill.uuid)"
                                     class="btn btn-warning text-white btn-sm me-2"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     class="btn btn-danger btn-sm"
-                                    @click="handleDelete(skill.id)"
+                                    @click="handleDelete(skill.uuid)"
                                 >
                                     Hapus
                                 </button>
