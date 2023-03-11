@@ -79,12 +79,12 @@ export default {
                     :disabled="isLoading"
                     >
                     Deskripsi Keahlian 1</textarea>
-                </div>
-                <div class="invalid-feedback"
-                    v-if="errors.skillDescription"
-                    v-for="(error, index) in errors.skillDescription"
-                    :key="index">
-                    {{ error }}.
+                    <div class="invalid-feedback"
+                        v-if="errors.skillDescription"
+                        v-for="(error, index) in errors.skillDescription"
+                        :key="index">
+                        {{ error }}.
+                    </div>
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
