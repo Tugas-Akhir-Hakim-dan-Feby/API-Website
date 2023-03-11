@@ -5,12 +5,19 @@ import Navbar from "./components/Navbar.vue";
 import Cookie from "js-cookie";
 
 export default {
+    data() {
+        return {
+            user: {},
+        };
+    },
     watch: {
         "$route.params.search": {
             handler: function (search) {
                 this.$store
                     .dispatch("postData", ["/auth/check", {}])
-                    .then((response) => {})
+                    .then((response) => {
+                        this.user = response.user;
+                    })
                     .catch((error) => {
                         this.error = error.response.data;
                         Cookie.remove("token");
@@ -32,7 +39,7 @@ export default {
 
         <div class="content-page">
             <div class="content">
-                <Navbar />
+                <Navbar v-if="user" :user="user" />
 
                 <div class="container-fluid">
                     <router-view></router-view>
