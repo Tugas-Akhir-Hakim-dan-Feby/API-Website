@@ -23,7 +23,7 @@ const routes = [
         name: "Dashboard",
         component: () => import("../pages/home/Index.vue"),
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
     {
@@ -31,7 +31,7 @@ const routes = [
         name: "My Profile",
         component: () => import("../pages/user/MyProfile.vue"),
         meta: {
-            // requiresAuth: true,
+            requiresAuth: true,
         },
     },
 ];
