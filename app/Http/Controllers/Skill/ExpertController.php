@@ -12,6 +12,7 @@ use App\Http\Resources\Skill\Expert\ExpertSkillDetail;
 use App\Repositories\ExpertSkill\ExpertSkillRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class ExpertController extends Controller
@@ -40,6 +41,10 @@ class ExpertController extends Controller
     public function store(ExpertSkillRequestStore $request)
     {
         return DB::transaction(function () use ($request) {
+            $request->merge([
+                'uuid' => Str::uuid()
+            ]);
+
             return $this->expertSkillRepository->create($request->all());
         });
     }

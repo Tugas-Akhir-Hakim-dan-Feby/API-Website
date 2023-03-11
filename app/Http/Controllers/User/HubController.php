@@ -54,6 +54,7 @@ class HubController extends Controller
 
             // Proses untuk create data user authentication
             $request->merge([
+                'uuid' => Str::uuid(),
                 'password' => bcrypt(Str::random(10)),
                 'role_id' => ModelsRole::ADMIN_PUSAT
             ]);
@@ -63,6 +64,7 @@ class HubController extends Controller
 
             // Proses untuk create data admin pusat
             $request->merge([
+                'uuid' => Str::uuid(),
                 'user_id' => $user->id,
                 'status' => 1
             ]);
@@ -73,7 +75,7 @@ class HubController extends Controller
 
     public function show($id)
     {
-        $user = $this->userRepository->findByCriteria(['id' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);
@@ -86,7 +88,7 @@ class HubController extends Controller
 
     public function update(AdminHubRequestUpdate $request, $id)
     {
-        $user = $this->userRepository->findByCriteria(['id' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);
@@ -108,7 +110,7 @@ class HubController extends Controller
 
     public function destroy($id)
     {
-        $user = $this->userRepository->findByCriteria(['id' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);

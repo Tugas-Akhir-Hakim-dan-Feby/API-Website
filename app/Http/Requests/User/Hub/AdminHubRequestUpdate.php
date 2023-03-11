@@ -28,7 +28,7 @@ class AdminHubRequestUpdate extends FormRequest
      */
     public function rules()
     {
-        $user = User::find(request()->id);
+        $user = User::where('uuid', request()->id)->first();
 
         return [
             'email' => ['email', 'required', Rule::unique('users')->ignore($user)],
