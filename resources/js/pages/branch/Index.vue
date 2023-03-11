@@ -17,6 +17,7 @@ export default {
             isLoading: false,
             isCreate: false,
             isEdit: false,
+            showAlert: false,
             branches: [],
 
             pagination: {
@@ -81,7 +82,7 @@ export default {
                 .dispatch("deleteData", ["branch", this.id])
                 .then((response) => {
                     $("#confirmModal").modal("hide");
-                    $("#successModal").modal("show");
+                    this.showAlert = true;
                     this.msg = "data berhasil dihapus.";
                     this.getBranches();
                 })
@@ -113,6 +114,20 @@ export default {
 
 <template>
     <PageTitle :title="title" />
+
+    <div
+        class="alert alert-success alert-dismissible bg-success text-white border-0 fade show"
+        role="alert"
+        v-if="showAlert"
+    >
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+        <strong>berhasil - </strong> {{ msg }}
+    </div>
 
     <CreateBranch v-if="isCreate" @onCancel="onCancel($e)" />
 
@@ -188,6 +203,5 @@ export default {
         </div>
     </div>
 
-    <Success :msg="msg" />
     <Confirm @onDelete="onDelete" />
 </template>
