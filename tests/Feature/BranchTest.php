@@ -98,7 +98,7 @@ class BranchTest extends TestCase
 
         $branch = Branch::where('branch_name', 'Branch 1')->first();
 
-        $response = $this->getJson(route('api.branch.show', $branch->id));
+        $response = $this->getJson(route('api.branch.show', $branch->uuid));
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -150,7 +150,7 @@ class BranchTest extends TestCase
 
         $branch = Branch::where('branch_name', 'Branch 1')->first();
 
-        $response = $this->putJson(route('api.branch.update', $branch->id), [
+        $response = $this->putJson(route('api.branch.update', $branch->uuid), [
             'branch_name' => 'Branch 1 Edited',
             'branch_address' => 'Jl. Raya No. 1',
             'branch_phone' => '08123456789',
@@ -190,7 +190,7 @@ class BranchTest extends TestCase
 
         $branch = Branch::where('branch_name', 'Branch 1 Edited')->first();
 
-        $response = $this->deleteJson(route('api.branch.destroy', $branch->id));
+        $response = $this->deleteJson(route('api.branch.destroy', $branch->uuid));
 
         $branch = Branch::where('branch_name', 'Branch 1 Edited')->first();
         $this->assertNull($branch);
