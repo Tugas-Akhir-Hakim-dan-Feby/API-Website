@@ -12,6 +12,7 @@ use App\Http\Resources\User\HubCollection;
 use App\Http\Resources\User\HubDetail;
 use App\Http\Traits\FillableFixer;
 use App\Models\Role as ModelsRole;
+use App\Models\User\Hub;
 use App\Repositories\User\UserRepository;
 use App\Repositories\UserHub\UserHubRepository;
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ class HubController extends Controller
             $request->merge([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
-                'status' => 1
+                'status' => Hub::ACTIVE
             ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
             return $this->adminHubRepository->create($fillableAdminHub);
@@ -101,10 +102,25 @@ class HubController extends Controller
 
             // Proses untuk update data admin pusat
             $request->merge([
-                'status' => 1
+                'status' => Hub::ACTIVE
             ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
             return $this->adminHubRepository->update($user->adminHub->id, $fillableAdminHub);
+        });
+    }
+
+    public function updateStatus($id)
+    {
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        return DB::transaction(function () use ($user) {
+            return $this->adminHubRepository->update($user->adminHub->id, [
+                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
+            ]);
         });
     }
 
