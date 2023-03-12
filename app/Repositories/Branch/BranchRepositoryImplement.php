@@ -24,4 +24,15 @@ class BranchRepositoryImplement extends Eloquent implements BranchRepository
     {
         return $this->model->query();
     }
+
+    public function findOrFail($id)
+    {
+        $branch = $this->model->where('uuid', $id)->first();
+
+        if (!$branch) {
+            abort(404);
+        }
+
+        return $branch;
+    }
 }

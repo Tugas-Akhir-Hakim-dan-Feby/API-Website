@@ -11,7 +11,7 @@ import EditBranch from "./Edit.vue";
 export default {
     data() {
         return {
-            id: null,
+            uuid: null,
             msg: "",
             title: "Data Cabang",
             isLoading: false,
@@ -57,16 +57,16 @@ export default {
                     console.log(error);
                 });
         },
-        handleDelete(id) {
-            this.id = id;
+        handleDelete(uuid) {
+            this.uuid = uuid;
             $("#confirmModal").modal("show");
         },
         onCreate() {
             this.title = "Tambah Cabang";
             this.isCreate = true;
         },
-        onEdit(id) {
-            this.id = id;
+        onEdit(uuid) {
+            this.uuid = uuid;
             this.title = "Edit Cabang";
             this.isEdit = true;
         },
@@ -78,7 +78,7 @@ export default {
         },
         onDelete() {
             this.$store
-                .dispatch("deleteData", ["branch", this.id])
+                .dispatch("deleteData", ["branch", this.uuid])
                 .then((response) => {
                     $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
@@ -116,7 +116,7 @@ export default {
 
     <CreateBranch v-if="isCreate" @onCancel="onCancel($e)" />
 
-    <EditBranch v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
+    <EditBranch v-else-if="isEdit" :uuid="uuid" @onCancel="onCancel($e)" />
 
     <div class="card" v-else>
         <div class="card-body position-relative">
@@ -162,21 +162,30 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(branch, index) in branches" :key="index">
+                        <tr v-if="branches.length < 1">
+                            <td colspan="5" class="text-center">
+                                Data cabang tidak ada
+                            </td>
+                        </tr>
+                        <tr
+                            v-else
+                            v-for="(branch, index) in branches"
+                            :key="index"
+                        >
                             <th v-html="iteration(index)"></th>
                             <td v-html="branch.branchName"></td>
                             <td v-html="branch.branchAddress"></td>
                             <td v-html="branch.branchPhone"></td>
                             <td>
                                 <button
-                                    @click="onEdit(branch.id)"
+                                    @click="onEdit(branch.uuid)"
                                     class="btn btn-warning btn-sm me-2 text-white"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     class="btn btn-danger btn-sm"
-                                    @click="handleDelete(branch.id)"
+                                    @click="handleDelete(branch.uuid)"
                                 >
                                     Hapus
                                 </button>

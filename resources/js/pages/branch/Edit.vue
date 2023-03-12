@@ -2,7 +2,7 @@
 import Success from "../../components/notifications/Success.vue";
 
 export default {
-    props: ["id"],
+    props: ["uuid"],
     data() {
         return {
             branch: {},
@@ -19,7 +19,7 @@ export default {
         },
         getBranch() {
             this.$store
-                .dispatch("showData", ["branch", this.id])
+                .dispatch("showData", ["branch", this.uuid])
                 .then((response) => {
                     this.branch = response.data;
                 })
@@ -31,7 +31,7 @@ export default {
             this.isLoading = true;
             this.errors = {};
             this.$store
-                .dispatch("updateData", ["branch", this.id, this.branch])
+                .dispatch("updateData", ["branch", this.uuid, this.branch])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");

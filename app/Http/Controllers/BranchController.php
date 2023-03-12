@@ -9,6 +9,7 @@ use App\Http\Resources\Branch\BranchDetail;
 use Illuminate\Http\Request;
 use App\Repositories\Branch\BranchRepository;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class BranchController extends Controller
@@ -36,6 +37,10 @@ class BranchController extends Controller
     public function store(BranchRequestStore $request)
     {
         return DB::transaction(function () use ($request) {
+            $request->merge([
+                'uuid' => Str::uuid()
+            ]);
+
             return $this->branchRepository->create($request->all());
         });
     }

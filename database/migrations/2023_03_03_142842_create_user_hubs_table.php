@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('user_hubs', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->nullable();
             $table->foreignIdFor(User::class);
             $table->string('position');
             $table->string('phone');

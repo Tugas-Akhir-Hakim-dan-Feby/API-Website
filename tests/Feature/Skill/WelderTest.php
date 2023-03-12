@@ -3,6 +3,7 @@
 namespace Tests\Feature\Skill;
 
 use App\Models\User;
+use App\Models\WelderSkill;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -104,7 +105,8 @@ class WelderTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->getJson(route('api.skill.welder.show', 1));
+        $welderSkill = WelderSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->getJson(route('api.skill.welder.show', $welderSkill->uuid));
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -151,7 +153,8 @@ class WelderTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->putJson(route('api.skill.welder.update', 1), [
+        $welderSkill = WelderSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->putJson(route('api.skill.welder.update', $welderSkill->uuid), [
             'skill_name' => 'skill name 1',
             'skill_description' => 'skill description 1',
         ]);
@@ -182,7 +185,8 @@ class WelderTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->deleteJson(route('api.skill.welder.destroy', 1));
+        $welderSkill = WelderSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->deleteJson(route('api.skill.welder.destroy', $welderSkill->uuid));
 
         $response->assertStatus(Response::HTTP_OK);
     }

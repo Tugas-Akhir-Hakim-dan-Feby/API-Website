@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Skill;
 
+use App\Models\ExpertSkill;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -104,7 +105,8 @@ class ExpertTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->getJson(route('api.skill.expert.show', 1));
+        $expertSkill = ExpertSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->getJson(route('api.skill.expert.show', $expertSkill->uuid));
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -151,7 +153,8 @@ class ExpertTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->putJson(route('api.skill.expert.update', 1), [
+        $expertSkill = ExpertSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->putJson(route('api.skill.expert.update', $expertSkill->uuid), [
             'skill_name' => 'skill name 1',
             'skill_description' => 'skill description 1',
         ]);
@@ -182,7 +185,8 @@ class ExpertTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $response = $this->deleteJson(route('api.skill.expert.destroy', 1));
+        $expertSkill = ExpertSkill::where('skill_name', 'skill name 1')->first();
+        $response = $this->deleteJson(route('api.skill.expert.destroy', $expertSkill->uuid));
 
         $response->assertStatus(Response::HTTP_OK);
     }
