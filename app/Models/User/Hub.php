@@ -14,7 +14,6 @@ class Hub extends Model
 
     protected $fillable = [
         'uuid',
-        'user_id',
         'position',
         'phone',
         'address',
@@ -23,6 +22,7 @@ class Hub extends Model
 
     protected $hidden = [
         'id',
+        'user_id',
     ];
 
     public function setUuidAttribute($uuid)
