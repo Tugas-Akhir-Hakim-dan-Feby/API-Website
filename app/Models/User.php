@@ -72,6 +72,11 @@ class User extends Authenticatable
         return $this->attributes['uuid'] = Str::uuid();
     }
 
+    public function document()
+    {
+        return $this->morphOne(Document::class, 'documentable');
+    }
+
     public function adminHub(): HasOne
     {
         return $this->hasOne(Hub::class, 'user_id', 'id');

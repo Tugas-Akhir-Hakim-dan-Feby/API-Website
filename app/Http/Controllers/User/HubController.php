@@ -82,7 +82,7 @@ class HubController extends Controller
             abort(404);
         }
 
-        $user->load('adminHub');
+        $user->load(['adminHub', 'document']);
 
         return new HubDetail($user);
     }
