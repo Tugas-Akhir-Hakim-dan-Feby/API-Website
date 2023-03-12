@@ -51,4 +51,4 @@ jobs:
           php artisan config:clear
           php artisan migrate:fresh
           php artisan db:seed --class=DatabaseTesterSeeder
-          php artisan test
+          php artisan test --stop-on-failure
