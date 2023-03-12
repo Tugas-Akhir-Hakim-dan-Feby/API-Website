@@ -10,7 +10,7 @@ class Role
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with('adminHub');
+        $query->with(['adminHub']);
         $query->where('role_id', ModelsRole::ADMIN_PUSAT);
 
         return $next($query);

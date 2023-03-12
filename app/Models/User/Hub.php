@@ -23,6 +23,10 @@ class Hub extends Model
         'address',
         'status',
         'user_id',
+        'gender',
+        'birth_place',
+        'date_birth',
+        'nip',
     ];
 
     protected $hidden = [
