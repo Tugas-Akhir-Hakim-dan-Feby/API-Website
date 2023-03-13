@@ -13,47 +13,47 @@ use Illuminate\Support\Facades\DB;
 
 class HubController extends Controller
 {
-    protected $adminhubRepository;
+    protected $adminHubRepository;
 
     public function __construct(AdminHubRepository $adminHubRepository)
     {
-        $this->adminhubRepository = $adminHubRepository;
+        $this->adminHubRepository = $adminHubRepository;
     }
 
     public function index(Request $request)
     {
-        $adminhubs = $this->adminhubRepository->all();
+        $adminhubs = $this->adminHubRepository->all();
         return new HubCollection($adminhubs);
     }
 
     public function store(HubRequestStore $request)
     {
         return DB::transaction(function () use ($request) {
-            return $this->adminhubRepository->create($request->all());
+            return $this->adminHubRepository->create($request->all());
         });
     }
 
     public function show($id)
     {
-        $adminhubs = $this->adminhubRepository->findOrFail($id);
+        $adminhubs = $this->adminHubRepository->findOrFail($id);
         return new HubDetail($adminhubs);
     }
 
     public function update(HubRequestStore $request, $id)
     {
-        $adminhubs = $this->adminhubRepository->findOrFail($id);
+        $adminhubs = $this->adminHubRepository->findOrFail($id);
 
         return DB::transaction(function () use ($request, $adminhubs) {
-            return $this->adminhubRepository->update($adminhubs->id, $request->all());
+            return $this->adminHubRepository->update($adminhubs->id, $request->all());
         });
     }
 
     public function destroy($id)
     {
-        $adminhubs = $this->adminhubRepository->findOrFail($id);
+        $adminhubs = $this->adminHubRepository->findOrFail($id);
 
         return DB::transaction(function () use ($adminhubs) {
-            return $this->adminhubRepository->delete($adminhubs->id);
+            return $this->adminHubRepository->delete($adminhubs->id);
         });
     }
 }

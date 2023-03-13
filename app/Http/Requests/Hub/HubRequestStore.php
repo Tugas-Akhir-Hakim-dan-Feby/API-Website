@@ -30,7 +30,7 @@ class HubRequestStore extends FormRequest
             'user_id' => 'required|max:255',
             'position' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
-            'address' => 'required|max:255',
+            'address' => 'required',
             'status' => 'required|integer|max:255',
         ];
     }
@@ -38,21 +38,20 @@ class HubRequestStore extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'user_id is required',
-            'user_id' => 'user is foreign',
-            'user_id.max' => 'user_id must be at less than 255 characters',
-            'position.required' => 'position is required',
-            'position.string' => 'position must be at less 255 characters',
-            'position.max' => 'position must be at less than 255 characters',
-            'phone.required' => 'phone is required',
-            'phone.string' => 'phone must be at less 255 characters',
-            'phone.max' => 'phone must be at less than 255 characters',
-            'address.required' => 'address is required',
-            'address.string' => 'address must be at less 255 characters',
-            'address.max' => 'address must be at less than 255 characters',
-            'status.required' => 'status is required',
-            'status.integer' => 'status must be at less than 255 characters',
-            'status.max' => 'status must be at less than 255 characters',
+            'user_id.required' => 'user_id diperlukan',
+            'user_id' => 'pengguna asing',
+            'user_id.max' => 'user_id harus kurang dari 255 karakter',
+            'position.required' => 'position diperlukan',
+            'position.string' => 'posisi harus kurang dari 255 karakter',
+            'position.max' => 'posisi harus kurang dari 255 karakter',
+            'phone.required' => 'telepon diperlukan',
+            'phone.string' => 'telepon harus kurang dari 255 karakter',
+            'phone.max' => 'telepon harus kurang dari 255 karakter',
+            'address.required' => 'address diperlukan',
+            'address.string' => 'alamat harus kurang dari 255 karakter',
+            'status.required' => 'status diperlukan',
+            'status.integer' => 'status harus kurang dari 255 karakter',
+            'status.max' => 'status harus kurang dari 255 karakter',
         ];
     }
 
