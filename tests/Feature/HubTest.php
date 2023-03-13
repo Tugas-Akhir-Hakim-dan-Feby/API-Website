@@ -33,11 +33,12 @@ class HubTest extends TestCase
     public function can_not_store_data_hub_before_login()
     {
         $response = $this->postJson(route('api.user.hub.store'), [
-            'user_id' => '1',
-            'position' => 'Anggota',
-            'phone' => '087532566',
-            'address' => 'Jl. Raya No. 8',
-            'status' => '1',
+                'name' => 'Fara',
+                'email' => 'fara@gmail.com',
+                'position' => 'Sekretaris',
+                'phone' => '0837464664',
+                'address' => 'cirebon',
+                'status' => '1',
         ]);
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -49,7 +50,8 @@ class HubTest extends TestCase
         Sanctum::actingAs(User::find(1), ['*']);
 
        $response = $this->postJson(route('api.user.hub.store'), [
-            'user_id' => '',
+            'name' => '',
+            'email' => '',
             'position' => '',
             'phone' => '',
             'address' => '',
@@ -65,16 +67,17 @@ class HubTest extends TestCase
             Sanctum::actingAs(User::find(1), ['*']);
 
             $response = $this->postJson(route('api.user.hub.store'), [
-                'user_id' => '1',
-                'position' => 'Anggota',
-                'phone' => '087532566',
-                'address' => 'Jl. Raya No. 8',
-                'status' => '0',
+                'name' => 'Fara',
+                'email' => 'fara@gmail.com',
+                'position' => 'Sekretaris',
+                'phone' => '0837464664',
+                'address' => 'cirebon',
+                'status' => '1',
             ]);
 
-            $adminhub = AdminHub::where('user_id', '1')->first();
+            $user = User::where('name', 'Fara')->first();
 
-            $this->assertNotNull($adminhub);
+            $this->assertNotNull($user);
             $response->assertStatus(Response::HTTP_CREATED);
         }
 
@@ -101,9 +104,9 @@ class HubTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['*']);
 
-        $adminhub = AdminHub::where('user_id', '1')->first();
+        $user = User::where('name', 'Fara')->first();
 
-        $response = $this->getJson(route('api.user.hub.show', $adminhub->id));
+        $response = $this->getJson(route('api.user.hub.show', $user->id));
 
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -112,7 +115,8 @@ class HubTest extends TestCase
     public function can_not_update_data_hub_before_login()
     {
         $response = $this->putJson(route('api.user.hub.update', 1), [
-            'user_id' => '1',
+            'name' => 'Fara',
+            'email' => 'fara@gmail.com',
             'position' => 'Anggota',
             'phone' => '087532566',
             'address' => 'Jl. Raya No. 8',
@@ -128,7 +132,8 @@ class HubTest extends TestCase
         Sanctum::actingAs(User::find(1), ['*']);
 
         $response = $this->putJson(route('api.user.hub.update', 1), [
-            'user_id' => '',
+            'name' => 'Fara',
+            'email' => 'fara@gmail.com',
             'position' => '',
             'phone' => '',
             'address' => '',
@@ -144,13 +149,13 @@ class HubTest extends TestCase
         Sanctum::actingAs(User::find(1), ['*']);
 
         $response = $this->putJson(route('api.user.hub.update', 999), [
-            'user_id' => '1',
+            'name' => 'Fara',
+            'email' => 'fira@gmail.com',
             'position' => 'Anggota',
-            'phone' => '087532566',
-            'address' => 'Jl. Raya No. 8',
-            'status' => '0',
+            'phone' => '0837464664',
+            'address' => 'cirebon',
+            'status' => '1',
         ]);
-
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -159,21 +164,22 @@ class HubTest extends TestCase
    {
     Sanctum::actingAs(User::find(1), ['*']);
 
-    $adminhub = AdminHub::where('user_id', '1')->first();
+    $user = User::where('name', 'Fara')->first();
 
-    $response = $this->putJson(route('api.user.hub.update', $adminhub->id), [
-            'user_id' => '11',
+    $response = $this->putJson(route('api.user.hub.update', $user->id), [
+            'name' => 'Fara',
+            'email' => 'fira@gmail.com',
             'position' => 'Anggota',
             'phone' => '087532566',
             'address' => 'Jl. Raya No. 8',
             'status' => '0',
     ]);
 
-    $adminhub = AdminHub::where('user_id', '1')->first();
-    $this->assertNull($adminhub);
+    $user = User::where('id', 'Fara')->first();
+    $this->assertNull($user);
 
-    $adminhub = AdminHub::where('user_id', '11')->first();
-    $this->assertNotNull($adminhub);
+    $user = User::where('id', 'Fara')->first();
+    $this->assertNull($user);
 
     $response->assertStatus(Response::HTTP_OK);
    }
@@ -201,12 +207,12 @@ class HubTest extends TestCase
    {
        Sanctum::actingAs(User::find(1), ['*']);
 
-       $adminhub = AdminHub::where('user_id', '11')->first();
+       $user = User::where('name', 'Fara')->first();
 
-       $response = $this->deleteJson(route('api.user.hub.destroy', $adminhub->id));
+       $response = $this->deleteJson(route('api.user.hub.destroy', $user->id));
 
-       $adminhub = AdminHub::where('user_id', '11')->first();
-       $this->assertNull($adminhub);
+       $user = User::where('name', 'Fara')->first();
+       $this->assertNull($user);
 
        $response->assertStatus(Response::HTTP_OK);
    }

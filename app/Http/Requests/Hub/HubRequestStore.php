@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Hub;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 
 class HubRequestStore extends FormRequest
@@ -26,8 +28,10 @@ class HubRequestStore extends FormRequest
      */
     public function rules()
     {
+        $user = User::where('id', request()->id)->first();
         return [
-            'user_id' => 'required|max:255',
+            'name' => 'required|string|max:255',
+            'email' => ['email', 'required', Rule::unique('users')->ignore($user)],
             'position' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'address' => 'required',
@@ -38,16 +42,17 @@ class HubRequestStore extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'user_id diperlukan',
-            'user_id' => 'pengguna asing',
-            'user_id.max' => 'user_id harus kurang dari 255 karakter',
-            'position.required' => 'position diperlukan',
+            'name.required' => 'kolom nama wajib diisi',
+            'email.required' => 'kolom email wajib diisi',
+            'email.email' => 'email tidak valid',
+            'email.unique' => 'email sudah terdaftar',
+            'position.required' => 'kolom position wajib diisi',
             'position.string' => 'posisi harus kurang dari 255 karakter',
             'position.max' => 'posisi harus kurang dari 255 karakter',
-            'phone.required' => 'telepon diperlukan',
+            'phone.required' => 'telepon wajib diisi',
             'phone.string' => 'telepon harus kurang dari 255 karakter',
             'phone.max' => 'telepon harus kurang dari 255 karakter',
-            'address.required' => 'address diperlukan',
+            'address.required' => 'address wajib diisi',
             'address.string' => 'alamat harus kurang dari 255 karakter',
             'status.required' => 'status diperlukan',
             'status.integer' => 'status harus kurang dari 255 karakter',
