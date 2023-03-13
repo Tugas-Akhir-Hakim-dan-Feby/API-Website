@@ -2,16 +2,47 @@
 import Success from "../../../components/notifications/Success.vue";
 
 export default {
+    props: ["id"],
+    mounted(){
+        this.getSkill(); 
+    },
     data() {
-        return {};
+        return {
+            skill:{},
+            errors: {},
+            isLoading: false
+
+
+        };
     },
     methods: {
         onCancel() {
             this.$emit("onCancel", true);
         },
+        getSkill(){
+            this.$store
+            .dispatch("showData", ["skill/expert", this.id])
+            .then((response)=> {
+                this.skill = response.data;
+            })
+            .catch((error)=> {
+                console.log(error);
+            });
+        },
         handleSubmit() {
-            $("#successModal").modal("show");
-            this.$emit("onCancel", true);
+            this.isLoading = true;
+            this.error = {};
+            this.$store
+            .dispatch("updateData", ["skill/expert", this.id, this.skill])
+            .then((response)=> {
+                this.isLoading = false;
+                    $("#successModal").modal("show");
+                    this.$emit("onCancel", true);
+            })
+            .catch((error)=> {
+                this.isLoading = false;
+                this.errors = error.response.data.messages;
+            });
         },
     },
     components: { Success },
@@ -27,21 +58,56 @@ export default {
                         type="text"
                         class="form-control"
                         id="skillName"
-                        value="Keahlian 1"
+                        :class="{'is-invalid': errors.skillName}"
+                        v-model="skill.skillName"
+                        :disabled="isLoading"
                     />
+                    <div class="invalid-feedback"
+                        v-if="errors.skillName"
+                        v-for="(error, index) in errors.skillName"
+                        :key="index">
+                        {{ error }}.
+                    </div>
                 </div>
                 <div class="mb-2">
                     <label for="skillDescription">Deskripsi</label>
-                    <textarea class="form-control" rows="5">
-Deskripsi Keahlian 1</textarea
+                    <textarea
+                    class="form-control"
+                    rows="5"
+                    :class="{'is-invalid': errors.skillDescription}"
+                    v-model="skill.skillDescription"
+                    :disabled="isLoading"
                     >
+                    Deskripsi Keahlian 1</textarea>
+                    <div class="invalid-feedback"
+                        v-if="errors.skillDescription"
+                        v-for="(error, index) in errors.skillDescription"
+                        :key="index">
+                        {{ error }}.
+                    </div>
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
-                <button class="btn btn-secondary" @click="onCancel">
+                <button 
+                class="btn btn-secondary"
+                @click="onCancel"
+                :disabled="isLoading">
                     Batal
                 </button>
-                <button class="btn btn-success">Simpan</button>
+                <button class="btn btn-success" v-if="!isLoading">Simpan</button>
+                <button
+                    class="btn btn-success"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </div>
     </form>

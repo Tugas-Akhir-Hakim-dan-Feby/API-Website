@@ -1,6 +1,11 @@
 <script>
 export default {
-    props: ["pagination"],
+    props: {
+        pagination: {
+            type: Object,
+            default: {},
+        },
+    },
     methods: {
         onPageChange(page) {
             this.$emit("onPageChange", page);
