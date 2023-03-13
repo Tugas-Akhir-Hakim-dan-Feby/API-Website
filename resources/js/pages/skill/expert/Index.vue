@@ -17,14 +17,15 @@ export default {
             isLoading: false,
             isCreate: false,
             isEdit: false,
+            showAlert: false,
             pagination: {
-                perPage:10,
-                page:1,
+                perPage: 10,
+                page: 1,
             },
-            filters:{
-                search: ""
+            filters: {
+                search: "",
             },
-            metaPagination:{},
+            metaPagination: {},
         };
     },
     mounted() {
@@ -34,11 +35,11 @@ export default {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
         },
-        getSkills(){
+        getSkills() {
             this.isLoading = true;
 
             let params = [
-            `per_page=${this.pagination.perPage}`,
+                `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
             ].join("&");
@@ -50,7 +51,7 @@ export default {
                     this.metaPagination = response.meta;
                     this.skills = response.data;
                 })
-                .catch((error) => {  
+                .catch((error) => {
                     this.isLoading = false;
                     console.log(error);
                 });
@@ -75,17 +76,17 @@ export default {
             this.getSkills();
         },
         onDelete() {
-            
             this.$store
-            .dispatch("deleteData", ["skill/expert", this.id])
-            .then((response)=>{
-                $("#confirmModal").modal("hide");
-                $("#successModal").modal("show");
-                this.msg = "data berhasil dihapus.";
-                this.getSkills();
-            }).catch((error)=>{
-                console.error(error);
-            });
+                .dispatch("deleteData", ["skill/expert", this.id])
+                .then((response) => {
+                    $("#confirmModal").modal("hide");
+                    this.showAlert = true;
+                    this.msg = "data berhasil dihapus.";
+                    this.getSkills();
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         onSearch() {
             this.getSkills();
@@ -109,13 +110,27 @@ export default {
 <template>
     <PageTitle :title="title" />
 
+    <div
+        class="alert alert-success alert-dismissible bg-success text-white border-0 fade show"
+        role="alert"
+        v-if="showAlert"
+    >
+        <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+        <strong>berhasil - </strong> {{ msg }}
+    </div>
+
     <CreateSkill v-if="isCreate" @onCancel="onCancel($e)" />
 
     <EditSkill v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
 
     <div v-else class="card">
         <div class="card-body position-relative">
-            <Loader v-if="isLoading"/>
+            <Loader v-if="isLoading" />
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
@@ -138,15 +153,14 @@ export default {
                         />
                     </div>
 
-                    <Pagination 
-                    :pagination="metaPagination"
-                    @onPageChange="onPageChange($event)"
+                    <Pagination
+                        :pagination="metaPagination"
+                        @onPageChange="onPageChange($event)"
                     />
                 </div>
             </div>
 
             <div class="table-responsive">
-                
                 <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
@@ -182,6 +196,5 @@ export default {
         </div>
     </div>
 
-    <Success :url="{ name: 'Expert Skill' }" :msg="msg" />
     <Confirm @onDelete="onDelete" />
 </template>
