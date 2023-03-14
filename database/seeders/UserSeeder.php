@@ -23,17 +23,17 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'email' => 'admin.pusat@mailinator.com',
-            'role_id' => Role::ADMIN_PUSAT,
+            'role_id' => Role::ADMIN_HUB,
         ]);
 
         User::factory()->create([
             'email' => 'admin.cabang@mailinator.com',
-            'role_id' => Role::ADMIN_CABANG,
+            'role_id' => Role::ADMIN_BRANCH,
         ]);
 
         User::factory()->create([
             'email' => 'pakar@mailinator.com',
-            'role_id' => Role::PAKAR,
+            'role_id' => Role::EXPERT,
         ]);
 
         User::factory()->create([
