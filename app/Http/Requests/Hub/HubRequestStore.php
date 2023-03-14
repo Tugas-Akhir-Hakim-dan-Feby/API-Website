@@ -46,17 +46,17 @@ class HubRequestStore extends FormRequest
             'email.required' => 'kolom email wajib diisi',
             'email.email' => 'email tidak valid',
             'email.unique' => 'email sudah terdaftar',
-            'position.required' => 'kolom position wajib diisi',
-            'position.string' => 'posisi harus kurang dari 255 karakter',
-            'position.max' => 'posisi harus kurang dari 255 karakter',
+            'position.required' => 'kolom jabatan wajib diisi',
+            'position.string' => 'jabatan harus kurang dari 255 karakter',
+            'position.max' => 'jabatan harus kurang dari 255 karakter',
             'phone.required' => 'telepon wajib diisi',
             'phone.string' => 'telepon harus kurang dari 255 karakter',
             'phone.max' => 'telepon harus kurang dari 255 karakter',
-            'address.required' => 'address wajib diisi',
+            'address.required' => 'alamat wajib diisi',
             'address.string' => 'alamat harus kurang dari 255 karakter',
             'status.required' => 'status diperlukan',
-            'status.integer' => 'status harus kurang dari 255 karakter',
-            'status.max' => 'status harus kurang dari 255 karakter',
+            'status.integer' => 'harap masukan dalam bentuk bilangan 1/0',
+            'status.max' => 'harap masukan dalam bentuk bilangan 1/0',
         ];
     }
 
