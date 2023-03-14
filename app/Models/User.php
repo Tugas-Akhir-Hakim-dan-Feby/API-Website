@@ -8,6 +8,7 @@ use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -60,5 +61,10 @@ class User extends Authenticatable
         $url = url("/auth/new-password?token=$token&email=$this->email");
 
         $this->notify(new SendEmailVerification($url));
+    }
+
+    public function adminHub(): HasOne
+    {
+        return $this->hasOne(AdminHub::class, 'user_id', 'id');
     }
 }
