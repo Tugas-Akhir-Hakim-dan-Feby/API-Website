@@ -2,85 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Welder;
 use Illuminate\Http\Request;
+use App\Http\Filters\Skill\Expert\Search;
+use App\Http\Filters\Skill\Expert\Sort;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\Welder\WelderDetail;
+use App\Repositories\Welder\WelderRepository;
+use App\Http\Resources\Welder\WelderCollection;
+use App\Http\Requests\Welder\WelderRequestStore;
+use Illuminate\Pipeline\Pipeline;
 
 class WelderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected $welderRepository;
+
+    public function __construct(WelderRepository $welderRepository)
     {
-        $welders = app(Pipeline::class)
-        ->send($this->)
+        $this->welderRepository = $welderRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $welders= app(Pipeline::class)
+            ->send($this->welderRepository->query())
+            ->through([
+                Search::class,
+                Sort::class,
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
+        return new WelderCollection($welders);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(WelderRequestStore $request)
     {
-        //
+        return DB::transaction(function () use ($request) {
+            return $this->welderRepository->create($request->all());
+        });
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Welder  $welder
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Welder $welder)
+    public function show($id)
     {
-        //
+        $welders = $this->welderRepository->findOrFail($id);
+
+        return new WelderDetail($welders);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Welder  $welder
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Welder $welder)
+    public function update(WelderRequestStore $request, $id)
     {
-        //
+        $welders = $this->welderRepository->findOrFail($id);
+
+        return DB::transaction(function () use ($request, $welders) {
+            return $this->welderRepository->update($welders->id, $request->all());
+        });
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Welder  $welder
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Welder $welder)
+    public function destroy($id)
     {
-        //
-    }
+        $welders = $this->welderRepository->findOrFail($id);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Welder  $welder
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Welder $welder)
-    {
-        //
+        return DB::transaction(function () use ($welders) {
+            return $this->welderRepository->delete($welders->id);
+        });
     }
 }
