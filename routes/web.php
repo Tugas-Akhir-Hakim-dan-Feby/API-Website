@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\ActivationAccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{any}', [PageController::class, 'app'])->where('any', '^(?!auth|laravel-version).*$');
-Route::get('/auth/{any}', [PageController::class, 'auth']);
-Route::get('/laravel-version', function () {
-    return view('welcome');
-});
+Route::get('/{any}', [PageController::class, 'app'])->where('any', '^(?!auth|laravel-version|email).*$');
+Route::get('/auth/{any}', [PageController::class, 'auth'])->where('any', '^(?!activation-account).*$');
+
+Route::get('/auth/activation-account', ActivationAccountController::class);

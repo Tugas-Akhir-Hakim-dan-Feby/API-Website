@@ -9,6 +9,7 @@ use App\Models\Role as ModelsRole;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Contracts\Role;
 
@@ -28,7 +29,7 @@ class RegisterController extends Controller
     public function __invoke(RegisterRequest $request)
     {
         $request->merge([
-            'password' => bcrypt(Str::random(8))
+            'password' => Hash::make($request->password)
         ]);
 
         $user = DB::transaction(function () use ($request) {
@@ -36,7 +37,7 @@ class RegisterController extends Controller
             $user = $this->userRepository->create($request->all());
 
             $user->assignRole($role);
-            $this->sendEmail($user->email);
+            $this->sendEmailActivation($user->email);
 
             return $user;
         });

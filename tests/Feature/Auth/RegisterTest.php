@@ -16,7 +16,9 @@ class RegisterTest extends TestCase
 
         $request = [
             'name' => 'John Doe',
-            'email' => 'john.doe@mailinator.com'
+            'email' => 'john.doe@mailinator.com',
+            'password' => 'password',
+            'retype_password' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -33,7 +35,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => 'John Doe',
-            'email' => 'john.doe@mailinator.com'
+            'email' => 'john.doe@mailinator.com',
+            'password' => 'password',
+            'retype_password' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -50,7 +54,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => '',
-            'email' => ''
+            'email' => '',
+            'password' => '',
+            'retype_password' => ''
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -67,7 +73,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => 'John Doe',
-            'email' => 'invalid-email'
+            'email' => 'invalid-email',
+            'password' => 'password',
+            'retype_password' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
