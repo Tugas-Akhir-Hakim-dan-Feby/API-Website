@@ -7,11 +7,11 @@ trait UploadDocument
     protected function uploads($documents, $model, $folder)
     {
         foreach ($documents as $document) {
-            $this->store($document, $model, $folder);
+            $this->move($document, $model, $folder);
         }
     }
 
-    protected function store($document, $model, $folder, $request = [])
+    protected function move($document, $model, $folder, $request = [])
     {
         $documentPath = $this->storageFile($document, $folder);
         $request['document_path'] = $documentPath;
@@ -26,6 +26,6 @@ trait UploadDocument
 
     protected function upload($document, $model, $folder)
     {
-        return $this->store($document, $model, $folder);
+        return $this->move($document, $model, $folder);
     }
 }
