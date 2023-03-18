@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use Database\Seeders\Tests\ArticleSeeder;
 use Database\Seeders\Tests\ExpertSkillSeeder;
 use Database\Seeders\Tests\UserHubSeeder;
 use Database\Seeders\Tests\WelderSkillSeeder;
@@ -22,6 +23,7 @@ class DatabaseTesterSeeder extends Seeder
             UserSeeder::class,
             UserHubSeeder::class,
             RoleSeeder::class,
+            ArticleSeeder::class,
             ExpertSkillSeeder::class,
             WelderSkillSeeder::class
         ]);
