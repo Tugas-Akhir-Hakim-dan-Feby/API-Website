@@ -44,7 +44,7 @@ class ActivationAccountController extends Controller
 
         if ($status == Password::PASSWORD_RESET) {
             $data = [
-                'message' => 'password berhasil diubah',
+                'message' => 'akun berhasil diaktifkan',
                 'status_code' => 200
             ];
         } else {
