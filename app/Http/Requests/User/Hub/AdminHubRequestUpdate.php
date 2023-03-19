@@ -36,6 +36,10 @@ class AdminHubRequestUpdate extends FormRequest
             'position' => 'required',
             'phone' => 'required|numeric',
             'address' => 'required',
+            'gender' => 'required|in:L,P',
+            'birth_place' => 'required',
+            'date_birth' => 'required',
+            'nip' => 'required|numeric',
         ];
     }
 
@@ -55,6 +59,13 @@ class AdminHubRequestUpdate extends FormRequest
             'phone.required' => 'kolom telepon wajib diisi',
             'phone.numeric' => 'harap masukan angka',
             'address.required' => 'kolom alamat wajib diisi',
+            'address.required' => 'kolom alamat wajib diisi',
+            'gender.required' => 'kolom jenis kelamin wajib diisi',
+            'gender.in' => 'harap masukan jenis kelamin "L" atau "P"',
+            'birth_place.required' => 'kolom tempat lahir wajib diisi',
+            'date_birth.required' => 'kolom tanggal lahir wajib diisi',
+            'nip.required' => 'kolom nip wajib diisi',
+            'nip.numeric' => 'nip wajib berisi angka',
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\User\Branch;
 use App\Models\User\Hub;
 use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
@@ -81,5 +82,10 @@ class User extends Authenticatable
     public function adminHub(): HasOne
     {
         return $this->hasOne(Hub::class, 'user_id', 'id');
+    }
+
+    public function adminBranch(): HasOne
+    {
+        return $this->hasOne(Branch::class, 'user_id', 'id');
     }
 }

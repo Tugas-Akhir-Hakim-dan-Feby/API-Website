@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Requests\User\Hub;
+namespace App\Http\Requests\User\Branch;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class AdminHubRequestStore extends FormRequest
+class AdminBranchRequestUpdate extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +28,11 @@ class AdminHubRequestStore extends FormRequest
      */
     public function rules()
     {
+        $user = User::where('uuid', request()->id)->first();
+
         return [
-            'email' => 'email|required|unique:users',
+            'email' => ['email', 'required', Rule::unique('users')->ignore($user)],
+            'branch_id' => 'required|exists:branches,uuid',
             'name' => 'required',
             'position' => 'required',
             'phone' => 'required|numeric',
@@ -51,6 +56,8 @@ class AdminHubRequestStore extends FormRequest
             'email.email' => 'harap masukan email valid',
             'email.unique' => 'email sudah terdaftar',
             'name.required' => 'kolom nama wajib diisi',
+            'branch_id.required' => 'kolom cabang wajib diisi',
+            'branch_id.exists' => 'cabang tidak ditemukan',
             'position.required' => 'kolom jabatan wajib diisi',
             'phone.required' => 'kolom telepon wajib diisi',
             'phone.numeric' => 'harap masukan angka',

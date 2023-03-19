@@ -102,7 +102,7 @@ class HubController extends Controller
 
             // Proses untuk update data admin pusat
             $request->merge([
-                'status' => Hub::ACTIVE
+                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
             ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
             return $this->adminHubRepository->update($user->adminHub->id, $fillableAdminHub);
@@ -136,6 +136,10 @@ class HubController extends Controller
             // Proses untuk delete data admin pusat
             if ($user->adminHub) {
                 $user->adminHub->delete();
+            }
+
+            if ($user->document) {
+                $user->document()->delete();
             }
 
             // Proses untuk delete data user
