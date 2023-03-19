@@ -39,7 +39,7 @@ class UserHubTest extends TestCase
             'search' => 'coba'
         ]));
         $result = collect($response->json()['data']);
-
+        dd($result->count() > 0);
         $this->assertTrue($result->count() > 0);
         $response->assertStatus(Response::HTTP_OK);
     }
