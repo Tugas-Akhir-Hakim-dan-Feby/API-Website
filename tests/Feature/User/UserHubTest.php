@@ -38,8 +38,8 @@ class UserHubTest extends TestCase
         $response = $this->getJson(route('api.user.hub.index', [
             'search' => 'coba'
         ]));
+        dd($response);
         $result = collect($response->json()['data']);
-        dd($result->count() > 0);
         $this->assertTrue($result->count() > 0);
         $response->assertStatus(Response::HTTP_OK);
     }
