@@ -7,36 +7,28 @@ import Pagination from "../../../components/Pagination.vue";
 export default {
     data() {
         return {
-            users: [
-                {
-                    id: 1,
-                    name: "John Doe",
-                    email: "john.doe@mailinator.com",
-                    position: "Sekretaris",
-                    phone: "081234567890",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    name: "Jane Doe",
-                    email: "jane.doe@mailinator.com",
-                    position: "Kepala Cabang",
-                    phone: "081234567890",
-                    status: 0,
-                },
-                {
-                    id: 3,
-                    name: "Hana Doe",
-                    email: "hana.doe@mailinator.com",
-                    position: "Kepala Pusat",
-                    phone: "081234567890",
-                    status: 1,
-                },
-            ],
+            id: null,
+            msg: "",
+            isLoading: false,
+            isCreate: false,
+            isEdit: false,
+            users: [],
             msg: "",
         };
     },
+    mounted(){
+        this.getUsers();
+    },
     methods: {
+        getUsers(){
+            this.$store.dispatch("getData", ["user/hub", {}])
+            .then((response) => {
+                this.users = response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        },
         handleDelete() {
             $("#confirmModal").modal("show");
         },
@@ -55,6 +47,8 @@ export default {
 </script>
 <template>
     <PageTitle :title="'Daftar Pengguna API Pusat'" />
+    <CreateSkill v-if="isCreate" @onCancel="onCancel($e)" />
+    <EditSkill v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
 
     <div class="card">
         <div class="card-body">

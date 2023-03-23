@@ -5,6 +5,12 @@ import Success from "../../../components/notifications/Success.vue";
 export default {
     data() {
         return {
+            form:{
+                name: "",
+                email: "",
+                position: "",
+                phone: "",
+            },
             msg: "",
         };
     },
@@ -24,20 +30,48 @@ export default {
         <form @submit.prevent="handleSubmit">
             <div class="card-body">
                 <div class="mb-2">
-                    <label>Nama Lengkap</label>
-                    <input type="text" class="form-control" />
+                    <label
+                    for="name"
+                    >Nama Lengkap</label>
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    id="name"
+                    v-model="form.name"
+                    />
                 </div>
                 <div class="mb-2">
-                    <label>Email</label>
-                    <input type="text" class="form-control" />
+                    <label
+                    for="email"
+                    >Email</label>
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    id="email"
+                    v-model="form.email"
+                    />
                 </div>
                 <div class="mb-2">
-                    <label>Jabatan</label>
-                    <input type="text" class="form-control" />
+                    <label
+                    for="position"
+                    >Jabatan</label>
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    id="position"
+                    v-model="form.position"
+                    />
                 </div>
                 <div class="mb-2">
-                    <label>Telepon</label>
-                    <input type="text" class="form-control" />
+                    <label
+                    for="phone"
+                    >Telepon</label>
+                    <input 
+                    type="text" 
+                    class="form-control"
+                    id="phone"
+                    v-model="form.phone"
+                    />
                 </div>
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
