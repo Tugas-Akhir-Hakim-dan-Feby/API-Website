@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Article;
 
+use App\Http\Traits\MessageFixer;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ArticleCollection extends ResourceCollection
 {
+    use MessageFixer;
     /**
      * Transform the resource collection into an array.
      *
@@ -14,6 +16,6 @@ class ArticleCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->collectionMessage();
     }
 }
