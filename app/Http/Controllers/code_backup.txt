@@ -1,0 +1,24 @@
+==========================================================================
+Xendit
+==========================================================================
+use Xendit\Xendit;
+
+public function __construct()
+{
+Xendit::setApiKey(config('xendit.key_auth'));
+}
+
+public function any()
+{
+$getVaBanks = \Xendit\VirtualAccounts::create([
+'external_id' => Str::random(16),
+'bank_code' => "BRI",
+'name' => 'Hakim Asrori',
+'expected_amount' => 100000,
+'is_closed' => true,
+'expiration_date' => Carbon::now()->addDays(1)->toISOString(),
+'is_single_use' => true,
+]);
+$getVaBanks = \Xendit\VirtualAccounts::getVABanks();
+return $getVaBanks;
+}
