@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\MessageFixer;
 use App\Repositories\Payment\PaymentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
+    use MessageFixer;
+
     protected $paymentRepository;
 
     public function __construct(PaymentRepository $paymentRepository)
@@ -17,10 +20,18 @@ class PaymentController extends Controller
 
     public function callback(Request $request)
     {
-        return DB::transaction(function () use ($request) {
-            $payment = $this->paymentRepository->findByCriteria(["external_id" => $request->external_id]);
+        DB::beginTransaction();
 
-            return $payment->update(['status' => $request->status]);
-        });
+        $payment = $this->paymentRepository->findByCriteria(["external_id" => $request->external_id]);
+
+        try {
+            $payment->update(['status' => $request->status]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $payment);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }
