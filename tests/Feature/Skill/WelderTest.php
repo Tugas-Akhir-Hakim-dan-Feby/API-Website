@@ -66,7 +66,7 @@ class WelderTest extends TestCase
             'skill_description' => '',
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -145,7 +145,7 @@ class WelderTest extends TestCase
             'skill_description' => '',
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */

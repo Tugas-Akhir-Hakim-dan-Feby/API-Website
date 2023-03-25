@@ -43,10 +43,10 @@ class NewPasswordTest extends TestCase
 
         $response = $this->postJson(route('api.auth.new.password'),  $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 
@@ -63,10 +63,10 @@ class NewPasswordTest extends TestCase
 
         $response = $this->postJson(route('api.auth.new.password'), array_merge(['token' => $token], $payload));
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_BAD_REQUEST
         ]);
     }
 
@@ -81,10 +81,10 @@ class NewPasswordTest extends TestCase
 
         $response = $this->postJson(route('api.auth.new.password'),  $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 
@@ -99,10 +99,10 @@ class NewPasswordTest extends TestCase
 
         $response = $this->postJson(route('api.auth.new.password'),  $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 
@@ -117,10 +117,10 @@ class NewPasswordTest extends TestCase
 
         $response = $this->postJson(route('api.auth.new.password'),  $payload);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Requests\Skill\Expert\ExpertSkillRequestStore;
 use App\Http\Resources\Skill\Expert\ExpertCollection;
 use App\Http\Resources\Skill\Expert\ExpertSkillCollection;
 use App\Http\Resources\Skill\Expert\ExpertSkillDetail;
+use App\Http\Traits\MessageFixer;
 use App\Repositories\ExpertSkill\ExpertSkillRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 
 class ExpertController extends Controller
 {
+    use MessageFixer;
+
     protected $expertSkillRepository;
 
     public function __construct(ExpertSkillRepository $expertSkillRepository)
@@ -40,13 +43,21 @@ class ExpertController extends Controller
 
     public function store(ExpertSkillRequestStore $request)
     {
-        return DB::transaction(function () use ($request) {
+        DB::beginTransaction();
+
+        try {
             $request->merge([
                 'uuid' => Str::uuid()
             ]);
 
-            return $this->expertSkillRepository->create($request->all());
-        });
+            $skill = $this->expertSkillRepository->create($request->all());
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $skill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function show($id)
@@ -58,19 +69,33 @@ class ExpertController extends Controller
 
     public function update(ExpertSkillRequestStore $request, $id)
     {
+        DB::beginTransaction();
+
         $expertSkill = $this->expertSkillRepository->findOrFail($id);
 
-        return DB::transaction(function () use ($request, $expertSkill) {
-            return $this->expertSkillRepository->update($expertSkill->id, $request->all());
-        });
+        try {
+            $expertSkill->update($request->all());
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $expertSkill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         $expertSkill = $this->expertSkillRepository->findOrFail($id);
 
-        return DB::transaction(function () use ($expertSkill) {
-            return $this->expertSkillRepository->delete($expertSkill->id);
-        });
+        try {
+            $expertSkill->delete();
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $expertSkill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

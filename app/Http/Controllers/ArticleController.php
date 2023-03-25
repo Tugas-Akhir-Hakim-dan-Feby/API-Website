@@ -9,6 +9,7 @@ use App\Http\Requests\Article\ArticleRequestStore;
 use App\Http\Requests\Article\ArticleRequestUpdate;
 use App\Http\Resources\Article\ArticleCollection;
 use App\Http\Resources\Article\ArticleDetail;
+use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
 use App\Models\Article;
 use App\Repositories\Article\ArticleRepository;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
-    use UploadDocument;
+    use UploadDocument, MessageFixer;
 
     protected $articleRepository;
 
@@ -48,6 +49,8 @@ class ArticleController extends Controller
 
     public function store(ArticleRequestStore $request)
     {
+        DB::beginTransaction();
+
         $request->merge([
             'uuid' => Str::uuid(),
             'user_id' => Auth::user()->id,
@@ -55,13 +58,19 @@ class ArticleController extends Controller
             'status' => $request->status ? Article::ACTIVE : Article::INACTIVE
         ]);
 
-        return DB::transaction(function () use ($request) {
+        try {
             $article = $this->articleRepository->create($request->all());
 
             $this->upload($request->document, $article->document(), 'article');
 
-            return $article;
-        });
+            DB::commit();
+
+            return $this->createMessage("data berhasil ditambahkan", $article);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function showBySlug($slug)
@@ -82,13 +91,15 @@ class ArticleController extends Controller
 
     public function update(ArticleRequestUpdate $request, $id)
     {
+        DB::beginTransaction();
+
         $article = $this->articleRepository->findOrFail($id);
 
         $request->merge([
             'article_slug' => Str::slug($request->article_title),
         ]);
 
-        return DB::transaction(function () use ($request, $article) {
+        try {
             if ($request->hasFile('document')) {
                 if ($article->document) {
                     $path = str_replace(url('storage') . '/', '', $article->document->document_path);
@@ -100,20 +111,41 @@ class ArticleController extends Controller
                 $this->upload($request->document, $article->document(), 'article');
             }
 
-            return $article->update($request->all());
-        });
+            $article->update($request->all());
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil diperbaharui", $article);
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         $article = $this->articleRepository->findOrFail($id);
-        if ($article->document) {
-            $path = str_replace(url('storage') . '/', '', $article->document->document_path);
-            Storage::delete($path);
 
-            $article->document()->delete();
+        try {
+            if ($article->document) {
+                $path = str_replace(url('storage') . '/', '', $article->document->document_path);
+                Storage::delete($path);
+
+                $article->document()->delete();
+            }
+
+            $article->delete();
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil dihapus", $article);
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return $this->errorMessage($th->getMessage());
         }
-
-        return $article->delete();
     }
 }

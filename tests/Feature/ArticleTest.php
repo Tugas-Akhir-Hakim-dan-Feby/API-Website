@@ -87,7 +87,7 @@ class ArticleTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ["admin-app"]);
 
-        $this->postJson(route('api.article.store'))->assertBadRequest();
+        $this->postJson(route('api.article.store'))->assertUnprocessable();
     }
 
     /** @test */
@@ -103,7 +103,7 @@ class ArticleTest extends TestCase
             "article_content" => "coba content",
             "document" => $file,
             "status" => 1
-        ])->assertBadRequest();
+        ])->assertUnprocessable();
     }
 
     /** @test */
@@ -181,7 +181,7 @@ class ArticleTest extends TestCase
 
         $article = Article::where('article_title', "coba")->first();
 
-        $this->putJson(route('api.article.update', $article->uuid))->assertBadRequest();
+        $this->putJson(route('api.article.update', $article->uuid))->assertUnprocessable();
     }
 
     /** @test */
@@ -217,7 +217,7 @@ class ArticleTest extends TestCase
             "article_content" => "coba content",
             "document" => $file,
             "status" => 1
-        ])->assertBadRequest();
+        ])->assertUnprocessable();
     }
 
     /** @test */

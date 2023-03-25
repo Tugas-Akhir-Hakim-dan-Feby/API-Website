@@ -11,6 +11,7 @@ use App\Http\Requests\User\Hub\AdminHubRequestUpdate;
 use App\Http\Resources\User\HubCollection;
 use App\Http\Resources\User\HubDetail;
 use App\Http\Traits\FillableFixer;
+use App\Http\Traits\MessageFixer;
 use App\Models\Role as ModelsRole;
 use App\Models\User\Hub;
 use App\Repositories\User\UserRepository;
@@ -23,7 +24,7 @@ use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class HubController extends Controller
 {
-    use FillableFixer;
+    use FillableFixer, MessageFixer;
 
     protected $userRepository, $adminHubRepository;
 
@@ -50,10 +51,11 @@ class HubController extends Controller
 
     public function store(AdminHubRequestStore $request)
     {
-        return DB::transaction(function () use ($request) {
-            $role = PermissionModelsRole::find(ModelsRole::ADMIN_PUSAT);
+        DB::beginTransaction();
 
-            // Proses untuk create data user authentication
+        $role = PermissionModelsRole::find(ModelsRole::ADMIN_PUSAT);
+
+        try {
             $request->merge([
                 'uuid' => Str::uuid(),
                 'password' => bcrypt(Str::random(10)),
@@ -63,15 +65,20 @@ class HubController extends Controller
             $user = $this->userRepository->create($fillableUser);
             $user->syncRoles($role);
 
-            // Proses untuk create data admin pusat
             $request->merge([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
                 'status' => Hub::ACTIVE
             ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
-            return $this->adminHubRepository->create($fillableAdminHub);
-        });
+
+            $user->adminHub()->create($fillableAdminHub);
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function show($id)
@@ -89,51 +96,65 @@ class HubController extends Controller
 
     public function update(AdminHubRequestUpdate $request, $id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($request, $user) {
-            // Proses untuk update data user
+        try {
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
-            $this->userRepository->update($user->id, $fillableUser);
+            $user->update($fillableUser);
 
-            // Proses untuk update data admin pusat
             $request->merge([
                 'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
             ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
-            return $this->adminHubRepository->update($user->adminHub->id, $fillableAdminHub);
-        });
+            $user->adminHub()->update($fillableAdminHub);
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function updateStatus($id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($user) {
-            return $this->adminHubRepository->update($user->adminHub->id, [
-                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
+        try {
+            $user->adminBranch()->update([
+                'status' => $user->adminBranch->status ? Hub::INACTIVE : Hub::ACTIVE
             ]);
-        });
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($user) {
-            // Proses untuk delete data admin pusat
+        try {
             if ($user->adminHub) {
                 $user->adminHub->delete();
             }
@@ -142,8 +163,13 @@ class HubController extends Controller
                 $user->document()->delete();
             }
 
-            // Proses untuk delete data user
-            return $user->delete();
-        });
+            $user->delete();
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

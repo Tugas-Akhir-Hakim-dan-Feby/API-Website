@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Article;
 
+use App\Http\Traits\MessageFixer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ArticleDetail extends JsonResource
 {
+    use MessageFixer;
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +16,6 @@ class ArticleDetail extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->detailMessage();
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Requests\User\Branch\AdminBranchRequestUpdate;
 use App\Http\Resources\User\BranchCollection;
 use App\Http\Resources\User\BranchDetail;
 use App\Http\Traits\FillableFixer;
+use App\Http\Traits\MessageFixer;
 use App\Models\Role as AppModelsRole;
 use App\Models\User\Branch;
 use App\Repositories\Branch\BranchRepository;
@@ -18,11 +19,12 @@ use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 use Spatie\Permission\Models\Role as ModelsRole;
 
 class BranchController extends Controller
 {
-    use FillableFixer;
+    use FillableFixer, MessageFixer;
 
     protected $userRepository, $adminBranchRepository, $branchRepository;
 
@@ -48,9 +50,11 @@ class BranchController extends Controller
 
     public function store(AdminBranchRequestStore $request)
     {
+        DB::beginTransaction();
+
         $branch = $this->branchRepository->findOrFail($request->branch_id);
 
-        return DB::transaction(function () use ($request, $branch) {
+        try {
             $role = ModelsRole::find(AppModelsRole::ADMIN_CABANG);
 
             $request->merge([
@@ -70,8 +74,15 @@ class BranchController extends Controller
                 'status' => Branch::ACTIVE
             ]);
             $fillableAdminBranch = $this->onlyFillables($request->all(), $this->adminBranchRepository->getFillable());
-            return $this->adminBranchRepository->create($fillableAdminBranch);
-        });
+
+            $user->adminBranch()->create($fillableAdminBranch);
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function show($id)
@@ -89,6 +100,8 @@ class BranchController extends Controller
 
     public function update(AdminBranchRequestUpdate $request, $id)
     {
+        DB::beginTransaction();
+
         $branch = $this->branchRepository->findOrFail($request->branch_id);
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
 
@@ -96,44 +109,60 @@ class BranchController extends Controller
             abort(404);
         }
 
-        return DB::transaction(function () use ($request, $user, $branch) {
+        try {
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
-            $this->userRepository->update($user->id, $fillableUser);
+            $user->update($fillableUser);
 
             $request->merge([
                 'status' => $user->adminBranch->status ? Branch::INACTIVE : Branch::ACTIVE,
                 'branch_id' => $branch->id,
             ]);
             $fillableAdminBranch = $this->onlyFillables($request->all(), $this->adminBranchRepository->getFillable());
-            return $this->adminBranchRepository->update($user->adminBranch->id, $fillableAdminBranch);
-        });
+
+            $user->adminBranch()->update($fillableAdminBranch);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function updateStatus($id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($user) {
-            return $this->adminBranchRepository->update($user->adminBranch->id, [
+        try {
+            $user->adminBranch()->update([
                 'status' => $user->adminBranch->status ? Branch::INACTIVE : Branch::ACTIVE
             ]);
-        });
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($user) {
-            // Proses untuk delete data admin pusat
+        try {
             if ($user->adminBranch) {
                 $user->adminBranch->delete();
             }
@@ -142,8 +171,13 @@ class BranchController extends Controller
                 $user->document()->delete();
             }
 
-            // Proses untuk delete data user
-            return $user->delete();
-        });
+            $user->delete();
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

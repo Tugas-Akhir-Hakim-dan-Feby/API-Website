@@ -72,9 +72,10 @@ class AdminHubRequestUpdate extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([
+            'status' => 'WARNING',
             'messages' => $validator->errors(),
-            'status_code' => 400
-        ], 400);
+            'status_code' => JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+        ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
 
         throw new ValidationException($validator, $response);
     }

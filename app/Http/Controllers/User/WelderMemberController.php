@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
+use App\Http\Traits\MessageFixer;
 use App\Models\Role as ModelsRole;
 use App\Models\User\WelderMember;
 use App\Repositories\Payment\PaymentRepository;
@@ -23,6 +24,8 @@ use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class WelderMemberController extends Controller
 {
+    use MessageFixer;
+
     protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository;
 
     public function __construct(
@@ -52,6 +55,8 @@ class WelderMemberController extends Controller
 
     public function store(WelderRequestStore $request)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => Auth::user()->uuid, 'role_id' => ModelsRole::GUEST]);
         if (!$user) {
             abort(404);
@@ -66,7 +71,7 @@ class WelderMemberController extends Controller
             'welder_skill_id' => $welderSkill->id
         ]);
 
-        return DB::transaction(function () use ($request, $user, $role) {
+        try {
             $secret_key = 'Basic ' . config('xendit.key_auth');
             $external_id = Str::random(10);
             $data_request = Http::withHeaders([
@@ -77,7 +82,7 @@ class WelderMemberController extends Controller
             ]);
             $response = $data_request->object();
 
-            $this->paymentRepository->create([
+            $user->payment()->create([
                 'uuid' => Str::uuid(),
                 'user_id' => Auth::user()->id,
                 'external_id' => $external_id,
@@ -87,8 +92,14 @@ class WelderMemberController extends Controller
                 'status' => $response->status,
             ]);
             $user->syncRoles($role);
-            return $user->welderMember()->create($request->all());
-        });
+            $user->welderMember()->create($request->all());
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     /**

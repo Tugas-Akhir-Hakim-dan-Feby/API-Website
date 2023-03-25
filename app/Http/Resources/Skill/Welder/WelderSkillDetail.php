@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Skill\Welder;
 
+use App\Http\Traits\MessageFixer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WelderSkillDetail extends JsonResource
 {
+    use MessageFixer;
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +16,6 @@ class WelderSkillDetail extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->detailMessage();
     }
 }

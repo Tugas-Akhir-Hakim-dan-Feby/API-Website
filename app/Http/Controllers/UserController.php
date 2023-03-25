@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\UploadImageRequest;
+use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    use UploadDocument;
+    use UploadDocument, MessageFixer;
 
     protected $userRepository;
 
@@ -26,13 +27,15 @@ class UserController extends Controller
 
     public function uploadImage(UploadImageRequest $request, $id)
     {
+        DB::beginTransaction();
+
         $user = $this->userRepository->findByCriteria(['uuid' => $id]);
 
         if (!$user) {
             abort(404);
         }
 
-        return DB::transaction(function () use ($request, $user) {
+        try {
             if ($user->document) {
                 $path = str_replace(url('storage') . '/', '', $user->document->document_path);
                 Storage::delete($path);
@@ -40,7 +43,13 @@ class UserController extends Controller
                 $user->document()->delete();
             }
 
-            return $this->upload($request->image, $user->document(), 'user');
-        });
+            $this->upload($request->image, $user->document(), 'user');
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

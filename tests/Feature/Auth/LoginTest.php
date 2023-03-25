@@ -31,7 +31,7 @@ class LoginTest extends TestCase
         ];
 
         $response = $this->postJson(route('api.auth.login'), $payload);
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class LoginTest extends TestCase
 
         $response = $this->postJson(route('api.auth.login'), $payload);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */

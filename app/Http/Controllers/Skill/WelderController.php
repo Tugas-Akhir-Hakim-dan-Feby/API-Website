@@ -8,6 +8,7 @@ use App\Http\Filters\Skill\Welder\Sort;
 use App\Http\Requests\Skill\Welder\WelderSkillRequestStore;
 use App\Http\Resources\Skill\Welder\WelderSkillCollection;
 use App\Http\Resources\Skill\Welder\WelderSkillDetail;
+use App\Http\Traits\MessageFixer;
 use App\Repositories\WelderSkill\WelderSkillRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 
 class WelderController extends Controller
 {
+    use MessageFixer;
+
     protected $welderSkillRepository;
 
     public function __construct(WelderSkillRepository $welderSkillRepository)
@@ -39,13 +42,21 @@ class WelderController extends Controller
 
     public function store(WelderSkillRequestStore $request)
     {
-        return DB::transaction(function () use ($request) {
+        DB::beginTransaction();
+
+        try {
             $request->merge([
                 'uuid' => Str::uuid()
             ]);
 
-            return $this->welderSkillRepository->create($request->all());
-        });
+            $skill = $this->welderSkillRepository->create($request->all());
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $skill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function show($id)
@@ -57,19 +68,34 @@ class WelderController extends Controller
 
     public function update(WelderSkillRequestStore $request, $id)
     {
+        DB::beginTransaction();
+
         $welderSkill = $this->welderSkillRepository->findOrFail($id);
 
-        return DB::transaction(function () use ($welderSkill, $request) {
-            return $this->welderSkillRepository->update($welderSkill->id, $request->all());
-        });
+        try {
+            $welderSkill->update($request->all());
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $welderSkill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
+
         $welderSkill = $this->welderSkillRepository->findOrFail($id);
 
-        return DB::transaction(function () use ($welderSkill) {
-            return $this->welderSkillRepository->delete($welderSkill->id);
-        });
+        try {
+            $welderSkill->delete();
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $welderSkill);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

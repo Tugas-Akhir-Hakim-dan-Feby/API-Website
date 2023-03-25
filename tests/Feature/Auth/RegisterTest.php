@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -42,10 +43,10 @@ class RegisterTest extends TestCase
 
         $response = $this->postJson(route('api.auth.register'), $request);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 
@@ -61,10 +62,10 @@ class RegisterTest extends TestCase
 
         $response = $this->postJson(route('api.auth.register'), $request);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 
@@ -80,10 +81,10 @@ class RegisterTest extends TestCase
 
         $response = $this->postJson(route('api.auth.register'), $request);
 
-        $response->assertStatus(400);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $response->assertJson([
-            'status_code' => 400
+            'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
         ]);
     }
 }

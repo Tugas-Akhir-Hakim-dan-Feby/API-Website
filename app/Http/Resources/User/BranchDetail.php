@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Traits\MessageFixer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BranchDetail extends JsonResource
 {
+    use MessageFixer;
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +16,6 @@ class BranchDetail extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->detailMessage();
     }
 }

@@ -69,7 +69,7 @@ class UserHubTest extends TestCase
             'address' => ''
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -85,7 +85,7 @@ class UserHubTest extends TestCase
             'address' => 'Jl. Losarang'
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -168,7 +168,7 @@ class UserHubTest extends TestCase
             'address' => ''
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -186,7 +186,7 @@ class UserHubTest extends TestCase
             'address' => 'Jl. Losarang'
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
