@@ -53,6 +53,7 @@ class NewPasswordRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([
+            'status' => 'WARNING',
             'messages' => $validator->errors(),
             'status_code' => 400
         ], 400);
