@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\User\Branch;
 use App\Models\User\Hub;
+use App\Models\User\WelderMember;
 use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -87,5 +88,10 @@ class User extends Authenticatable
     public function adminBranch(): HasOne
     {
         return $this->hasOne(Branch::class, 'user_id', 'id');
+    }
+
+    public function welderMember(): HasOne
+    {
+        return $this->hasOne(WelderMember::class, 'user_id', 'id');
     }
 }
