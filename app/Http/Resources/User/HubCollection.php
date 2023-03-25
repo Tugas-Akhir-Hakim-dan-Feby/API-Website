@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Traits\MessageFixer;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class HubCollection extends ResourceCollection
 {
+    use MessageFixer;
     /**
      * Transform the resource collection into an array.
      *
@@ -14,6 +16,6 @@ class HubCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return $this->collectionMessage();
     }
 }
