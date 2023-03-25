@@ -20,7 +20,7 @@ class PaymentController extends Controller
         return DB::transaction(function () use ($request) {
             $payment = $this->paymentRepository->findByCriteria(["external_id" => $request->external_id]);
 
-            return $payment;
+            return $payment->update(['status' => $request->status]);
         });
     }
 }
