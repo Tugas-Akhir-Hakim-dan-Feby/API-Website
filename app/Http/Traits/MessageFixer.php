@@ -65,8 +65,8 @@ trait MessageFixer
     {
         return response()->json([
             'status' => 'ERROR',
-            'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
             'message' => $message,
+            'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR,
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
