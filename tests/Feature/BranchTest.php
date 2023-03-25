@@ -53,7 +53,7 @@ class BranchTest extends TestCase
             'branch_phone' => '',
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -126,7 +126,7 @@ class BranchTest extends TestCase
             'branch_phone' => '',
         ]);
 
-        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */

@@ -52,7 +52,7 @@ class WelderController extends Controller
             $skill = $this->welderSkillRepository->create($request->all());
 
             DB::commit();
-            return $this->successMessage("data berhasil ditambahkan", $skill);
+            return $this->createMessage("data berhasil ditambahkan", $skill);
         } catch (\Throwable $th) {
             DB::rollBack();
             return $this->errorMessage($th->getMessage());
