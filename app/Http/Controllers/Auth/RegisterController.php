@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Traits\MessageFixer;
 use App\Http\Traits\SendEmail;
 use App\Models\Role as ModelsRole;
 use App\Repositories\User\UserRepository;
@@ -15,7 +16,7 @@ use Spatie\Permission\Contracts\Role;
 
 class RegisterController extends Controller
 {
-    use SendEmail;
+    use SendEmail, MessageFixer;
 
     protected $userRepository;
     protected $roleRepository;
@@ -28,24 +29,25 @@ class RegisterController extends Controller
 
     public function __invoke(RegisterRequest $request)
     {
+        DB::beginTransaction();
+
         $request->merge([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'uuid' => Str::uuid()
         ]);
 
-        $user = DB::transaction(function () use ($request) {
+        try {
             $role = $this->roleRepository->findById(ModelsRole::GUEST, 'api');
             $user = $this->userRepository->create($request->all());
 
             $user->assignRole($role);
             $this->sendEmailActivation($user->email);
 
-            return $user;
-        });
-
-        return response()->json([
-            'message' => 'Registrasi berhasil',
-            'data' => $user,
-            'status_code' => 201
-        ], 201);
+            DB::commit();
+            return $this->createMessage('registrasi berhasil', $user);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }
