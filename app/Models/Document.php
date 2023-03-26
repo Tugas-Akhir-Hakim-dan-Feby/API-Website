@@ -20,6 +20,6 @@ class Document extends Model
 
     public function getDocumentPathAttribute($image)
     {
-        return $this->attributes['document_path'] = url('storage/' . $image);
+        return asset('storage/' . $image);
     }
 }
