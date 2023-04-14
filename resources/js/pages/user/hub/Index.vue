@@ -3,61 +3,88 @@ import Success from "../../../components/notifications/Success.vue";
 import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
+import PaginationUtil from "../../../store/utils/pagination";
+import Loader from "../../../components/Loader.vue";
 
 export default {
     data() {
         return {
-            users: [
-                {
-                    id: 1,
-                    name: "John Doe",
-                    email: "john.doe@mailinator.com",
-                    position: "Sekretaris",
-                    phone: "081234567890",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    name: "Jane Doe",
-                    email: "jane.doe@mailinator.com",
-                    position: "Kepala Cabang",
-                    phone: "081234567890",
-                    status: 0,
-                },
-                {
-                    id: 3,
-                    name: "Hana Doe",
-                    email: "hana.doe@mailinator.com",
-                    position: "Kepala Pusat",
-                    phone: "081234567890",
-                    status: 1,
-                },
-            ],
+            users: [],
+            pagination: {
+                perPage: 10,
+                page: 1,
+            },
+            filters: {
+                search: "",
+            },
+            metaPagination: {},
             msg: "",
+            isLoading: false,
         };
     },
+    mounted() {
+        this.getUsers();
+    },
     methods: {
-        handleDelete() {
-            $("#confirmModal").modal("show");
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination);
         },
-        onDelete() {
-            $("#confirmModal").modal("hide");
-            $("#successModal").modal("show");
-            this.msg = "data berhasil dihapus.";
+        getUsers() {
+            this.isLoading = true;
+
+            let params = [
+                `per_page=${this.pagination.perPage}`,
+                `page=${this.pagination.page}`,
+                `search=${this.filters.search}`,
+            ].join("&");
+
+            this.$store
+                .dispatch("getData", ["user/hub", params])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.users = response.data;
+                    this.metaPagination = response.meta;
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
         },
         onUpdateStatus(id, status) {
-            $("#successModal").modal("show");
-            this.msg = `status berhasil diperbaharui.`;
+            this.isLoading = true;
+            this.errors = {};
+            this.$store
+                .dispatch("updateData", ["user/hub/update-status", id, {}])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.msg = `data berhasil diperbaharui.`;
+                    this.getUsers();
+                    $("#successModal").modal("show");
+                    this.$emit("onCancel", true);
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                });
+        },
+        onSearch() {
+            setTimeout(() => {
+                this.getUsers();
+            }, 1000);
+        },
+        onPageChange(e) {
+            this.pagination.page = e;
+            this.getUsers();
         },
     },
-    components: { Pagination, PageTitle, Success, Confirm },
+    components: { Pagination, PageTitle, Success, Confirm, Loader },
 };
 </script>
 <template>
     <PageTitle :title="'Daftar Pengguna API Pusat'" />
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body position-relative">
+            <Loader v-if="isLoading" />
             <div class="table-responsive">
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"
@@ -78,10 +105,15 @@ export default {
                                 type="search"
                                 class="form-control"
                                 placeholder="pencarian"
+                                @keyup="onSearch"
+                                v-model="filters.search"
                             />
                         </div>
 
-                        <Pagination />
+                        <Pagination
+                            :pagination="metaPagination"
+                            @onPageChange="onPageChange($event)"
+                        />
                     </div>
                 </div>
             </div>
@@ -101,47 +133,36 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-for="(user, index) in users" :key="index">
-                            <th v-html="index + 1"></th>
+                            <th v-html="iteration(index)"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
-                            <td v-html="user.position"></td>
-                            <td v-html="user.phone"></td>
+                            <td v-html="user.adminHub?.position"></td>
+                            <td v-html="user.adminHub?.phone"></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
                                         type="checkbox"
                                         role="switch"
-                                        :checked="user.status"
+                                        :checked="user.adminHub?.status"
                                         @click="
-                                            onUpdateStatus(user.id, user.status)
+                                            onUpdateStatus(
+                                                user.uuid,
+                                                user.adminHub?.status
+                                            )
                                         "
                                     />
                                 </div>
                             </td>
                             <td>
-                                <!-- <router-link
-                                        :to="{
-                                            name: 'User Hub Detail',
-                                            params: { id: user.id },
-                                        }"
-                                        class="btn btn-sm btn-info me-2"
-                                        >Detail</router-link
-                                    > -->
                                 <router-link
                                     :to="{
                                         name: 'User Hub Edit',
-                                        params: { id: user.id },
+                                        params: { id: user.uuid },
                                     }"
-                                    class="btn btn-sm btn-warning me-2"
+                                    class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >
-                                <button
-                                    @click="handleDelete"
-                                    class="btn btn-sm btn-danger"
-                                >
-                                    Hapus
-                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -151,5 +172,5 @@ export default {
     </div>
 
     <Success :url="{ name: 'User Hub' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Confirm @onDelete="onDelete" :msg="msg"></Confirm>
 </template>

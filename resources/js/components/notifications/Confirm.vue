@@ -1,5 +1,11 @@
 <script>
 export default {
+    props: {
+        msg: {
+            default: null,
+            type: String,
+        },
+    },
     methods: {
         onDelete() {
             this.$emit("onDelete", 1);
@@ -26,7 +32,7 @@ export default {
                 </div>
                 <div
                     class="modal-body"
-                    v-html="'apakah anda yakin data akan dihapus?'"
+                    v-html="msg ?? 'apakah anda yakin data akan dihapus?'"
                 ></div>
                 <div class="modal-footer">
                     <button
@@ -41,7 +47,7 @@ export default {
                         type="button"
                         class="btn btn-danger"
                     >
-                        Hapus
+                        <slot> Hapus </slot>
                     </button>
                 </div>
             </div>
