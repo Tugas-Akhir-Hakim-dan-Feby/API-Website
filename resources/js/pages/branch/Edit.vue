@@ -18,12 +18,15 @@ export default {
             this.$emit("onCancel", true);
         },
         getBranch() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["branch", this.uuid])
                 .then((response) => {
+                    this.isLoading = false;
                     this.branch = response.data;
                 })
                 .catch((error) => {
+                    this.isLoading = false;
                     console.log(error);
                 });
         },
