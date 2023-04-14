@@ -4,6 +4,7 @@ import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
 import PaginationUtil from "../../../store/utils/pagination";
+import Util from "../../../store/utils/util";
 import Loader from "../../../components/Loader.vue";
 
 export default {
@@ -28,6 +29,9 @@ export default {
     methods: {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
+        },
+        getGender(gender) {
+            return Util.getGender(gender);
         },
         getUsers() {
             this.isLoading = true;
@@ -126,7 +130,7 @@ export default {
                             <th>Nama Pengguna</th>
                             <th>Email Pengguna</th>
                             <th>Jabatan</th>
-                            <th>Telepon</th>
+                            <th>Jenis Kelamin</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -137,7 +141,7 @@ export default {
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
                             <td v-html="user.adminHub?.position"></td>
-                            <td v-html="user.adminHub?.phone"></td>
+                            <td v-html="getGender(user.adminHub?.gender)"></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
