@@ -132,8 +132,8 @@ class HubController extends Controller
         }
 
         try {
-            $user->adminBranch()->update([
-                'status' => $user->adminBranch->status ? Hub::INACTIVE : Hub::ACTIVE
+            $user->adminHub()->update([
+                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
             ]);
 
             DB::commit();
