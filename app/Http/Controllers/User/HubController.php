@@ -108,9 +108,6 @@ class HubController extends Controller
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
             $user->update($fillableUser);
 
-            $request->merge([
-                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
-            ]);
             $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
             $user->adminHub()->update($fillableAdminHub);
             DB::commit();
@@ -132,8 +129,8 @@ class HubController extends Controller
         }
 
         try {
-            $user->adminBranch()->update([
-                'status' => $user->adminBranch->status ? Hub::INACTIVE : Hub::ACTIVE
+            $user->adminHub()->update([
+                'status' => $user->adminHub->status ? Hub::INACTIVE : Hub::ACTIVE
             ]);
 
             DB::commit();
