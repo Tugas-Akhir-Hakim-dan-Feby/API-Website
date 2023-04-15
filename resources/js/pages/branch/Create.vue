@@ -1,5 +1,6 @@
 <script>
 import Success from "../../components/notifications/Success.vue";
+import Util from "../../store/utils/util";
 
 export default {
     data() {
@@ -12,6 +13,9 @@ export default {
             errors: {},
             isLoading: false,
         };
+    },
+    mounted() {
+        Util.removeInvalidClass();
     },
     methods: {
         onCancel() {
@@ -44,7 +48,7 @@ export default {
                     <label for="branchName">Nama Cabang</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control form-validation"
                         id="branchName"
                         :class="{ 'is-invalid': errors.branchName }"
                         v-model="form.branchName"
@@ -63,7 +67,7 @@ export default {
                     <label for="branchAddress">Alamat Cabang</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control form-validation"
                         id="branchAddress"
                         v-model="form.branchAddress"
                         :disabled="isLoading"
@@ -81,8 +85,8 @@ export default {
                 <div class="mb-2">
                     <label for="branchPhone">No. Telepon Cabang</label>
                     <input
-                        type="text"
-                        class="form-control"
+                        type="number"
+                        class="form-control form-validation"
                         id="branchPhone"
                         v-model="form.branchPhone"
                         :disabled="isLoading"

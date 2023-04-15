@@ -1,5 +1,6 @@
 <script>
 import Success from "../../components/notifications/Success.vue";
+import Util from "../../store/utils/util";
 
 export default {
     props: ["uuid"],
@@ -12,6 +13,7 @@ export default {
     },
     mounted() {
         this.getBranch();
+        Util.removeInvalidClass();
     },
     methods: {
         onCancel() {
@@ -94,7 +96,7 @@ export default {
                 <div class="mb-2">
                     <label for="branchPhone">No. Telepon Cabang</label>
                     <input
-                        type="text"
+                        type="number"
                         class="form-control"
                         id="branchPhone"
                         v-model="branch.branchPhone"

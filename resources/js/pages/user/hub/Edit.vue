@@ -1,6 +1,7 @@
 <script>
 import PageTitle from "../../../components/PageTitle.vue";
 import Success from "../../../components/notifications/Success.vue";
+import Util from "../../../store/utils/util";
 
 export default {
     props: ["id"],
@@ -24,6 +25,7 @@ export default {
     },
     mounted() {
         this.getUser();
+        Util.removeInvalidClass();
     },
     methods: {
         getUser() {
@@ -84,7 +86,7 @@ export default {
                     <label>NIP</label>
                     <input
                         type="number"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.nip }"
                         v-model="form.nip"
                         :disabled="isLoading"
@@ -102,7 +104,7 @@ export default {
                     <label>Nama Lengkap</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.name }"
                         v-model="form.name"
                         :disabled="isLoading"
@@ -120,7 +122,7 @@ export default {
                     <label>Email</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.email }"
                         v-model="form.email"
                         :disabled="isLoading"
@@ -138,7 +140,7 @@ export default {
                     <label>Telepon</label>
                     <input
                         type="number"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.phone }"
                         v-model="form.phone"
                         :disabled="isLoading"
@@ -156,7 +158,7 @@ export default {
                     <label>Tempat Lahir</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.birthPlace }"
                         v-model="form.birthPlace"
                         :disabled="isLoading"
@@ -174,7 +176,7 @@ export default {
                     <label>Tanggal Lahir</label>
                     <input
                         type="date"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.dateBirth }"
                         v-model="form.dateBirth"
                         :disabled="isLoading"
@@ -191,7 +193,7 @@ export default {
                 <div class="mb-2">
                     <label>Jenis Kelamin</label>
                     <select
-                        class="form-select"
+                        class="form-validation form-select"
                         :class="{ 'is-invalid': errors.gender }"
                         v-model="form.gender"
                         :disabled="isLoading"
@@ -213,7 +215,7 @@ export default {
                     <label>Jabatan</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.position }"
                         v-model="form.position"
                         :disabled="isLoading"
@@ -230,7 +232,7 @@ export default {
                 <div class="mb-2">
                     <label>Alamat</label>
                     <textarea
-                        class="form-control"
+                        class="form-validation form-control"
                         :class="{ 'is-invalid': errors.address }"
                         v-model="form.address"
                         :disabled="isLoading"
