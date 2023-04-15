@@ -1,10 +1,12 @@
 <script>
 import Success from "../../../components/notifications/Success.vue";
+import Util from "../../../store/utils/util";
 
 export default {
     props: ["uuid"],
     mounted() {
         this.getSkill();
+        Util.removeInvalidClass();
     },
     data() {
         return {
@@ -54,7 +56,7 @@ export default {
                     <label for="skillName">Nama Keahlian</label>
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control form-validation"
                         id="skillName"
                         :class="{ 'is-invalid': errors.skillName }"
                         v-model="skill.skillName"
@@ -72,7 +74,7 @@ export default {
                 <div class="mb-2">
                     <label for="skillDescription">Deskripsi</label>
                     <textarea
-                        class="form-control"
+                        class="form-control form-validation"
                         rows="5"
                         :class="{ 'is-invalid': errors.skillDescription }"
                         v-model="skill.skillDescription"

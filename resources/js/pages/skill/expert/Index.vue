@@ -17,6 +17,7 @@ export default {
             isLoading: false,
             isCreate: false,
             isEdit: false,
+            skills: [],
             pagination: {
                 perPage: 10,
                 page: 1,
