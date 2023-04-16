@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ExamPacket\ExamPacketRequestStore;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
+use App\Http\Traits\MessageFixer;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ExamPacketController extends Controller
 {
+    use MessageFixer;
+
     protected $examPacketRepository;
 
     public function __construct(ExamPacketRepository $examPacketRepository)
@@ -22,25 +28,25 @@ class ExamPacketController extends Controller
         return new ExamPacketCollection($examPackets);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(ExamPacketRequestStore $request)
     {
-        //
-    }
+        DB::beginTransaction();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        try {
+            $request->merge([
+                'uuid' => Str::uuid(),
+                'year' => date("Y")
+            ]);
+
+            $examPacket = $this->examPacketRepository->create($request->all());
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil ditambahkan", $examPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     /**
