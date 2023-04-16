@@ -7,6 +7,7 @@ import userBranch from "./services/user/branch";
 import userExpert from "./services/user/expert";
 import userCompany from "./services/user/company";
 import userMember from "./services/user/member";
+import article from "./services/article";
 
 const routes = [
     ...auth,
@@ -18,6 +19,7 @@ const routes = [
     ...userExpert,
     ...userCompany,
     ...userMember,
+    ...article,
     {
         path: "/",
         name: "Dashboard",

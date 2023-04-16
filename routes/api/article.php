@@ -9,6 +9,7 @@ Route::get('/article/show-by-slug/{slug}', [ArticleController::class, 'showBySlu
 Route::middleware(['auth:sanctum'])->prefix('article')->group(function () {
     Route::post('/', [ArticleController::class, 'store'])->name('api.article.store');
     Route::get('/{id}', [ArticleController::class, 'show'])->name('api.article.show');
+    Route::put('/update-status/{id}', [ArticleController::class, 'updateStatus'])->name('api.article.update.status');
     Route::put('/{id}', [ArticleController::class, 'update'])->name('api.article.update');
     Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('api.article.destroy');
 });
