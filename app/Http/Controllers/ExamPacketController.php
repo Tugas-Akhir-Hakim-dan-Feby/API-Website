@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ExamPacket\ExamPacketRequestStore;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
+use App\Http\Resources\ExamPacket\ExamPacketDetail;
 use App\Http\Traits\MessageFixer;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use Illuminate\Http\Request;
@@ -49,15 +50,11 @@ class ExamPacketController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        $examPacket = $this->examPacketRepository->findOrFail($id);
+
+        return new ExamPacketDetail($examPacket);
     }
 
     /**
