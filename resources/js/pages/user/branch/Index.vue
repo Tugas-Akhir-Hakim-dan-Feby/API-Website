@@ -74,12 +74,12 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    this.isError = true;
 
                     if (
                         error.response.data.status == "ERROR" &&
                         error.response.data.statusCode == 500
                     ) {
+                        this.isError = true;
                         this.msg = error.response.data.message;
                     }
                 });

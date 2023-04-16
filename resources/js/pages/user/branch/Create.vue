@@ -1,5 +1,6 @@
 <script>
 import PageTitle from "../../../components/PageTitle.vue";
+import Error from "../../../components/alerts/Error.vue";
 import Success from "../../../components/notifications/Success.vue";
 import Util from "../../../store/utils/util";
 
@@ -7,6 +8,7 @@ export default {
     data() {
         return {
             msg: "",
+            isError: false,
             isLoading: false,
             branches: [],
             errors: {},
@@ -37,7 +39,15 @@ export default {
                 .then((response) => {
                     this.branches = response.data;
                 })
-                .catch((error) => {});
+                .catch((error) => {
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
+                });
         },
         handleSubmit() {
             this.isLoading = true;
@@ -52,14 +62,24 @@ export default {
                 .catch((error) => {
                     this.isLoading = false;
                     this.errors = error.response.data.messages;
+
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
                 });
         },
     },
-    components: { PageTitle, Success },
+    components: { PageTitle, Success, Error },
 };
 </script>
 <template>
     <PageTitle :title="'Tambah Pengguna API Pusat'" />
+
+    <Error v-if="isError" :message="msg" />
 
     <div class="card">
         <form @submit.prevent="handleSubmit">
@@ -258,7 +278,7 @@ export default {
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
                 <router-link
-                    :to="{ name: 'User Hub' }"
+                    :to="{ name: 'User Branch' }"
                     class="btn btn-secondary"
                     >Batal</router-link
                 >
