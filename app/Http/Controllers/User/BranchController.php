@@ -93,7 +93,7 @@ class BranchController extends Controller
             abort(404);
         }
 
-        $user->load(['adminBranch', 'document']);
+        $user->load(['adminBranch.branch', 'document']);
 
         return new BranchDetail($user);
     }
@@ -114,7 +114,6 @@ class BranchController extends Controller
             $user->update($fillableUser);
 
             $request->merge([
-                'status' => $user->adminBranch->status ? Branch::INACTIVE : Branch::ACTIVE,
                 'branch_id' => $branch->id,
             ]);
             $fillableAdminBranch = $this->onlyFillables($request->all(), $this->adminBranchRepository->getFillable());

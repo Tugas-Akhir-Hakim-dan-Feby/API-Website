@@ -44,15 +44,15 @@ export default {
         },
         setForm(user) {
             this.form = {
-                nip: user.adminHub.nip,
+                nip: user.adminHub?.nip,
                 name: user.name,
                 email: user.email,
-                phone: user.adminHub.phone,
-                birthPlace: user.adminHub.birthPlace,
-                dateBirth: user.adminHub.dateBirth,
-                gender: user.adminHub.gender,
-                position: user.adminHub.position,
-                address: user.adminHub.address,
+                phone: user.adminHub?.phone,
+                birthPlace: user.adminHub?.birthPlace,
+                dateBirth: user.adminHub?.dateBirth,
+                gender: user.adminHub?.gender,
+                position: user.adminHub?.position,
+                address: user.adminHub?.address,
             };
         },
         handleSubmit() {
