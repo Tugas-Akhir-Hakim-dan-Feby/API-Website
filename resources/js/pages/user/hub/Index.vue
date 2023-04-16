@@ -136,7 +136,12 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in users" :key="index">
+                        <tr v-if="users.length < 1">
+                            <td colspan="8" class="text-center">
+                                data pengguna admin pusat tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="iteration(index)"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>

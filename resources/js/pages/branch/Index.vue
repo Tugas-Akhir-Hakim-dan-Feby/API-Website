@@ -164,7 +164,7 @@ export default {
                     <tbody>
                         <tr v-if="branches.length < 1">
                             <td colspan="5" class="text-center">
-                                Data cabang tidak ada
+                                data cabang tidak ada
                             </td>
                         </tr>
                         <tr

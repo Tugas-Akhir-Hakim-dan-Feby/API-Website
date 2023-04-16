@@ -159,7 +159,7 @@ export default {
                     <tbody>
                         <tr v-if="skills.length < 1">
                             <td colspan="4" class="text-center">
-                                Data keahlian pakar tidak ada
+                                data keahlian pakar tidak ada
                             </td>
                         </tr>
                         <tr

@@ -162,7 +162,7 @@ export default {
                     <tbody>
                         <tr v-if="skills.length < 1">
                             <td colspan="4" class="text-center">
-                                Data keahlian welder tidak ada
+                                data keahlian welder tidak ada
                             </td>
                         </tr>
                         <tr
