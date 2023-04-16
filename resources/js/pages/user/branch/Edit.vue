@@ -116,7 +116,7 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Edit Pengguna API Pusat'" />
+    <PageTitle :title="'Edit Pengguna API Cabang'" />
 
     <Error v-if="isError" :message="msg" />
 

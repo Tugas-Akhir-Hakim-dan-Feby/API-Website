@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\Branch\Role;
+use App\Http\Filters\User\Branch\Search;
+use App\Http\Filters\User\Branch\Sort;
 use App\Http\Requests\User\Branch\AdminBranchRequestStore;
 use App\Http\Requests\User\Branch\AdminBranchRequestUpdate;
 use App\Http\Resources\User\BranchCollection;
@@ -41,6 +43,8 @@ class BranchController extends Controller
             ->send($this->userRepository->query())
             ->through([
                 Role::class,
+                Search::class,
+                Sort::class
             ])
             ->thenReturn()
             ->paginate($request->per_page);

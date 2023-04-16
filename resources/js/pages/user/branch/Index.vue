@@ -4,6 +4,7 @@ import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
 import Util from "../../../store/utils/util";
+import PaginationUtil from "../../../store/utils/pagination";
 import Loader from "../../../components/Loader.vue";
 import Error from "../../../components/alerts/Error.vue";
 
@@ -28,6 +29,9 @@ export default {
         this.getUsers();
     },
     methods: {
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination);
+        },
         getUsers() {
             this.isLoading = true;
 
@@ -84,6 +88,15 @@ export default {
                     }
                 });
         },
+        onPageChange(e) {
+            this.pagination.page = e;
+            this.getUsers();
+        },
+        onSearch() {
+            setTimeout(() => {
+                this.getUsers();
+            }, 1000);
+        },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader, Error },
 };
@@ -116,9 +129,14 @@ export default {
                                 type="search"
                                 class="form-control"
                                 placeholder="pencarian"
+                                @keyup="onSearch"
+                                v-model="filters.search"
                             />
                         </div>
-                        <Pagination />
+                        <Pagination
+                            :pagination="metaPagination"
+                            @onPageChange="onPageChange($event)"
+                        />
                     </div>
                 </div>
             </div>
@@ -138,8 +156,13 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in users" :key="index">
-                            <th v-html="index + 1"></th>
+                        <tr v-if="users.length < 1">
+                            <td colspan="8" class="text-center">
+                                data pengguna admin cabang tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(user, index) in users" :key="index">
+                            <th v-html="iteration(index)"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
                             <td
