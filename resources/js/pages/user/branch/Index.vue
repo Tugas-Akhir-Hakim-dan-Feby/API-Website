@@ -3,43 +3,53 @@ import Success from "../../../components/notifications/Success.vue";
 import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
+import Util from "../../../store/utils/util";
+import Loader from "../../../components/Loader.vue";
 
 export default {
     data() {
         return {
-            users: [
-                {
-                    id: 1,
-                    name: "John Doe",
-                    email: "john.doe@mailinator.com",
-                    branch: "Cabang 1",
-                    position: "Sekretaris",
-                    phone: "081234567890",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    name: "Jane Doe",
-                    email: "jane.doe@mailinator.com",
-                    branch: "Cabang 2",
-                    position: "Kepala Cabang",
-                    phone: "081234567890",
-                    status: 0,
-                },
-                {
-                    id: 3,
-                    name: "Hana Doe",
-                    email: "hana.doe@mailinator.com",
-                    branch: "Cabang 3",
-                    position: "Kepala Pusat",
-                    phone: "081234567890",
-                    status: 1,
-                },
-            ],
+            users: [],
+            pagination: {
+                perPage: 10,
+                page: 1,
+            },
+            filters: {
+                search: "",
+            },
+            metaPagination: {},
             msg: "",
+            isLoading: false,
         };
     },
+    mounted() {
+        this.getUsers();
+    },
     methods: {
+        getUsers() {
+            this.isLoading = true;
+
+            let params = [
+                `per_page=${this.pagination.perPage}`,
+                `page=${this.pagination.page}`,
+                `search=${this.filters.search}`,
+            ].join("&");
+
+            this.$store
+                .dispatch("getData", ["user/branch", params])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.users = response.data;
+                    this.metaPagination = response.meta;
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    console.log(error);
+                });
+        },
+        getGender(gender) {
+            return Util.getGender(gender);
+        },
         handleDelete() {
             $("#confirmModal").modal("show");
         },
@@ -49,18 +59,31 @@ export default {
             this.msg = "data berhasil dihapus.";
         },
         onUpdateStatus(id, status) {
-            $("#successModal").modal("show");
-            this.msg = `status berhasil diperbaharui.`;
+            this.isLoading = true;
+            this.errors = {};
+            this.$store
+                .dispatch("updateData", ["user/branch/update-status", id, {}])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.msg = `data berhasil diperbaharui.`;
+                    this.getUsers();
+                    $("#successModal").modal("show");
+                    this.$emit("onCancel", true);
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                });
         },
     },
-    components: { Pagination, PageTitle, Success, Confirm },
+    components: { Pagination, PageTitle, Success, Confirm, Loader },
 };
 </script>
 <template>
     <PageTitle :title="'Daftar Pengguna API Cabang'" />
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body position-relative">
+            <Loader v-if="isLoading" />
             <div class="table-responsive">
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"
@@ -83,14 +106,7 @@ export default {
                                 placeholder="pencarian"
                             />
                         </div>
-                        <!-- <div
-                                class="d-flex align-items-center justify-content-center"
-                            > -->
-                        <!-- <button class="btn no-border me-md-2 me-0">
-                                    <i class="mdi mdi-filter-variant"></i>
-                                </button> -->
                         <Pagination />
-                        <!-- </div> -->
                     </div>
                 </div>
             </div>
@@ -104,7 +120,7 @@ export default {
                             <th>Email Pengguna</th>
                             <th>Cabang</th>
                             <th>Jabatan</th>
-                            <th>Telepon</th>
+                            <th>Jenis Kelamin</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -114,18 +130,25 @@ export default {
                             <th v-html="index + 1"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
-                            <td v-html="user.branch"></td>
-                            <td v-html="user.position"></td>
-                            <td v-html="user.phone"></td>
+                            <td
+                                v-html="user.adminBranch?.branch?.branchName"
+                            ></td>
+                            <td v-html="user.adminBranch?.position"></td>
+                            <td
+                                v-html="getGender(user.adminBranch?.gender)"
+                            ></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
                                         type="checkbox"
                                         role="switch"
-                                        :checked="user.status"
+                                        :checked="user.adminBranch?.status"
                                         @click="
-                                            onUpdateStatus(user.id, user.status)
+                                            onUpdateStatus(
+                                                user.uuid,
+                                                user.adminBranch?.status
+                                            )
                                         "
                                     />
                                 </div>
@@ -134,17 +157,11 @@ export default {
                                 <router-link
                                     :to="{
                                         name: 'User Branch Edit',
-                                        params: { id: user.id },
+                                        params: { id: user.uuid },
                                     }"
-                                    class="btn btn-sm btn-warning me-2"
+                                    class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >
-                                <button
-                                    @click="handleDelete"
-                                    class="btn btn-sm btn-danger"
-                                >
-                                    Hapus
-                                </button>
                             </td>
                         </tr>
                     </tbody>
