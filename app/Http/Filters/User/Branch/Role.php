@@ -10,7 +10,7 @@ class Role
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with(['adminBranch', 'document']);
+        $query->with(['adminBranch.branch', 'document']);
         $query->where('role_id', ModelsRole::ADMIN_CABANG);
 
         return $next($query);
