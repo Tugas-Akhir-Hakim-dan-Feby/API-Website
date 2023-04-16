@@ -85,31 +85,13 @@
                 </li>
 
                 <li class="side-nav-item">
-                    <a
-                        data-bs-toggle="collapse"
-                        href="#skill"
-                        aria-expanded="false"
-                        aria-controls="skill"
+                    <router-link
+                        :to="{ name: 'Welder Skill' }"
                         class="side-nav-link"
                     >
                         <i class="mdi mdi-head-alert-outline"></i>
-                        <span> Jenis Keahlian </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="skill">
-                        <ul class="side-nav-second-level">
-                            <li>
-                                <router-link :to="{ name: 'Expert Skill' }"
-                                    >Keahlian Pakar
-                                </router-link>
-                            </li>
-                            <li>
-                                <router-link :to="{ name: 'Welder Skill' }"
-                                    >Keahlian Welder</router-link
-                                >
-                            </li>
-                        </ul>
-                    </div>
+                        <span> Keahlian Welder </span>
+                    </router-link>
                 </li>
 
                 <li class="side-nav-item">

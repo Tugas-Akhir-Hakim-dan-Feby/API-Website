@@ -11,7 +11,7 @@ import EditSkill from "./Edit.vue";
 export default {
     data() {
         return {
-            title: "Daftar Jenis Keahlian Welder",
+            title: "Keahlian Welder",
             uuid: null,
             msg: "",
             isCreate: false,
@@ -71,7 +71,7 @@ export default {
             this.isEdit = true;
         },
         onCancel() {
-            this.title = "Data Jenis Keahlian Welder";
+            this.title = "Keahlian Welder";
             this.isCreate = false;
             this.isEdit = false;
             this.getSkills();
