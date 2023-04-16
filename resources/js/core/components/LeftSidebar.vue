@@ -96,6 +96,18 @@
 
                 <li class="side-nav-item">
                     <router-link
+                        :to="{ name: 'Article' }"
+                        class="side-nav-link"
+                    >
+                        <i
+                            class="mdi mdi-newspaper-variant-multiple-outline"
+                        ></i>
+                        <span> Berita </span>
+                    </router-link>
+                </li>
+
+                <li class="side-nav-item">
+                    <router-link
                         :to="{ name: 'Question' }"
                         class="side-nav-link"
                     >

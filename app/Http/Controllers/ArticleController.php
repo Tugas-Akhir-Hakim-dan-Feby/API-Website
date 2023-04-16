@@ -123,6 +123,27 @@ class ArticleController extends Controller
         }
     }
 
+    public function updateStatus($id)
+    {
+        DB::beginTransaction();
+
+        $article = $this->articleRepository->findOrFail($id);
+
+        try {
+            $article->update([
+                'status' => $article->status ? Article::INACTIVE : Article::ACTIVE
+            ]);
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil diperbaharui", $article);
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
     public function destroy($id)
     {
         DB::beginTransaction();
