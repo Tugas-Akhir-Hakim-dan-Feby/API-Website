@@ -5,6 +5,7 @@ import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
 import Util from "../../../store/utils/util";
 import Loader from "../../../components/Loader.vue";
+import Error from "../../../components/alerts/Error.vue";
 
 export default {
     data() {
@@ -20,6 +21,7 @@ export default {
             metaPagination: {},
             msg: "",
             isLoading: false,
+            isError: false,
         };
     },
     mounted() {
@@ -72,14 +74,24 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
+                    this.isError = true;
+
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.msg = error.response.data.message;
+                    }
                 });
         },
     },
-    components: { Pagination, PageTitle, Success, Confirm, Loader },
+    components: { Pagination, PageTitle, Success, Confirm, Loader, Error },
 };
 </script>
 <template>
     <PageTitle :title="'Daftar Pengguna API Cabang'" />
+
+    <Error v-if="isError" :message="msg" />
 
     <div class="card">
         <div class="card-body position-relative">
