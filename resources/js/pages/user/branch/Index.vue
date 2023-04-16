@@ -3,9 +3,10 @@ import Success from "../../../components/notifications/Success.vue";
 import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
-import PaginationUtil from "../../../store/utils/pagination";
 import Util from "../../../store/utils/util";
+import PaginationUtil from "../../../store/utils/pagination";
 import Loader from "../../../components/Loader.vue";
+import Error from "../../../components/alerts/Error.vue";
 
 export default {
     data() {
@@ -21,6 +22,7 @@ export default {
             metaPagination: {},
             msg: "",
             isLoading: false,
+            isError: false,
         };
     },
     mounted() {
@@ -29,9 +31,6 @@ export default {
     methods: {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
-        },
-        getGender(gender) {
-            return Util.getGender(gender);
         },
         getUsers() {
             this.isLoading = true;
@@ -43,7 +42,7 @@ export default {
             ].join("&");
 
             this.$store
-                .dispatch("getData", ["user/hub", params])
+                .dispatch("getData", ["user/branch", params])
                 .then((response) => {
                     this.isLoading = false;
                     this.users = response.data;
@@ -54,11 +53,22 @@ export default {
                     console.log(error);
                 });
         },
+        getGender(gender) {
+            return Util.getGender(gender);
+        },
+        handleDelete() {
+            $("#confirmModal").modal("show");
+        },
+        onDelete() {
+            $("#confirmModal").modal("hide");
+            $("#successModal").modal("show");
+            this.msg = "data berhasil dihapus.";
+        },
         onUpdateStatus(id, status) {
             this.isLoading = true;
             this.errors = {};
             this.$store
-                .dispatch("updateData", ["user/hub/update-status", id, {}])
+                .dispatch("updateData", ["user/branch/update-status", id, {}])
                 .then((response) => {
                     this.isLoading = false;
                     this.msg = `data berhasil diperbaharui.`;
@@ -68,23 +78,33 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
+
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
                 });
+        },
+        onPageChange(e) {
+            this.pagination.page = e;
+            this.getUsers();
         },
         onSearch() {
             setTimeout(() => {
                 this.getUsers();
             }, 1000);
         },
-        onPageChange(e) {
-            this.pagination.page = e;
-            this.getUsers();
-        },
     },
-    components: { Pagination, PageTitle, Success, Confirm, Loader },
+    components: { Pagination, PageTitle, Success, Confirm, Loader, Error },
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna API Pusat'" />
+    <PageTitle :title="'Daftar Pengguna API Cabang'" />
+
+    <Error v-if="isError" :message="msg" />
 
     <div class="card">
         <div class="card-body position-relative">
@@ -95,7 +115,7 @@ export default {
                 >
                     <div class="text-center">
                         <router-link
-                            :to="{ name: 'User Hub Create' }"
+                            :to="{ name: 'User Branch Create' }"
                             class="btn btn-primary mb-2"
                             >Tambah Pengguna</router-link
                         >
@@ -113,7 +133,6 @@ export default {
                                 v-model="filters.search"
                             />
                         </div>
-
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
@@ -129,6 +148,7 @@ export default {
                             <th>No.</th>
                             <th>Nama Pengguna</th>
                             <th>Email Pengguna</th>
+                            <th>Cabang</th>
                             <th>Jabatan</th>
                             <th>Jenis Kelamin</th>
                             <th>Status</th>
@@ -138,26 +158,31 @@ export default {
                     <tbody>
                         <tr v-if="users.length < 1">
                             <td colspan="8" class="text-center">
-                                data pengguna admin pusat tidak ada
+                                data pengguna admin cabang tidak ada
                             </td>
                         </tr>
                         <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="iteration(index)"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
-                            <td v-html="user.adminHub?.position"></td>
-                            <td v-html="getGender(user.adminHub?.gender)"></td>
+                            <td
+                                v-html="user.adminBranch?.branch?.branchName"
+                            ></td>
+                            <td v-html="user.adminBranch?.position"></td>
+                            <td
+                                v-html="getGender(user.adminBranch?.gender)"
+                            ></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
                                         type="checkbox"
                                         role="switch"
-                                        :checked="user.adminHub?.status"
+                                        :checked="user.adminBranch?.status"
                                         @click="
                                             onUpdateStatus(
                                                 user.uuid,
-                                                user.adminHub?.status
+                                                user.adminBranch?.status
                                             )
                                         "
                                     />
@@ -166,7 +191,7 @@ export default {
                             <td>
                                 <router-link
                                     :to="{
-                                        name: 'User Hub Edit',
+                                        name: 'User Branch Edit',
                                         params: { id: user.uuid },
                                     }"
                                     class="btn btn-sm btn-warning me-2 text-white"
@@ -180,6 +205,6 @@ export default {
         </div>
     </div>
 
-    <Success :url="{ name: 'User Hub' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" :msg="msg"></Confirm>
+    <Success :url="{ name: 'User Branch' }" :msg="msg" />
+    <Confirm @onDelete="onDelete" />
 </template>

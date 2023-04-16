@@ -2,8 +2,10 @@
 
 namespace App\Models\User;
 
+use App\Models\Branch as ModelsBranch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Branch extends Model
 {
@@ -34,4 +36,9 @@ class Branch extends Model
         'user_id',
         'branch_id',
     ];
+
+    public function branch(): HasOne
+    {
+        return $this->hasOne(ModelsBranch::class, 'id', 'branch_id');
+    }
 }

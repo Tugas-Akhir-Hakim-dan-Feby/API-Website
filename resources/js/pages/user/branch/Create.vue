@@ -1,14 +1,17 @@
 <script>
 import PageTitle from "../../../components/PageTitle.vue";
+import Error from "../../../components/alerts/Error.vue";
 import Success from "../../../components/notifications/Success.vue";
 import Util from "../../../store/utils/util";
 
 export default {
-    props: ["id"],
     data() {
         return {
-            isLoading: false,
             msg: "",
+            isError: false,
+            isLoading: false,
+            branches: [],
+            errors: {},
             form: {
                 nip: "",
                 name: "",
@@ -19,74 +22,99 @@ export default {
                 gender: "",
                 position: "",
                 address: "",
+                branchId: "",
             },
-            errors: {},
         };
     },
     mounted() {
-        this.getUser();
+        this.getBranches();
         Util.removeInvalidClass();
     },
     methods: {
-        getUser() {
-            this.isLoading = true;
+        getBranches() {
+            let params = [`per_page=100`, `page=1`].join("&");
 
             this.$store
-                .dispatch("showData", ["user/hub", this.id])
+                .dispatch("getData", ["branch", params])
                 .then((response) => {
-                    this.isLoading = false;
-                    this.setForm(response.data);
+                    this.branches = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
-                    this.errors = error.response.data.messages;
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
                 });
-        },
-        setForm(user) {
-            this.form = {
-                nip: user.adminHub?.nip,
-                name: user.name,
-                email: user.email,
-                phone: user.adminHub?.phone,
-                birthPlace: user.adminHub?.birthPlace,
-                dateBirth: user.adminHub?.dateBirth,
-                gender: user.adminHub?.gender,
-                position: user.adminHub?.position,
-                address: user.adminHub?.address,
-            };
         },
         handleSubmit() {
             this.isLoading = true;
             this.errors = {};
             this.$store
-                .dispatch("updateData", ["user/hub", this.id, this.form])
+                .dispatch("postData", ["user/branch", this.form])
                 .then((response) => {
                     $("#successModal").modal("show");
-                    this.$emit("onCancel", true);
-                    this.msg = "data berhasil diperbaharui.";
+                    this.msg = "data berhasil ditambahkan.";
                     this.isLoading = false;
                 })
                 .catch((error) => {
                     this.isLoading = false;
                     this.errors = error.response.data.messages;
+
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
                 });
         },
     },
-    components: { PageTitle, Success },
+    components: { PageTitle, Success, Error },
 };
 </script>
 <template>
-    {{ user }}
-    <PageTitle :title="'Edit Pengguna API Pusat'" />
+    <PageTitle :title="'Tambah Pengguna API Cabang'" />
+
+    <Error v-if="isError" :message="msg" />
 
     <div class="card">
         <form @submit.prevent="handleSubmit">
             <div class="card-body">
                 <div class="mb-2">
+                    <label>Cabang API</label>
+                    <select
+                        class="form-select form-validation"
+                        :class="{ 'is-invalid': errors.branchId }"
+                        v-model="form.branchId"
+                        :disabled="isLoading"
+                    >
+                        <option value="" selected disabled></option>
+                        <option
+                            v-for="(branch, index) in branches"
+                            :key="index"
+                            :value="branch.uuid"
+                        >
+                            {{ branch.branchName }}
+                        </option>
+                    </select>
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.branchId"
+                        v-for="(error, index) in errors.branchId"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
+                </div>
+                <div class="mb-2">
                     <label>NIP</label>
                     <input
                         type="number"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.nip }"
                         v-model="form.nip"
                         :disabled="isLoading"
@@ -104,7 +132,7 @@ export default {
                     <label>Nama Lengkap</label>
                     <input
                         type="text"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.name }"
                         v-model="form.name"
                         :disabled="isLoading"
@@ -122,7 +150,7 @@ export default {
                     <label>Email</label>
                     <input
                         type="text"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.email }"
                         v-model="form.email"
                         :disabled="isLoading"
@@ -140,7 +168,7 @@ export default {
                     <label>Telepon</label>
                     <input
                         type="number"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.phone }"
                         v-model="form.phone"
                         :disabled="isLoading"
@@ -158,7 +186,7 @@ export default {
                     <label>Tempat Lahir</label>
                     <input
                         type="text"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.birthPlace }"
                         v-model="form.birthPlace"
                         :disabled="isLoading"
@@ -176,7 +204,7 @@ export default {
                     <label>Tanggal Lahir</label>
                     <input
                         type="date"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.dateBirth }"
                         v-model="form.dateBirth"
                         :disabled="isLoading"
@@ -193,7 +221,7 @@ export default {
                 <div class="mb-2">
                     <label>Jenis Kelamin</label>
                     <select
-                        class="form-validation form-select"
+                        class="form-select form-validation"
                         :class="{ 'is-invalid': errors.gender }"
                         v-model="form.gender"
                         :disabled="isLoading"
@@ -215,7 +243,7 @@ export default {
                     <label>Jabatan</label>
                     <input
                         type="text"
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.position }"
                         v-model="form.position"
                         :disabled="isLoading"
@@ -232,7 +260,7 @@ export default {
                 <div class="mb-2">
                     <label>Alamat</label>
                     <textarea
-                        class="form-validation form-control"
+                        class="form-control form-validation"
                         :class="{ 'is-invalid': errors.address }"
                         v-model="form.address"
                         :disabled="isLoading"
@@ -250,7 +278,7 @@ export default {
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
                 <router-link
-                    :to="{ name: 'User Hub' }"
+                    :to="{ name: 'User Branch' }"
                     class="btn btn-secondary"
                     >Batal</router-link
                 >
@@ -259,5 +287,5 @@ export default {
         </form>
     </div>
 
-    <Success :url="{ name: 'User Hub' }" :msg="msg" />
+    <Success :url="{ name: 'User Branch' }" :msg="msg" />
 </template>

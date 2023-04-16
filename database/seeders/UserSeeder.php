@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Branch;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -35,9 +36,25 @@ class UserSeeder extends Seeder
             'status' => 1
         ]);
 
-        User::factory()->create([
+        $branch = Branch::create([
+            'uuid' => Str::uuid(),
+            'branch_name' => "Chung Jui Fang",
+            'branch_address' => "Jawa Tengah",
+            'branch_phone' => "12121221",
+        ]);
+
+        $userBranch = User::factory()->create([
             'email' => 'admin.cabang@mailinator.com',
             'role_id' => Role::ADMIN_CABANG,
+        ]);
+
+        $userBranch->adminBranch()->create([
+            'uuid' => Str::uuid(),
+            'position' => 'CEO',
+            'phone' => '12121212',
+            'address' => 'Indramayu',
+            'status' => 1,
+            'branch_id' => $branch->id
         ]);
 
         User::factory()->create([
