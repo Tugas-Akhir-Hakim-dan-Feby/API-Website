@@ -57,37 +57,37 @@ class ExamPacketController extends Controller
         return new ExamPacketDetail($examPacket);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update(ExamPacketRequestStore $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $examPacket = $this->examPacketRepository->findOrFail($id);
+            $examPacket->update($request->all());
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil diperbaharui", $examPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $examPacket = $this->examPacketRepository->findOrFail($id);
+            $examPacket->delete();
+
+            DB::commit();
+
+            return $this->successMessage("data berhasil dihapus", $examPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }
