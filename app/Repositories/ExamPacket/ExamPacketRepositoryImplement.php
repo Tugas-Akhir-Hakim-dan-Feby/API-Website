@@ -20,6 +20,11 @@ class ExamPacketRepositoryImplement extends Eloquent implements ExamPacketReposi
         $this->model = $model;
     }
 
+    public function query()
+    {
+        return $this->model->query();
+    }
+
     public function findOrFail($id)
     {
         $examPacket = $this->model->where("uuid", $id)->first();

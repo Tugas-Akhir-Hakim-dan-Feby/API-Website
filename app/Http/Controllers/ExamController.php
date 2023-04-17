@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\Exam\Search;
 use App\Http\Requests\Exam\ExamRequest;
 use App\Http\Resources\Exam\ExamCollection;
 use App\Http\Resources\Exam\ExamDetail;
@@ -9,6 +10,7 @@ use App\Http\Traits\MessageFixer;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -24,9 +26,15 @@ class ExamController extends Controller
         $this->examPacketRepository = $examPacketRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $exams = $this->examRepository->all();
+        $exams = app(Pipeline::class)
+            ->send($this->examRepository->query())
+            ->through([
+                Search::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
 
         return new ExamCollection($exams);
     }
