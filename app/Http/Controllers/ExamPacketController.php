@@ -61,8 +61,9 @@ class ExamPacketController extends Controller
     {
         DB::beginTransaction();
 
+        $examPacket = $this->examPacketRepository->findOrFail($id);
+
         try {
-            $examPacket = $this->examPacketRepository->findOrFail($id);
             $examPacket->update($request->all());
 
             DB::commit();
@@ -78,8 +79,9 @@ class ExamPacketController extends Controller
     {
         DB::beginTransaction();
 
+        $examPacket = $this->examPacketRepository->findOrFail($id);
+
         try {
-            $examPacket = $this->examPacketRepository->findOrFail($id);
             $examPacket->delete();
 
             DB::commit();
