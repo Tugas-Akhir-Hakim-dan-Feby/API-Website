@@ -82,6 +82,14 @@ class ExamPacketController extends Controller
         $examPacket = $this->examPacketRepository->findOrFail($id);
 
         try {
+            if ($examPacket->exams) {
+                foreach ($examPacket->exams as $exam) {
+                    $exam->answers()->delete();
+                }
+
+                $examPacket->exams()->delete();
+            }
+
             $examPacket->delete();
 
             DB::commit();
