@@ -1,9 +1,12 @@
 <script>
+import cookie from "js-cookie";
+
 export default {
     props: ["user"],
     methods: {
         handleLogout() {
             this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
+                cookie.remove("token");
                 window.location.replace("/auth/login");
             });
         },
