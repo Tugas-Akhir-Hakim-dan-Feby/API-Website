@@ -20,6 +20,11 @@ class ExamRepositoryImplement extends Eloquent implements ExamRepository
         $this->model = $model;
     }
 
+    public function query()
+    {
+        return $this->model->query();
+    }
+
     public function findOrFail($id)
     {
         $exam = $this->model->where("uuid", $id)->first();
