@@ -8,6 +8,7 @@ import userExpert from "./services/user/expert";
 import userCompany from "./services/user/company";
 import userMember from "./services/user/member";
 import article from "./services/article";
+import examPacket from "./services/exam/examPacket";
 
 const routes = [
     ...auth,
@@ -20,6 +21,7 @@ const routes = [
     ...userCompany,
     ...userMember,
     ...article,
+    ...examPacket,
     {
         path: "/",
         name: "Dashboard",

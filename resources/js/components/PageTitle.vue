@@ -5,6 +5,15 @@ export default {
             type: String,
             required: true,
         },
+        isBack: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    methods: {
+        onBack() {
+            this.$router.back(-1);
+        },
     },
 };
 </script>
@@ -16,7 +25,16 @@ export default {
                 <div class="page-title-right">
                     <slot></slot>
                 </div>
-                <h4 class="page-title" v-html="title"></h4>
+
+                <h4 class="page-title">
+                    <i
+                        class="font-20 uil-arrow-left"
+                        style="cursor: pointer"
+                        v-if="isBack"
+                        @click="onBack"
+                    ></i>
+                    {{ title }}
+                </h4>
             </div>
         </div>
     </div>
