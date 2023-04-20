@@ -57,6 +57,25 @@ export default {
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
+        getMinute(startTime, endTime) {
+            const [startHours, startMinutes] = startTime.split(":");
+            const [endHours, endMinutes] = endTime.split(":");
+
+            const startDate = new Date();
+            startDate.setHours(startHours);
+            startDate.setMinutes(startMinutes);
+
+            const endDate = new Date();
+            endDate.setHours(endHours);
+            endDate.setMinutes(endMinutes);
+
+            let diff = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
+            if (diff < 0) {
+                diff += 1440;
+            }
+
+            return diff;
+        },
         handleDelete(uuid) {
             this.uuid = uuid;
             $("#confirmModal").modal("show");
@@ -142,6 +161,7 @@ export default {
                             <th>No.</th>
                             <th>Nama Paket</th>
                             <th>Jadwal Ujian</th>
+                            <th>Tenggat Ujian</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -154,12 +174,23 @@ export default {
                             <th v-html="iteration(index)"></th>
                             <td v-html="examPacket.name"></td>
                             <td v-html="getSchedule(examPacket.schedule)"></td>
+                            <td
+                                v-html="
+                                    `${examPacket.startTime} - ${
+                                        examPacket.endTime
+                                    } WIB (${getMinute(
+                                        examPacket.startTime,
+                                        examPacket.endTime
+                                    )} Menit)`
+                                "
+                            ></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
                                         type="checkbox"
                                         role="switch"
+                                        style="cursor: pointer"
                                         :checked="examPacket.status"
                                         @click="
                                             onUpdateStatus(

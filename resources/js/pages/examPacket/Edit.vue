@@ -19,13 +19,36 @@ export default {
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
+        getMinute(startTime, endTime) {
+            if (startTime) {
+                const [startHours, startMinutes] = startTime.split(":");
+                const [endHours, endMinutes] = endTime.split(":");
+
+                const startDate = new Date();
+                startDate.setHours(startHours);
+                startDate.setMinutes(startMinutes);
+
+                const endDate = new Date();
+                endDate.setHours(endHours);
+                endDate.setMinutes(endMinutes);
+
+                let diff =
+                    (endDate.getTime() - startDate.getTime()) / 1000 / 60;
+                if (diff < 0) {
+                    diff += 1440;
+                }
+
+                return diff;
+            }
+            return;
+        },
         handleEdit() {
             this.isLoading = true;
             let form = {
                 name: this.examPacket.name,
                 schedule: this.examPacket.date,
-                period: this.examPacket.period,
-                isPeriod: true,
+                startTime: this.examPacket.startTime,
+                endTime: this.examPacket.endTime,
             };
             this.$store
                 .dispatch("updateData", [
@@ -65,7 +88,7 @@ export default {
                                         <input
                                             v-else
                                             type="text"
-                                            class="form-control"
+                                            class="form-control mt-2"
                                             v-model="examPacket.name"
                                             :disabled="isLoading"
                                             :class="{
@@ -101,7 +124,7 @@ export default {
                                                 <input
                                                     v-else
                                                     type="date"
-                                                    class="form-control"
+                                                    class="form-control mt-2"
                                                     v-model="examPacket.date"
                                                     :disabled="isLoading"
                                                     :class="{
@@ -130,29 +153,84 @@ export default {
                                                     class="mb-1 text-white"
                                                     v-if="!isEdit"
                                                 >
-                                                    {{ examPacket.period }}
-                                                    Menit
+                                                    {{
+                                                        `${
+                                                            examPacket.startTime
+                                                        } - ${
+                                                            examPacket.endTime
+                                                        } WIB (${getMinute(
+                                                            examPacket.startTime,
+                                                            examPacket.endTime
+                                                        )} Menit)`
+                                                    }}
                                                 </h5>
-                                                <input
-                                                    v-else
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="examPacket.period"
-                                                    :disabled="isLoading"
-                                                    :class="{
-                                                        'is-invalid':
-                                                            errors.period,
-                                                    }"
-                                                />
-                                                <div
-                                                    class="invalid-feedback"
-                                                    v-if="errors.period"
-                                                    v-for="(
-                                                        error, index
-                                                    ) in errors.period"
-                                                    :key="index"
-                                                >
-                                                    {{ error }}.
+                                                <div class="row" v-else>
+                                                    <div class="col-lg-6 mt-2">
+                                                        <p
+                                                            class="mb-0 font-13 text-white-50"
+                                                        >
+                                                            Jam Mulai
+                                                        </p>
+                                                        <input
+                                                            type="time"
+                                                            class="form-control"
+                                                            v-model="
+                                                                examPacket.startTime
+                                                            "
+                                                            :disabled="
+                                                                isLoading
+                                                            "
+                                                            :class="{
+                                                                'is-invalid':
+                                                                    errors.startTime,
+                                                            }"
+                                                        />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            v-if="
+                                                                errors.startTime
+                                                            "
+                                                            v-for="(
+                                                                error, index
+                                                            ) in errors.startTime"
+                                                            :key="index"
+                                                        >
+                                                            {{ error }}.
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 mt-2">
+                                                        <p
+                                                            class="mb-0 font-13 text-white-50"
+                                                        >
+                                                            Jam Selesai
+                                                        </p>
+                                                        <input
+                                                            type="time"
+                                                            class="form-control"
+                                                            v-model="
+                                                                examPacket.endTime
+                                                            "
+                                                            :disabled="
+                                                                isLoading
+                                                            "
+                                                            :class="{
+                                                                'is-invalid':
+                                                                    errors.endTime,
+                                                            }"
+                                                        />
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            v-if="
+                                                                errors.endTime
+                                                            "
+                                                            v-for="(
+                                                                error, index
+                                                            ) in errors.endTime"
+                                                            :key="index"
+                                                        >
+                                                            {{ error }}.
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <p
                                                     class="mb-0 font-13 text-white-50"
