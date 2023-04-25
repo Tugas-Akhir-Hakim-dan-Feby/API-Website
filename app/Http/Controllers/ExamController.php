@@ -7,6 +7,7 @@ use App\Http\Requests\Exam\ExamRequest;
 use App\Http\Resources\Exam\ExamCollection;
 use App\Http\Resources\Exam\ExamDetail;
 use App\Http\Traits\MessageFixer;
+use App\Models\Exam;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use Illuminate\Http\Request;
@@ -48,7 +49,8 @@ class ExamController extends Controller
         try {
             $exam = $examPacket->exams()->create([
                 "uuid" => Str::uuid(),
-                "question" => $request->question
+                "question" => $request->question,
+                "type" => $request->answer_type
             ]);
 
             foreach ($request->answers as $answer) {
@@ -96,8 +98,8 @@ class ExamController extends Controller
             $correctAnswer = $exam->answers()->where("answer", $request->correct_answer)->first();
 
             $exam->update([
-                "question" => $request->question,
-                "answer_id" => $correctAnswer->id
+                "answer_id" => $correctAnswer->id,
+                "question" => $request->question
             ]);
 
             DB::commit();

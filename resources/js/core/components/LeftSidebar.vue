@@ -108,7 +108,7 @@
 
                 <li class="side-nav-item">
                     <router-link
-                        :to="{ name: 'Question' }"
+                        :to="{ name: 'Exam Packet' }"
                         class="side-nav-link"
                     >
                         <i class="mdi mdi-family-tree"></i>
