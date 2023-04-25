@@ -12,7 +12,7 @@ export default {
     },
     methods: {
         onBack() {
-            this.$router.back(-1);
+            this.$emit("onBack", true);
         },
     },
 };

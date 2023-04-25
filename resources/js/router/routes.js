@@ -1,7 +1,6 @@
 import auth from "./services/auth";
 import skill from "./services/skill";
 import branch from "./services/branch";
-import question from "./services/question";
 import userHub from "./services/user/hub";
 import userBranch from "./services/user/branch";
 import userExpert from "./services/user/expert";
@@ -9,12 +8,12 @@ import userCompany from "./services/user/company";
 import userMember from "./services/user/member";
 import article from "./services/article";
 import examPacket from "./services/exam/examPacket";
+import exam from "./services/exam/exam";
 
 const routes = [
     ...auth,
     ...skill,
     ...branch,
-    ...question,
     ...userHub,
     ...userBranch,
     ...userExpert,
@@ -22,6 +21,7 @@ const routes = [
     ...userMember,
     ...article,
     ...examPacket,
+    ...exam,
     {
         path: "/",
         name: "Dashboard",

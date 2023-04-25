@@ -1,10 +1,37 @@
+import { AnswerQuestion } from "./constants";
+
 export default {
+    convertStringToBoolean(data) {
+        switch (data) {
+            case "true":
+            case "yes":
+            case "1":
+                return true;
+
+            case "false":
+            case "no":
+            case "0":
+            case null:
+            case undefined:
+                return false;
+
+            default:
+                return JSON.parse(data);
+        }
+    },
     getGender(gender) {
         if (gender == "L") {
             return "Laki-laki";
         }
 
         return "Perempuan";
+    },
+    getAnswerQuestionData(type) {
+        if (type == AnswerQuestion.MULTIPLE_CHOICE) {
+            return "Pilihan Ganda";
+        }
+
+        return "Benar atau Salah";
     },
     removeInvalidClass() {
         $("body").on("keyup", ".form-validation", function () {

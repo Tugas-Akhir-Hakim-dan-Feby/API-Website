@@ -1,6 +1,7 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
 import Success from "../../components/notifications/Success.vue";
+import Util from "../../store/utils/util";
 
 export default {
     data() {
@@ -10,12 +11,13 @@ export default {
                 schedule: "",
                 startTime: "",
                 endTime: "",
-                period: "",
-                isPeriod: true,
             },
             errors: {},
             isLoading: false,
         };
+    },
+    mounted() {
+        Util.removeInvalidClass();
     },
     methods: {
         handleSubmit() {
@@ -86,27 +88,52 @@ export default {
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label for="period"
-                                >Tenggat Pengerjaan
-                                <small class="text-danger"
-                                    >*masukan dalam bentuk menit</small
-                                ></label
-                            >
-                            <input
-                                type="number"
-                                class="form-control form-validation"
-                                id="period"
-                                :class="{ 'is-invalid': errors.period }"
-                                v-model="form.period"
-                                :disabled="isLoading"
-                            />
-                            <div
-                                class="invalid-feedback"
-                                v-if="errors.period"
-                                v-for="(error, index) in errors.period"
-                                :key="index"
-                            >
-                                {{ error }}.
+                            <label>Tenggat Pengerjaan</label>
+                            <div class="row">
+                                <div class="col-lg-6 mb-2">
+                                    <input
+                                        type="time"
+                                        class="form-control form-validation"
+                                        id="startTime"
+                                        :class="{
+                                            'is-invalid': errors.startTime,
+                                        }"
+                                        v-model="form.startTime"
+                                        :disabled="isLoading"
+                                    />
+                                    <small>* masukan waktu mulai</small>
+                                    <div
+                                        class="invalid-feedback"
+                                        v-if="errors.startTime"
+                                        v-for="(
+                                            error, index
+                                        ) in errors.startTime"
+                                        :key="index"
+                                    >
+                                        {{ error }}.
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-2">
+                                    <input
+                                        type="time"
+                                        class="form-control form-validation"
+                                        id="endTime"
+                                        :class="{
+                                            'is-invalid': errors.endTime,
+                                        }"
+                                        v-model="form.endTime"
+                                        :disabled="isLoading"
+                                    />
+                                    <small>* masukan waktu selesai</small>
+                                    <div
+                                        class="invalid-feedback"
+                                        v-if="errors.endTime"
+                                        v-for="(error, index) in errors.endTime"
+                                        :key="index"
+                                    >
+                                        {{ error }}.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -11,11 +11,16 @@ class Exam extends Model
 {
     use HasFactory;
 
+    const TYPE_MULTIPLECHOICE = "MultipleChoice";
+
+    const TYPE_TRUEFALSE = "TrueFalse";
+
     protected $fillable = [
         "answer_id",
         "exam_packet_id",
         "question",
-        "uuid"
+        "uuid",
+        "type"
     ];
 
     protected $hidden = [

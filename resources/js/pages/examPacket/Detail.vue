@@ -1,5 +1,6 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
+import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
 import Edit from "./Edit.vue";
 
@@ -11,6 +12,8 @@ export default {
             errors: {},
             date: null,
             isLoading: false,
+            examId: null,
+            msg: "",
         };
     },
     mounted() {
@@ -33,23 +36,53 @@ export default {
                     console.log(error);
                 });
         },
+        handleDeleteExam(id) {
+            this.examId = id;
+            $("#confirmModal").modal("show");
+        },
+        onDeleteExam() {
+            this.$store
+                .dispatch("deleteData", ["exam", this.examId])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    this.getExamPacket();
+                    $("#confirmModal").modal("hide");
+                    $("#successModal").modal("show");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
+        },
         onSuccessEdit() {
             this.getExamPacket();
+            this.msg = "data berhasil diperbaharui.";
             $("#successModal").modal("show");
         },
+        onBack(e) {
+            this.$router.push({ name: "Exam Packet" });
+        },
     },
-    components: { PageTitle, Success, Edit },
+    components: { PageTitle, Success, Edit, Confirm },
 };
 </script>
 
 <template>
-    <PageTitle title="Detail Paket" :isBack="true" />
+    <PageTitle title="Detail Paket" :isBack="true" @onBack="onBack($event)" />
 
     <Edit :examPacket="examPacket" @onSuccessEdit="onSuccessEdit" />
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h4>Daftar Pertanyaan</h4>
-            <button class="btn btn-primary">Tambah Pertanyaan</button>
+            <router-link
+                :to="{
+                    name: 'Exam Create',
+                    params: { id: id },
+                }"
+                class="btn btn-primary"
+                >Tambah Pertanyaan</router-link
+            >
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -62,12 +95,38 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="examPacket.exams?.length < 1">
+                            <td colspan="3" class="text-center">
+                                data pertanyaan tidak ada
+                            </td>
+                        </tr>
                         <tr
+                            v-else
                             v-for="(exam, index) in examPacket.exams"
                             :key="index"
                         >
                             <th v-html="index + 1"></th>
                             <td v-html="exam.question"></td>
+                            <td>
+                                <router-link
+                                    :to="{
+                                        name: 'Exam Edit',
+                                        params: {
+                                            id: examPacket.uuid,
+                                            examId: exam.uuid,
+                                        },
+                                    }"
+                                    class="btn btn-warning btn-sm me-2 text-white"
+                                >
+                                    Edit
+                                </router-link>
+                                <button
+                                    class="btn btn-danger btn-sm"
+                                    @click="handleDeleteExam(exam.uuid)"
+                                >
+                                    Hapus
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -75,5 +134,6 @@ export default {
         </div>
     </div>
 
-    <Success :msg="'data berhasil diperbaharui.'" />
+    <Success :msg="msg" />
+    <Confirm @onDelete="onDeleteExam" />
 </template>
