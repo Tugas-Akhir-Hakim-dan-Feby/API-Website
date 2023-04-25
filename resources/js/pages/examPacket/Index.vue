@@ -3,6 +3,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
 import Success from "../../components/notifications/Success.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
+import Loader from "../../components/Loader.vue";
 import PaginationUtil from "../../store/utils/pagination";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -121,7 +122,7 @@ export default {
                 });
         },
     },
-    components: { PageTitle, Success, Pagination, Confirm },
+    components: { PageTitle, Success, Pagination, Confirm, Loader },
 };
 </script>
 
@@ -130,7 +131,7 @@ export default {
 
     <div class="card">
         <div class="card-body position-relative">
-            <Loader v-if="false" />
+            <Loader v-if="isLoading" />
 
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"

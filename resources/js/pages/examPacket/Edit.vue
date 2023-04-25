@@ -250,9 +250,22 @@ export default {
                                     type="button"
                                     class="btn btn-success me-2"
                                     @click="handleEdit"
-                                    v-if="isEdit"
+                                    v-if="isEdit && !isLoading"
                                 >
                                     Simpan
+                                </button>
+                                <button
+                                    class="btn btn-success me-2"
+                                    type="button"
+                                    disabled
+                                    v-if="isEdit && isLoading"
+                                >
+                                    <span
+                                        class="spinner-border spinner-border-sm me-1"
+                                        role="status"
+                                        aria-hidden="true"
+                                    ></span>
+                                    Harap Tunggu...
                                 </button>
                                 <button
                                     type="button"

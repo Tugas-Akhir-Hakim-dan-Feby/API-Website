@@ -1,4 +1,5 @@
 <script>
+import Loader from "../../components/Loader.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
@@ -64,7 +65,7 @@ export default {
             this.$router.push({ name: "Exam Packet" });
         },
     },
-    components: { PageTitle, Success, Edit, Confirm },
+    components: { PageTitle, Success, Edit, Confirm, Loader },
 };
 </script>
 
@@ -72,6 +73,7 @@ export default {
     <PageTitle title="Detail Paket" :isBack="true" @onBack="onBack($event)" />
 
     <Edit :examPacket="examPacket" @onSuccessEdit="onSuccessEdit" />
+
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h4>Daftar Pertanyaan</h4>
@@ -84,7 +86,9 @@ export default {
                 >Tambah Pertanyaan</router-link
             >
         </div>
-        <div class="card-body">
+        <div class="card-body position-relative">
+            <Loader v-if="isLoading" />
+
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>
