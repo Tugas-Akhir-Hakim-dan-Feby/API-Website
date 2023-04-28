@@ -7,6 +7,15 @@ const store = createStore({
         action,
         ticket,
     },
+    state: {
+        ADMIN_APP: "Admin App",
+        ADMIN_HUB: "Admin Pusat",
+        ADMIN_BRANCH: "Admin Cabang",
+        EXPERT: "Pakar",
+        MEMBER_COMPANY: "Member Company",
+        MEMBER_WELDER: "Member Welder",
+        GUEST: "Guest",
+    },
 });
 
 export default store;

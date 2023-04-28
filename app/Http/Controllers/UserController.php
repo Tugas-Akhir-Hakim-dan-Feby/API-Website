@@ -7,6 +7,7 @@ use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,6 +20,16 @@ class UserController extends Controller
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+    }
+
+    public function me()
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'user' => $user,
+            'roles' => $user->roles->pluck('name')
+        ]);
     }
 
     public function show()

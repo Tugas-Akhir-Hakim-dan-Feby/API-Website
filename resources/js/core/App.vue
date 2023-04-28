@@ -8,6 +8,7 @@ export default {
     data() {
         return {
             user: null,
+            roles: {},
         };
     },
     watch: {
@@ -17,6 +18,7 @@ export default {
                     .dispatch("postData", ["/auth/check", {}])
                     .then((response) => {
                         this.user = response.user;
+                        this.roles = response.roles;
                     })
                     .catch((error) => {
                         this.error = error.response.data;
@@ -30,16 +32,30 @@ export default {
             immediate: true,
         },
     },
+    methods: {
+        camelCase(string) {
+            return string
+                .toLowerCase()
+                .split(" ")
+                .map((word, index) => {
+                    if (index === 0) {
+                        return word;
+                    }
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                })
+                .join("");
+        },
+    },
     components: { LeftSidebar, Navbar, Footer },
 };
 </script>
 <template>
     <div class="wrapper">
-        <LeftSidebar />
+        <LeftSidebar v-if="roles" :roles="roles" />
 
         <div class="content-page">
             <div class="content">
-                <Navbar v-if="user" :user="user" />
+                <Navbar v-if="user" :user="user" :roles="roles" />
 
                 <div class="container-fluid">
                     <router-view></router-view>

@@ -1,3 +1,17 @@
+<script>
+import role from "../../store/utils/role";
+
+export default {
+    props: ["roles"],
+    methods: {
+        checkRole(data) {
+            if (Array.isArray(this.roles)) {
+                return role.checkRoles(this.roles, data);
+            }
+        },
+    },
+};
+</script>
 <template>
     <div class="leftside-menu">
         <a href="index.html" class="logo text-center logo-light">
@@ -32,16 +46,27 @@
                     </router-link>
                 </li>
 
-                <li class="side-nav-title side-nav-item">Data Master</li>
+                <li
+                    class="side-nav-title side-nav-item"
+                    v-if="checkRole($store.state.ADMIN_APP)"
+                >
+                    Data Master
+                </li>
 
-                <li class="side-nav-item">
+                <li
+                    class="side-nav-item"
+                    v-if="checkRole($store.state.ADMIN_APP)"
+                >
                     <router-link :to="{ name: 'Branch' }" class="side-nav-link">
                         <i class="mdi mdi-family-tree"></i>
                         <span> Data Cabang </span>
                     </router-link>
                 </li>
 
-                <li class="side-nav-item">
+                <li
+                    class="side-nav-item"
+                    v-if="checkRole($store.state.ADMIN_APP)"
+                >
                     <a
                         data-bs-toggle="collapse"
                         href="#user"
@@ -84,7 +109,10 @@
                     </div>
                 </li>
 
-                <li class="side-nav-item">
+                <li
+                    class="side-nav-item"
+                    v-if="checkRole($store.state.ADMIN_APP)"
+                >
                     <router-link
                         :to="{ name: 'Welder Skill' }"
                         class="side-nav-link"
@@ -106,7 +134,10 @@
                     </router-link>
                 </li>
 
-                <li class="side-nav-item">
+                <li
+                    class="side-nav-item"
+                    v-if="checkRole($store.state.ADMIN_APP)"
+                >
                     <router-link
                         :to="{ name: 'Exam Packet' }"
                         class="side-nav-link"
