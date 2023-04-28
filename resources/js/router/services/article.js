@@ -16,6 +16,15 @@ export default [
         },
     },
     {
+        path: "/article/:slug",
+        component: () => import("../../pages/article/Detail.vue"),
+        name: "Article Detail",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
         path: "/article/:id/edit",
         component: () => import("../../pages/article/Edit.vue"),
         name: "Article Edit",
