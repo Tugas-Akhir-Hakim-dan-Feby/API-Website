@@ -1,11 +1,19 @@
 <script>
+import Cookie from "js-cookie";
 export default {
-    props: ["user"],
+    props: ["user", "roles"],
     methods: {
         handleLogout() {
             this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
+                Cookie.remove("token");
                 window.location.replace("/auth/login");
             });
+        },
+        checkRole(string) {
+            if (this.roles.includes(string)) {
+                return true;
+            }
+            return false;
         },
     },
 };
@@ -13,6 +21,14 @@ export default {
 <template>
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
+            <li
+                class="notification-list pt-1"
+                v-if="checkRole($store.state.GUEST)"
+            >
+                <a class="btn btn-primary btn-sm" href="javascript: void(0);"
+                    >Daftar Member</a
+                >
+            </li>
             <li class="dropdown notification-list">
                 <a
                     class="nav-link dropdown-toggle nav-user arrow-none me-0"
@@ -71,3 +87,9 @@ export default {
         </button>
     </div>
 </template>
+
+<style scoped>
+.pt-1 {
+    padding-top: 1.1rem !important;
+}
+</style>

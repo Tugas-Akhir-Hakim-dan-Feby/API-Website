@@ -14,10 +14,10 @@ class AuthenticatedController extends Controller
         $user = Auth::user();
 
         $user = User::where('uuid', $user->uuid)->first();
-        $user->load('roles');
 
         return response()->json([
             'user' => $user,
+            'roles' => $user->roles->pluck('name')
         ]);
     }
 }
