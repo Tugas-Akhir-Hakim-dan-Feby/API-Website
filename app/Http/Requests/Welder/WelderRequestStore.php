@@ -43,6 +43,7 @@ class WelderRequestStore extends FormRequest
         ];
     }
 
+
     protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([
