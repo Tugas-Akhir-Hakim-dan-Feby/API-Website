@@ -32,6 +32,9 @@ class WelderRequestStore extends FormRequest
             'date_birth' => 'required|date',
             'birth_place' => 'required',
             'working_status' => 'required|in:1,0',
+            'document_certificate_school' => 'required',
+            'document_pas_photo' => 'required',
+            'document_certificate_competency' => 'required',
         ];
     }
 
@@ -43,6 +46,9 @@ class WelderRequestStore extends FormRequest
             'date_birth' => 'tanggal lahir',
             'birth_place' => 'tempat lahir',
             'working_status' => 'status bekerja',
+            'document_certificate_school' => 'ijazah pendidikan formal',
+            'document_pas_photo' => 'pas foto formal berwarna',
+            'document_certificate_competency' => 'pas foto formal berwarna',
         ];
     }
 

@@ -7,9 +7,7 @@ export default {
         }
     },
     checkRoleString(roles, data) {
-        roles.filter((role) => {
-            return role == data;
-        });
+        return roles.includes(data);
     },
     checkRoleObject(roles, data) {
         for (const role in data) {

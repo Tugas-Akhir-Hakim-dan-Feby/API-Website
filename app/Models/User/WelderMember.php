@@ -2,8 +2,10 @@
 
 namespace App\Models\User;
 
+use App\Models\WelderDocument;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class WelderMember extends Model
 {
@@ -23,6 +25,8 @@ class WelderMember extends Model
         'birth_place',
         'working_status',
         'status',
+        "certificate_school",
+        "pas_photo",
         'uuid',
     ];
 

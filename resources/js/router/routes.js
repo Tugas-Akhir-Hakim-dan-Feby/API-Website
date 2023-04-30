@@ -9,6 +9,7 @@ import userMember from "./services/user/member";
 import article from "./services/article";
 import examPacket from "./services/exam/examPacket";
 import exam from "./services/exam/exam";
+import member from "./services/member";
 
 const routes = [
     ...auth,
@@ -22,6 +23,7 @@ const routes = [
     ...article,
     ...examPacket,
     ...exam,
+    ...member,
     {
         path: "/",
         name: "Dashboard",
