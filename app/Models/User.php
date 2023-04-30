@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Notifications\SendEmailVerification;
+use App\Notifications\SendResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -52,7 +53,7 @@ class User extends Authenticatable
     {
         $url = url("/auth/new-password?token=$token&email=$this->email");
 
-        $this->notify(new SendEmailVerification($url));
+        $this->notify(new SendResetPassword($url));
     }
 
     public function sendActivationUserNotification($token)

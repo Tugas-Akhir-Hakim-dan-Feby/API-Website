@@ -35,16 +35,16 @@ class RoleSeeder extends Seeder
                 $user->assignRole(Role::where('id', ModelsRole::ADMIN_APP)->first());
             }
 
-            if ($user->role_id == ModelsRole::ADMIN_PUSAT) {
-                $user->assignRole(Role::where('id', ModelsRole::ADMIN_PUSAT)->first());
+            if ($user->role_id == ModelsRole::ADMIN_HUB) {
+                $user->assignRole(Role::where('id', ModelsRole::ADMIN_HUB)->first());
             }
 
-            if ($user->role_id == ModelsRole::ADMIN_CABANG) {
-                $user->assignRole(Role::where('id', ModelsRole::ADMIN_CABANG)->first());
+            if ($user->role_id == ModelsRole::ADMIN_BRANCH) {
+                $user->assignRole(Role::where('id', ModelsRole::ADMIN_BRANCH)->first());
             }
 
-            if ($user->role_id == ModelsRole::PAKAR) {
-                $user->assignRole(Role::where('id', ModelsRole::PAKAR)->first());
+            if ($user->role_id == ModelsRole::EXPERT) {
+                $user->assignRole(Role::where('id', ModelsRole::EXPERT)->first());
             }
 
             if ($user->role_id == ModelsRole::MEMBER_COMPANY) {

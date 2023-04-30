@@ -11,11 +11,11 @@ class Role extends Model
 
     const ADMIN_APP = 1;
 
-    const ADMIN_PUSAT = 2;
+    const ADMIN_HUB = 2;
 
-    const ADMIN_CABANG = 3;
+    const ADMIN_BRANCH = 3;
 
-    const PAKAR = 4;
+    const EXPERT = 4;
 
     const MEMBER_COMPANY = 5;
 
