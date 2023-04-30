@@ -25,8 +25,10 @@ export default {
                 class="notification-list pt-1"
                 v-if="checkRole($store.state.GUEST)"
             >
-                <a class="btn btn-primary btn-sm" href="javascript: void(0);"
-                    >Daftar Member</a
+                <router-link
+                    class="btn btn-primary btn-sm"
+                    :to="{ name: 'Member' }"
+                    >Daftar Member</router-link
                 >
             </li>
             <li class="dropdown notification-list">

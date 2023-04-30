@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
@@ -50,10 +51,13 @@ class UserSeeder extends Seeder
 
         $userBranch->adminBranch()->create([
             'uuid' => Str::uuid(),
+            'nip' => '111',
             'position' => 'CEO',
             'phone' => '12121212',
             'address' => 'Indramayu',
             'status' => 1,
+            'date_birth' => Carbon::now(),
+            'birth_place' => 'Indramayu',
             'branch_id' => $branch->id
         ]);
 

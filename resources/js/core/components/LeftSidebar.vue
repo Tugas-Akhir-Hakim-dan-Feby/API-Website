@@ -14,28 +14,33 @@ export default {
 </script>
 <template>
     <div class="leftside-menu">
-        <a href="index.html" class="logo text-center logo-light">
+        <router-link
+            :to="{ name: 'Dashboard' }"
+            class="logo text-center logo-light"
+        >
             <span class="logo-lg">
                 <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
             <span class="logo-sm">
                 <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
-        </a>
+        </router-link>
 
-        <a href="index.html" class="logo text-center logo-dark">
+        <router-link
+            :to="{ name: 'Dashboard' }"
+            class="logo text-center logo-dark"
+        >
             <span class="logo-lg">
                 <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
             <span class="logo-sm">
                 <img src="../../../images/api-iws.png" alt="" height="50" />
             </span>
-        </a>
+        </router-link>
 
         <div class="h-100" id="leftside-menu-container" data-simplebar="">
             <ul class="side-nav">
                 <li class="side-nav-title side-nav-item">Navigasi</li>
-
                 <li class="side-nav-item">
                     <router-link
                         :to="{ name: 'Dashboard' }"
@@ -136,14 +141,17 @@ export default {
 
                 <li
                     class="side-nav-item"
-                    v-if="checkRole($store.state.ADMIN_APP)"
+                    v-if="
+                        checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.MEMBER_WELDER)
+                    "
                 >
                     <router-link
                         :to="{ name: 'Exam Packet' }"
                         class="side-nav-link"
                     >
                         <i class="mdi mdi-family-tree"></i>
-                        <span> Bank Soal </span>
+                        <span> Uji Kompetensi </span>
                     </router-link>
                 </li>
             </ul>

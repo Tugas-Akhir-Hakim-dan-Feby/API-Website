@@ -12,6 +12,7 @@ use App\Notifications\SendResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,6 +22,20 @@ use Illuminate\Support\Str;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    const ADMIN_APP = 1;
+
+    const ADMIN_PUSAT = 2;
+
+    const ADMIN_CABANG = 3;
+
+    const PAKAR = 4;
+
+    const MEMBER_COMPANY = 5;
+
+    const MEMBER_WELDER = 6;
+
+    const GUEST = 7;
 
     /**
      * The attributes that are mass assignable.
@@ -78,6 +93,11 @@ class User extends Authenticatable
     public function document()
     {
         return $this->morphOne(Document::class, 'documentable');
+    }
+
+    public function welderDocuments(): MorphMany
+    {
+        return $this->morphMany(WelderDocument::class, "documentable");
     }
 
     public function adminHub(): HasOne
