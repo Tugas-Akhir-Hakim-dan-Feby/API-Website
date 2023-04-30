@@ -7,6 +7,8 @@ export default {
             form: {
                 name: "",
                 email: "",
+                password: "",
+                retypePassword: "",
             },
             errors: {},
             isLoading: false,
@@ -111,6 +113,46 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errors.email"
                                 v-for="(error, index) in errors.email"
+                                :key="index"
+                                v-html="error"
+                            ></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                autofocus
+                                class="form-control"
+                                v-model="form.password"
+                                :class="{ 'is-invalid': errors.password }"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.password"
+                                v-for="(error, index) in errors.password"
+                                :key="index"
+                                v-html="error"
+                            ></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="retypePassword">Ulangi Password</label>
+                            <input
+                                type="password"
+                                id="retypePassword"
+                                autofocus
+                                class="form-control"
+                                v-model="form.retypePassword"
+                                :class="{ 'is-invalid': errors.retypePassword }"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.retypePassword"
+                                v-for="(error, index) in errors.retypePassword"
                                 :key="index"
                                 v-html="error"
                             ></div>
