@@ -3,61 +3,115 @@ import Success from "../../../components/notifications/Success.vue";
 import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
+import Loader from "../../../components/Loader.vue";
+import CreateUser from "./Create.vue"
+import EditUser from "./Edit.vue"
 
 export default {
     data() {
         return {
-            users: [
-                {
-                    id: 1,
-                    name: "John Doe",
-                    email: "john.doe@mailinator.com",
-                    position: "Sekretaris",
-                    phone: "081234567890",
-                    status: 1,
-                },
-                {
-                    id: 2,
-                    name: "Jane Doe",
-                    email: "jane.doe@mailinator.com",
-                    position: "Kepala Cabang",
-                    phone: "081234567890",
-                    status: 0,
-                },
-                {
-                    id: 3,
-                    name: "Hana Doe",
-                    email: "hana.doe@mailinator.com",
-                    position: "Kepala Pusat",
-                    phone: "081234567890",
-                    status: 1,
-                },
-            ],
+            id : null,
+            title: "Daftar Pengguna API Pusat",
+            isCreate: false,
+            isEdit: false,
+            users: [],
             msg: "",
+            pagination: {
+                perPage: 10,
+                page: 1,
+            },
+            filters: {
+                search: ""
+            },
+            
         };
     },
+    mounted(){
+        this.getUsers();
+    },
     methods: {
-        handleDelete() {
+        getUsers(){
+            this.isLoading = true;
+            let params = [
+                `search=${this.filters.search}`
+            ].join("&");
+
+            this.$store
+            .dispatch("getData",["user/hub", params])
+            .then((response)=>{
+                this.isLoading = false;
+                this.users = response.data;
+            })
+            .catch((error) => {
+                this.isLoading = false;
+                console.log( error);
+            })
+        },
+        handleDelete(id) {
+            this.id = id;
             $("#confirmModal").modal("show");
         },
-        onDelete() {
-            $("#confirmModal").modal("hide");
-            $("#successModal").modal("show");
-            this.msg = "data berhasil dihapus.";
+        onCreate() {
+            this.title = "Tambah Pengguna";
+            this.isCreate = true;
         },
+        onEdit(id) {
+            this.title = "Edit Data Pengguna";
+            this.id = id;
+            this.isEdit = true;
+        },
+        onCancel() {
+            this.title = "Daftar Pengguna API Pusat";
+            this.isCreate = false;
+            this.isEdit = false;
+        },
+        onDelete() {
+            this.$store
+                .dispatch("deleteData", ["user/hub", this.id])
+                .then((response) => {
+                    $("#confirmModal").modal("hide");
+                    this.showAlert = true;
+                    this.msg = "data berhasil dihapus.";
+                    this.getUsers();
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        
         onUpdateStatus(id, status) {
             $("#successModal").modal("show");
             this.msg = `status berhasil diperbaharui.`;
         },
+        onSearch() {
+            this.getUsers();
+        },
+        onPageChange(e) {
+            this.pagination.page = e;
+            this.getUsers();
+        },
     },
-    components: { Pagination, PageTitle, Success, Confirm },
+    components: { 
+        Pagination,
+        PageTitle,  
+        Success, 
+        Confirm,
+        CreateUser,
+        EditUser,
+        Loader
+        },
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna API Pusat'" />
+    <PageTitle :title="title" />
 
-    <div class="card">
-        <div class="card-body">
+    <CreateUser v-if="isCreate" @onCancel="onCancel($e)" />
+
+    <EditUser v-else-if="isEdit" :id="id" @onCancel="onCancel($e)" />
+
+    <div v-else class="card">
+        <div class="card-body position-relative">
+            <Loader v-if="isLoading" />
             <div class="table-responsive">
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"
@@ -78,6 +132,8 @@ export default {
                                 type="search"
                                 class="form-control"
                                 placeholder="pencarian"
+                                @keyup="onSearch"
+                                v-model="filters.search"
                             />
                         </div>
 
@@ -93,6 +149,7 @@ export default {
                             <th>No.</th>
                             <th>Nama Pengguna</th>
                             <th>Email Pengguna</th>
+                            <th>Alamat</th>
                             <th>Jabatan</th>
                             <th>Telepon</th>
                             <th>Status</th>
@@ -104,6 +161,7 @@ export default {
                             <th v-html="index + 1"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
+                            <td v-html="user.address"></td>
                             <td v-html="user.position"></td>
                             <td v-html="user.phone"></td>
                             <td>
