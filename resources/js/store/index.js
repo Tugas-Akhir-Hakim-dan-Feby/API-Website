@@ -15,6 +15,8 @@ const store = createStore({
         MEMBER_COMPANY: "Member Company",
         MEMBER_WELDER: "Member Welder",
         GUEST: "Guest",
+        PAID: "PAID",
+        PENDING: "PENDING",
     },
 });
 

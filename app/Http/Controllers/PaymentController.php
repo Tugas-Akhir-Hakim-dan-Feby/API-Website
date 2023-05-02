@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Payment\PaymentDetail;
 use App\Http\Traits\MessageFixer;
+use App\Models\Payment;
 use App\Repositories\Payment\PaymentRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
@@ -33,5 +36,21 @@ class PaymentController extends Controller
             DB::rollback();
             return $this->errorMessage($th->getMessage());
         }
+    }
+
+    public function show($externalId)
+    {
+        $payment = $this->paymentRepository->findByCriteria(["external_id" => $externalId]);
+        if (!$payment) {
+            abort(404);
+        }
+
+        if ($payment->status == Payment::PAID) {
+            return $this->successMessage($payment->status, $payment);
+        }
+
+        $payment->load('user');
+
+        return new PaymentDetail($payment);
     }
 }

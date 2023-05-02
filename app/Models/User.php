@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\User\Branch;
+use App\Models\User\CompanyMember;
 use App\Models\User\Hub;
 use App\Models\User\WelderMember;
 use App\Notifications\SendEmailVerification;
@@ -113,6 +114,11 @@ class User extends Authenticatable
     public function welderMember(): HasOne
     {
         return $this->hasOne(WelderMember::class, 'user_id', 'id');
+    }
+
+    public function companyMember(): HasOne
+    {
+        return $this->hasOne(CompanyMember::class, 'user_id', 'id');
     }
 
     public function payment(): HasOne
