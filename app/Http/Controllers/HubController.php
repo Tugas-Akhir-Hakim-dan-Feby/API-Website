@@ -26,7 +26,7 @@ class HubController extends Controller
 
     public function index(Request $request)
     {
-        $adminhubs = $this->userRepository->findByCriteria(['role_id' =>Role::ADMIN_PUSAT]);
+        $adminhubs = $this->userRepository->findByCriteria(['role_id' =>Role::ADMIN_HUB]);
         return new HubCollection($adminhubs);
     }
 
