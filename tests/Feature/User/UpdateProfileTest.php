@@ -40,11 +40,10 @@ class UpdateProfileTest extends TestCase
     {
         Sanctum::actingAs(User::find(1), ['admin-app']);
 
-        $response = $this->postJson(route('api.user.update.password'), [
-        'new_name' => 'nama baru',
-        'new_email' => 'email@email.com',
-        'new_password' => 'password123',
-        'current_password' => 'password'
-        ])->assertOk();
+        $response = $this->postJson(route('api.user.update.profile'), [
+            'new_name' => 'nama baru',
+            'new_email' => 'email@baru.com',
+        ])->assertStatus(400);
     }
+
 }
