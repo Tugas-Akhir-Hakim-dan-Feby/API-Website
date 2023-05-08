@@ -76,7 +76,7 @@ class WelderMemberController extends Controller
         try {
             if ($request->hasFile("document_certificate_school")) {
                 $request->merge([
-                    "certificate_school" => $this->storageFile($request->file("document_certificate_school"), "cerfiticate_school")
+                    "certificate_school" => $this->storageFile($request->file("document_certificate_school"), "certificate_school")
                 ]);
             }
 

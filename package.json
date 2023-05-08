@@ -18,6 +18,8 @@
         "camelcase-keys": "^8.0.2",
         "dayjs": "^1.11.7",
         "js-cookie": "^3.0.1",
+        "laravel-echo": "^1.15.1",
+        "pusher-js": "^8.0.2",
         "snakecase-keys": "^5.4.5",
         "vue": "^3.2.36",
         "vue-loader": "^17.0.1",
