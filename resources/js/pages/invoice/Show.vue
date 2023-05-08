@@ -1,5 +1,6 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
+import PusherUtil from "../../store/utils/pusher";
 
 export default {
     props: ["externalId", "costId"],
@@ -12,6 +13,16 @@ export default {
     mounted() {
         this.getUser();
         this.getPayment();
+
+        PusherUtil.getMessage(
+            "App.Models.Payment." + this.externalId,
+            "MessagePayment",
+            (response) => {
+                if (response.message.status == this.$store.state.PAID) {
+                    this.$router.push({ name: "Invoice Success" });
+                }
+            }
+        );
     },
     methods: {
         getUser() {

@@ -60,8 +60,10 @@ class CompanyMemberController extends Controller
 
             $this->pay();
 
-            // $user->syncRoles($role);
-            // $user->companyMember()->create($request->all());
+            $user->update([
+                "role_id" => $role->id
+            ]);
+            $user->companyMember()->create($request->all());
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $user->payment);

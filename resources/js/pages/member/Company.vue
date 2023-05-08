@@ -53,7 +53,7 @@ export default {
                     this.isLoading = false;
 
                     this.$router.push({
-                        name: "Invoice",
+                        name: "Show Invoice",
                         params: {
                             externalId: response.data.externalId,
                             costId: "102992",

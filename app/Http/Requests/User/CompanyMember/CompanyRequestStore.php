@@ -33,7 +33,7 @@ class CompanyRequestStore extends FormRequest
             'company_profile' => 'required',
             'company_email' => 'required|email',
             'document_company_legality' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|numeric',
             'facsmile' => 'required',
         ];
     }
