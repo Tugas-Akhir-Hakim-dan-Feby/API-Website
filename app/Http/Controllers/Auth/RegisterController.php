@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Traits\SendEmail;
 use App\Models\Role as ModelsRole;
 use App\Repositories\User\UserRepository;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -28,7 +29,7 @@ class RegisterController extends Controller
     public function __invoke(RegisterRequest $request)
     {
         $request->merge([
-            'password' => bcrypt(Str::random(8))
+            'password' => Hash::make($request->input('password')),
         ]);
 
         $user = DB::transaction(function () use ($request) {

@@ -29,6 +29,8 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password_confirmation' => ['required'],
         ];
     }
 
@@ -44,6 +46,8 @@ class RegisterRequest extends FormRequest
             'email.required' => 'kolom email wajib diisi',
             'email.email' => 'email tidak valid',
             'email.unique' => 'email sudah terdaftar',
+            'password_confirmation.required' => 'Konfirmasi password harus diisi.',
+            'password.confirmed' => 'Password dan konfirmasi password tidak cocok.',
         ];
     }
 
