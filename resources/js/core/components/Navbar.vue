@@ -65,13 +65,13 @@ export default {
                         <h6 class="text-overflow m-0">Selamat Datang !</h6>
                     </div>
 
-                    <a
-                        href="javascript:void(0);"
+                    <router-link
+                        :to="{name: 'My Profile'}"
                         class="dropdown-item notify-item"
                     >
                         <i class="mdi mdi-account-circle me-1"></i>
                         <span>Profil Saya</span>
-                    </a>
+                    </router-link>
 
                     <a
                         @click="handleLogout"
