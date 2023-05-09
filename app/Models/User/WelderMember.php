@@ -3,8 +3,10 @@
 namespace App\Models\User;
 
 use App\Models\WelderDocument;
+use App\Models\WelderSkill;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class WelderMember extends Model
@@ -35,4 +37,9 @@ class WelderMember extends Model
         'user_id',
         'welder_skill_id',
     ];
+
+    public function welderSkill(): HasOne
+    {
+        return $this->hasOne(WelderSkill::class, 'id', 'welder_skill_id');
+    }
 }

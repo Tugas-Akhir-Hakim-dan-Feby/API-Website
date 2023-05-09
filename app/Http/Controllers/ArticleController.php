@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\Article\Author;
+use App\Http\Filters\Article\BySigned;
 use App\Http\Filters\Article\IsActive;
 use App\Http\Filters\Article\Search;
 use App\Http\Requests\Article\ArticleRequestStore;
@@ -36,6 +37,7 @@ class ArticleController extends Controller
         $articles = app(Pipeline::class)
             ->send($this->articleRepository->query())
             ->through([
+                BySigned::class,
                 IsActive::class,
                 Search::class,
                 Author::class
