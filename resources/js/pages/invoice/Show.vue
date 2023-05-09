@@ -18,6 +18,7 @@ export default {
             "App.Models.Payment." + this.externalId,
             "MessagePayment",
             (response) => {
+                console.log(response);
                 if (response.message.status == this.$store.state.PAID) {
                     this.$router.push({ name: "Invoice Success" });
                 }
