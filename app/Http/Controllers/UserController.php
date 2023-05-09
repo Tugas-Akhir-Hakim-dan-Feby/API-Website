@@ -31,7 +31,7 @@ class UserController extends Controller
             'roles' => $user->roles->pluck('name')
         ];
 
-        if ($user->isMemberWelder()) {
+        if ($user->isMemberWelder() || $user->isExpert()) {
             $data["skill"] = $user->welderMember->welderSkill;
         }
 
