@@ -34,6 +34,6 @@ class MessagePayment implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('App.Models.Payment.' . $this->externalId);
+        return new PrivateChannel('App.Models.Payment.' . $this->externalId);
     }
 }

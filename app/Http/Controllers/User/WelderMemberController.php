@@ -7,6 +7,7 @@ use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
 use App\Http\Traits\MessageFixer;
+use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
 use App\Models\User;
 use App\Models\User\WelderMember;
@@ -25,7 +26,7 @@ use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class WelderMemberController extends Controller
 {
-    use MessageFixer, UploadDocument;
+    use MessageFixer, UploadDocument, PaymentFixer;
 
     protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository;
 
@@ -90,7 +91,12 @@ class WelderMemberController extends Controller
                 $this->upload($request->file("document_certificate_competency"), $user->welderDocuments(), "welder_document");
             }
 
-            $user->syncRoles($role);
+            $this->pay();
+
+            $user->update([
+                "role_id" => $role->id
+            ]);
+
             $user->welderMember()->create($request->all());
 
             DB::commit();
@@ -99,36 +105,6 @@ class WelderMemberController extends Controller
             DB::rollback();
             return $this->errorMessage($th->getMessage());
         }
-
-        // try {
-        //     $secret_key = 'Basic ' . config('xendit.key_auth');
-        //     $external_id = Str::random(10);
-        //     $data_request = Http::withHeaders([
-        //         'Authorization' => $secret_key
-        //     ])->post('https://api.xendit.co/v2/invoices', [
-        //         'external_id' => $external_id,
-        //         'amount' => 100000
-        //     ]);
-        //     $response = $data_request->object();
-
-        //     $user->payment()->create([
-        //         'uuid' => Str::uuid(),
-        //         'user_id' => Auth::user()->id,
-        //         'external_id' => $external_id,
-        //         'description' => 'pembayaran welder member',
-        //         'amount' => 100000,
-        //         'payment_link' => $response->invoice_url,
-        //         'status' => $response->status,
-        //     ]);
-        //     $user->syncRoles($role);
-        //     $user->welderMember()->create($request->all());
-
-        //     DB::commit();
-        //     return $this->createMessage("data berhasil ditambahkan", $user);
-        // } catch (\Throwable $th) {
-        //     DB::rollback();
-        //     return $this->errorMessage($th->getMessage());
-        // }
     }
 
     /**

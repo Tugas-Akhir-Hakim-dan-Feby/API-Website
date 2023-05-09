@@ -10,20 +10,23 @@ export default {
             payment: {},
         };
     },
+    created() {
+    },
     mounted() {
         this.getUser();
         this.getPayment();
 
-        PusherUtil.getMessage(
-            "App.Models.Payment." + this.externalId,
-            "MessagePayment",
-            (response) => {
-                console.log(response);
-                if (response.message.status == this.$store.state.PAID) {
-                    this.$router.push({ name: "Invoice Success" });
+        setInterval(() => {
+            PusherUtil.privateMessage(
+                "App.Models.Payment." + this.externalId,
+                "MessagePayment",
+                (response) => {
+                    if (response.message.status == this.$store.state.PAID) {
+                        this.$router.push({ name: "Invoice Success" });
+                    }
                 }
-            }
-        );
+            );
+        }, 1000);
     },
     methods: {
         getUser() {
@@ -50,6 +53,9 @@ export default {
             });
             return formatter.format(number ?? 0);
         },
+        redirect() {
+            this.$router.push({ name: "Invoice Success" });
+        }
     },
     components: { PageTitle },
 };
