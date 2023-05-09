@@ -26,10 +26,16 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return response()->json([
+        $data = [
             'user' => $user,
             'roles' => $user->roles->pluck('name')
-        ]);
+        ];
+
+        if ($user->isMemberWelder()) {
+            $data["skill"] = $user->welderMember->welderSkill;
+        }
+
+        return response()->json($data);
     }
 
     public function show()

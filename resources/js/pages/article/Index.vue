@@ -24,7 +24,9 @@ export default {
                 });
         },
         checkRoles(data) {
-            return role.checkRoleObject(this.roles, data);
+            if (data == this.roles) {
+                return true;
+            }
         },
     },
     components: { Admin, Guest },
@@ -34,16 +36,19 @@ export default {
 <template>
     <div
         v-if="
-            checkRoles([
-                $store.state.ADMIN_APP,
-                $store.state.ADMIN_HUB,
-                $store.state.ADMIN_BRANCH,
-            ])
+            checkRoles($store.state.GUEST) ||
+            checkRoles($store.state.MEMBER_WELDER) ||
+            checkRoles($store.state.EXPERT)
         "
     >
-        <Admin />
-    </div>
-    <div v-else>
         <Guest />
+    </div>
+    <div v-else-if="
+            checkRoles($store.state.MEMBER_COMPANY) ||
+            checkRoles($store.state.ADMIN_HUB) ||
+            checkRoles($store.state.ADMIN_BRANCH) ||
+            checkRoles($store.state.ADMIN_APP)
+            ">
+        <Admin />
     </div>
 </template>

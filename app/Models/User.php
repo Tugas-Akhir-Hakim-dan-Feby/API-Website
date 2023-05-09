@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Http\Traits\CheckRoles;
 use App\Models\User\Branch;
 use App\Models\User\CompanyMember;
 use App\Models\User\Hub;
@@ -22,7 +23,7 @@ use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, CheckRoles;
 
     const ADMIN_APP = 1;
 

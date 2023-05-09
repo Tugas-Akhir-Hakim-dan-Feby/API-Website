@@ -4,6 +4,7 @@ import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
+import PaginationUtil from "../../store/utils/pagination"
 
 export default {
     data() {
@@ -28,6 +29,9 @@ export default {
         this.getArticles();
     },
     methods: {
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination)
+        },
         getArticles() {
             this.isLoading = true;
 
@@ -160,7 +164,6 @@ export default {
                             <th>No.</th>
                             <th>Judul</th>
                             <th>Pembuat</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -175,25 +178,9 @@ export default {
                             v-for="(article, index) in articles"
                             :key="index"
                         >
-                            <td v-html="index + 1"></td>
+                            <td v-html="iteration(index)"></td>
                             <td v-html="article.articleTitle"></td>
                             <td v-html="article.user?.name"></td>
-                            <td>
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        :checked="article.status"
-                                        @click="
-                                            onUpdateStatus(
-                                                article.uuid,
-                                                article.status
-                                            )
-                                        "
-                                    />
-                                </div>
-                            </td>
                             <td>
                                 <router-link
                                     :to="{
