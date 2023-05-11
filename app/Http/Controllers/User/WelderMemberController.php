@@ -100,7 +100,7 @@ class WelderMemberController extends Controller
             $user->welderMember()->create($request->all());
 
             DB::commit();
-            return $this->createMessage("data berhasil ditambahkan", $user);
+            return $this->createMessage("data berhasil ditambahkan", $user->payment);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

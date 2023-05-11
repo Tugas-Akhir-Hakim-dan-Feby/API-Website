@@ -66,7 +66,8 @@ export default {
                 ])
                 .then((response) => {
                     this.isLoading = false;
-                    console.log(response);
+                    window.location.href =
+                        "/invoice/" + response.data.externalId + "/1212";
                 })
                 .catch((error) => {
                     this.isLoading = false;

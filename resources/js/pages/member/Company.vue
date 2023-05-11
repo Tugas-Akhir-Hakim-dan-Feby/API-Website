@@ -52,13 +52,8 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
 
-                    this.$router.push({
-                        name: "Show Invoice",
-                        params: {
-                            externalId: response.data.externalId,
-                            costId: "102992",
-                        },
-                    });
+                    window.location.href =
+                        "/invoice/" + response.data.externalId + "/1212";
                 })
                 .catch((error) => {
                     this.isLoading = false;
