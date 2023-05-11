@@ -9,8 +9,11 @@ export default {
                 window.location.replace("/auth/login");
             });
         },
-        checkRole(string) {
-            if (this.roles.includes(string)) {
+        checkRole() {
+            if (
+                this.roles.includes(this.$store.state.GUEST) &&
+                this.roles.length < 2
+            ) {
                 return true;
             }
             return false;
@@ -21,10 +24,7 @@ export default {
 <template>
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
-            <li
-                class="notification-list pt-1"
-                v-if="checkRole($store.state.GUEST)"
-            >
+            <li class="notification-list pt-1" v-if="checkRole()">
                 <router-link
                     class="btn btn-primary btn-sm"
                     :to="{ name: 'Member' }"
@@ -66,7 +66,7 @@ export default {
                     </div>
 
                     <router-link
-                        :to="{name: 'My Profile'}"
+                        :to="{ name: 'My Profile' }"
                         class="dropdown-item notify-item"
                     >
                         <i class="mdi mdi-account-circle me-1"></i>

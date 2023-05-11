@@ -32,7 +32,7 @@ class PaymentController extends Controller
 
         try {
             $payment->update(['status' => $request->status]);
-            $payment->user->syncRoles($role);
+            $payment->user->assignRole($role);
 
             MessagePayment::dispatch($payment, $request->external_id);
 
