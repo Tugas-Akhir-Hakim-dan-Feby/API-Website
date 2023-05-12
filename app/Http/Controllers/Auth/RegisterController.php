@@ -32,9 +32,18 @@ class RegisterController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
+        $validated = $request->validated();
+
+        if ($validated['password'] !== $validated['password_confirmation']) {
+            return response()->json([
+                'message' => 'Konfirmasi password tidak sesuai',
+                'status_code' => 422
+            ], 422);
+        }
+
         $user = DB::transaction(function () use ($request) {
             $role = $this->roleRepository->findById(ModelsRole::GUEST, 'api');
-            $user = $this->userRepository->create($request->all());
+            $user = $this->userRepository->create($request->validated());
 
             $user->assignRole($role);
             $this->sendEmail($user->email);

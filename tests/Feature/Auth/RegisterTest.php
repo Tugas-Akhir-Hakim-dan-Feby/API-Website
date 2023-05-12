@@ -16,7 +16,9 @@ class RegisterTest extends TestCase
 
         $request = [
             'name' => 'John Doe',
-            'email' => 'john.doe@mailinator.com'
+            'email' => 'john.doe@mailinator.com',
+            'password' => 'password',
+            'password_confirmation' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -33,7 +35,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => 'John Doe',
-            'email' => 'john.doe@mailinator.com'
+            'email' => 'john.doe@mailinator.com',
+            'password' => 'password',
+            'password_confirmation' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -50,7 +54,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => '',
-            'email' => ''
+            'email' => '',
+            'password' => '',
+            'password_confirmation' => ''
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -67,7 +73,9 @@ class RegisterTest extends TestCase
     {
         $request = [
             'name' => 'John Doe',
-            'email' => 'invalid-email'
+            'email' => 'invalid-email',
+            'password' => 'password',
+            'password_confirmation' => 'password'
         ];
 
         $response = $this->postJson(route('api.auth.register'), $request);
@@ -78,4 +86,23 @@ class RegisterTest extends TestCase
             'status_code' => 400
         ]);
     }
+
+    /** @test */
+public function cannot_register_with_unmatched_password_confirmation()
+{
+    $request = [
+        'name' => 'John Doe',
+        'email' => 'john.doe@mailinator.com',
+        'password' => 'password',
+        'password_confirmation' => 'mismatched'
+    ];
+
+    $response = $this->postJson(route('api.auth.register'), $request);
+    $response->assertStatus(400);
+
+    $response->assertJson([
+        'status_code' => 400
+    ]);
+}
+
 }
