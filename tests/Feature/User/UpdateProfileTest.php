@@ -45,5 +45,4 @@ class UpdateProfileTest extends TestCase
             'new_email' => 'email@baru.com',
         ])->assertStatus(400);
     }
-
 }
