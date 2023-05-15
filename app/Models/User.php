@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Http\Traits\CheckRoles;
 use App\Models\User\Branch;
 use App\Models\User\CompanyMember;
+use App\Models\User\Expert;
 use App\Models\User\Hub;
 use App\Models\User\WelderMember;
 use App\Notifications\SendEmailVerification;
@@ -109,6 +110,11 @@ class User extends Authenticatable
     public function adminBranch(): HasOne
     {
         return $this->hasOne(Branch::class, 'user_id', 'id');
+    }
+
+    public function expert(): HasOne
+    {
+        return $this->hasOne(Expert::class, 'user_id', 'id');
     }
 
     public function welderMember(): HasOne

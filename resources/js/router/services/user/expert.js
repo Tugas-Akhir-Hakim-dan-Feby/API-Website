@@ -16,6 +16,15 @@ export default [
         },
     },
     {
+        path: "/user/expert/:id",
+        component: () => import("../../../pages/user/expert/Show.vue"),
+        name: "User Expert Show",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
         path: "/user/expert/:id/edit",
         component: () => import("../../../pages/user/expert/Edit.vue"),
         name: "User Expert Edit",

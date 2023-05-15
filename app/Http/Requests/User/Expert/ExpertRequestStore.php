@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\User\WelderMember;
+namespace App\Http\Requests\User\Expert;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class WelderRequestStore extends FormRequest
+class ExpertRequestStore extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,28 +27,22 @@ class WelderRequestStore extends FormRequest
     public function rules()
     {
         return [
-            'welder_skill_id' => 'required|exists:welder_skills,uuid',
-            'resident_id_card' => 'required|numeric',
-            'date_birth' => 'required|date',
-            'birth_place' => 'required',
-            'working_status' => 'required|in:1,0',
-            'document_certificate_school' => 'required',
-            'document_pas_photo' => 'required',
-            'document_certificate_competency' => 'required',
+            "instance" => "required",
+            "document_certificate_profession" => "required",
+            "document_certificate_competency" => "required",
+            "document_working_mail" => "required",
+            "document_career" => "required",
         ];
     }
 
     public function attributes()
     {
         return [
-            'welder_skill_id' => 'keahlian welder',
-            'resident_id_card' => 'nik',
-            'date_birth' => 'tanggal lahir',
-            'birth_place' => 'tempat lahir',
-            'working_status' => 'status bekerja',
-            'document_certificate_school' => 'ijazah pendidikan formal',
-            'document_pas_photo' => 'pas foto formal berwarna',
-            'document_certificate_competency' => 'dokumen sertifikat',
+            "instance" => "instansi",
+            "document_certificate_profession" => "sertifikat gelar profesi",
+            "document_certificate_competency" => "sertifikat kompetensi",
+            "document_working_mail" => "surat keterangan aktif bekerja",
+            "document_career" => "riwayat bekerja",
         ];
     }
 

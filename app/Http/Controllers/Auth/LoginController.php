@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Traits\MessageFixer;
+use App\Models\User;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -40,6 +41,12 @@ class LoginController extends Controller
                 return $this->warningMessage('harap verifikasi email terlebih dahulu');
             }
 
+            if ($this->checkRoleId($user->roles->pluck('id'), User::MEMBER_WELDER)) {
+                if ($user->welderMember->status == 0) {
+                    return $this->warningMessage('akun anda di nonaktifkan Admin, harap hubungi Admin API-IWS untuk mengaktifkan akun anda');
+                }
+            }
+
             $role = $user->roles->pluck('name');
             $token = $user->createToken('api', $role->toArray())->plainTextToken;
 
@@ -51,5 +58,10 @@ class LoginController extends Controller
 
             return $this->errorMessage($th->getMessage());
         }
+    }
+
+    public function checkRoleId($data, $id)
+    {
+        return in_array($id, $data->toArray());
     }
 }
