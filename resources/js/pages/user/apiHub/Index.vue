@@ -11,7 +11,7 @@ export default {
     data() {
         return {
             id : null,
-            title: "Daftar Pengguna API Pusat",
+            // title: "Daftar Pengguna API Pusat",
             isCreate: false,
             isEdit: false,
             users: [],
@@ -56,14 +56,14 @@ export default {
             this.isCreate = true;
         },
         onEdit(id) {
-            this.title = "Edit Data Pengguna";
             this.id = id;
             this.isEdit = true;
         },
         onCancel() {
-            this.title = "Daftar Pengguna API Pusat";
+            // console.log("OK");
             this.isCreate = false;
             this.isEdit = false;
+            this.getUsers();
         },
         onDelete() {
             this.$store
@@ -161,18 +161,18 @@ export default {
                             <th v-html="index + 1"></th>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
-                            <td v-html="user.address"></td>
-                            <td v-html="user.position"></td>
-                            <td v-html="user.phone"></td>
+                            <td v-html="user.adminHub?.address"></td>
+                            <td v-html="user.adminHub?.position"></td>
+                            <td v-html="user.adminHub?.phone"></td>
                             <td>
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
                                         type="checkbox"
                                         role="switch"
-                                        :checked="user.status"
+                                        :checked="user.adminHub?.status"
                                         @click="
-                                            onUpdateStatus(user.id, user.status)
+                                            onUpdateStatus(user.id, user.adminHub?.status)
                                         "
                                     />
                                 </div>
@@ -186,16 +186,22 @@ export default {
                                         class="btn btn-sm btn-info me-2"
                                         >Detail</router-link
                                     > -->
-                                <router-link
+                                <!-- <router-link
                                     :to="{
                                         name: 'User Hub Edit',
                                         params: { id: user.id },
                                     }"
                                     class="btn btn-sm btn-warning me-2"
                                     >Edit</router-link
-                                >
+                                > -->
                                 <button
-                                    @click="handleDelete"
+                                    @click="onEdit(user.id)"
+                                    class="btn btn-warning text-white btn-sm me-2"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    @click="handleDelete(user.id)"
                                     class="btn btn-sm btn-danger"
                                 >
                                     Hapus

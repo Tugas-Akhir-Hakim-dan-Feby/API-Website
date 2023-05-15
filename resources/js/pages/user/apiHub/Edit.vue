@@ -4,37 +4,71 @@ import Success from "../../../components/notifications/Success.vue";
 
 export default {
     props: ["id"],
-    mounted(){
-
-    },
     data() {
         return {
-            user: {},
+            form: {
+                name: "",
+                email: "",
+                address: "",
+                position: "",
+                phone: "",
+                status: "",
+            },
+            errors: {},
+            isLoading: false,
+            msg: "",
         };
+    },
+    mounted() {
+        this.getUser();
     },
     methods: {
         onCancel() {
             this.$emit("onCancel", true);
         },
         getUser(){
+            this.isLoading = true;
+            
+            // this.$store
+            //     .dispatch("showData" ["user/hub", this.id])
+            //     .then((response) => {
+            //         this.isLoading = false;
+            //         this.setFrom(response.data);
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
+            //     });
             this.$store
-            .dispatch("showData" ["user/hub", this.id])
-            .then((response) => {
-                this.user = response.data;
+            .dispatch("showData",["user/hub", this.id])
+            .then((response)=>{
+                this.isLoading = false;
+                this.setFrom(response.data)
             })
             .catch((error) => {
-                console.log(error);
-            });
+                this.isLoading = false;
+                console.log( error);
+            })
+        },
+        setFrom(user){
+            this.form = {
+                name: user.name,
+                email: user.email,
+                address: user.adminHub?.address,
+                position: user.adminHub?.position,
+                phone: user.adminHub?.phone,
+                status: user.adminHub?.status,
+            }
         },
         handleSubmit() {
             this.isLoading = true;
             this.error = {};
             this.$store
-            .dispatch("updateData", ["user/hub", this.id, this.user])
+            .dispatch("updateData", ["user/hub", this.id, this.form])
             .then((response)=> {
                 this.isLoading = false;
                     $("#successModal").modal("show");
                     this.$emit("onCancel", true);
+                    this.msg = "Data berhasil di update"
             })
             .catch((error)=> {
                 this.isLoading = false;
@@ -57,7 +91,7 @@ export default {
                     type="text"
                     class="form-control"
                     id="name"
-                    v-model="user.name"
+                    v-model="form.name"
                     :class="{'is-invalid': errors.name}"
                     :disabled="isLoading"
                     />
@@ -74,7 +108,7 @@ export default {
                     type="text" 
                     class="form-control"
                     id="email"
-                    v-model="user.email"
+                    v-model="form.email"
                     :class="{'is-invalid': errors.email}"
                     :disabled="isLoading"
                     />
@@ -91,7 +125,7 @@ export default {
                     type="text" 
                     class="form-control"
                     id="address"
-                    v-model="user.address"
+                    v-model="form.address"
                     :class="{'is-invalid': errors.address}"
                     :disabled="isLoading"
                     />
@@ -108,7 +142,7 @@ export default {
                     type="text" 
                     class="form-control"
                     id="position"
-                    v-model="user.position"
+                    v-model="form.position"
                     :class="{'is-invalid': errors.position}"
                     :disabled="isLoading"
                     />
@@ -125,7 +159,7 @@ export default {
                     type="text" 
                     class="form-control"
                     id="phone"
-                    v-model="user.phone"
+                    v-model="form.phone"
                     :class="{'is-invalid': errors.phone}"
                     :disabled="isLoading"
                     />
@@ -141,7 +175,7 @@ export default {
                     <select
                     class="form-select" 
                     aria-label="Default select example"
-                    v-model="user.status"
+                    v-model="form.status"
                     :class="{'is-invalid': errors.status}"
                     :disabled="isLoading"
                     >
@@ -157,17 +191,17 @@ export default {
                 </div>
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
-                <router-link
-                    :to="{ name: 'User Hub' }"
-                    class="btn btn-secondary"
-                    :disabled="isLoading"
-                    >Batal</router-link
-                >
-                <button class="btn btn-primary" v-if="!isLoading">Simpan</button>
+                <button 
+                class="btn btn-secondary"
+                @click="onCancel"
+                :disabled="isLoading">
+                    Batal
+                </button>
+                <button class="btn btn-success" v-if="!isLoading">Simpan</button>
                 <button
                     class="btn btn-success"
                     type="button"
-                    disabled
+                    :disabled="isLoading"
                     v-if="isLoading"
                 >
                     <span
@@ -181,5 +215,5 @@ export default {
         </form>
     </div>
 
-    <Success :url="{ name: 'User Hub' }" :msg="msg" />
+    <Success :msg="'Data berhasil di update'" />
 </template>

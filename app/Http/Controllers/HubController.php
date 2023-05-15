@@ -72,6 +72,7 @@ class HubController extends Controller
     public function show($id)
     {
         $adminhubs = $this->userRepository->findOrFail($id);
+        $adminhubs->load(['adminHub']);
         return new HubDetail($adminhubs);
     }
 
