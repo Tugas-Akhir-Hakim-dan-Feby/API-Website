@@ -42,4 +42,14 @@ class WelderMember extends Model
     {
         return $this->hasOne(WelderSkill::class, 'id', 'welder_skill_id');
     }
+
+    public function getCertificateSchoolAttribute($image)
+    {
+        return asset('storage/' . $image);
+    }
+
+    public function getPasPhotoAttribute($image)
+    {
+        return asset('storage/' . $image);
+    }
 }

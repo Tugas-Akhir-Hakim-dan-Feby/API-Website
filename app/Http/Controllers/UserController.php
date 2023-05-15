@@ -35,6 +35,14 @@ class UserController extends Controller
             $data["skill"] = $user->welderMember->welderSkill;
         }
 
+        if ($user->isExpert()) {
+            $user->load("expert");
+        }
+
+        if ($user->document) {
+            $data["document"] = $user->document;
+        }
+
         return response()->json($data);
     }
 

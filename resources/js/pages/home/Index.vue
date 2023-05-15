@@ -1,7 +1,50 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
+import jsCookie from "js-cookie";
 
 export default {
+    data() {
+        return {
+            user: {},
+            isWarning: false,
+            isSuccess: false,
+            isNotExpert: false,
+        };
+    },
+    mounted() {
+        this.getUser();
+        setTimeout(() => {
+            this.isNotExpert = jsCookie.get("isNotExpert");
+        }, 1000);
+    },
+    methods: {
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.user = response.user;
+
+                    if (
+                        response.user.expert &&
+                        !response.roles.includes(this.$store.state.EXPERT)
+                    ) {
+                        jsCookie.set("isNotExpert", true);
+                        this.isWarning = true;
+                    }
+
+                    if (
+                        response.user.expert &&
+                        response.roles.includes(this.$store.state.EXPERT)
+                    ) {
+                        this.isSuccess = true;
+                    }
+                })
+                .catch((error) => {});
+        },
+        removeTokenNotExpert() {
+            jsCookie.remove("isNotExpert");
+        },
+    },
     components: { PageTitle },
 };
 </script>
@@ -12,6 +55,37 @@ export default {
             <li class="breadcrumb-item active">Dashboard</li>
         </ol>
     </PageTitle>
+
+    <div
+        class="alert alert-warning alert-dismissible"
+        role="alert"
+        v-if="isWarning && isNotExpert"
+    >
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+        Data anda sebagai pakar sedang diperiksa, harap tunggu konfirmasi dari
+        Admin!
+    </div>
+
+    <div
+        class="alert alert-success alert-dismissible"
+        role="alert"
+        v-if="isSuccess && isNotExpert"
+    >
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            @click="removeTokenNotExpert"
+        ></button>
+        Selamat anda sudah terdaftar sebagai Pakar dari
+        <strong>API-IWS</strong> !!!
+    </div>
 
     <div class="row">
         <div class="col-12">

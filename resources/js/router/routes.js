@@ -11,6 +11,7 @@ import examPacket from "./services/exam/examPacket";
 import exam from "./services/exam/exam";
 import member from "./services/member";
 import invoice from "./services/invoice";
+import expert from "./services/expert";
 
 const routes = [
     ...auth,
@@ -26,6 +27,7 @@ const routes = [
     ...exam,
     ...member,
     ...invoice,
+    ...expert,
     {
         path: "/",
         name: "Dashboard",

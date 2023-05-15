@@ -43,12 +43,15 @@ export default {
     >
         <Guest />
     </div>
-    <div v-else-if="
+    <div
+        v-else-if="
             checkRoles($store.state.MEMBER_COMPANY) ||
             checkRoles($store.state.ADMIN_HUB) ||
             checkRoles($store.state.ADMIN_BRANCH) ||
             checkRoles($store.state.ADMIN_APP)
-            ">
+        "
+    >
         <Admin />
     </div>
+    <div class="alert alert-primary mt-3" v-else>Harap tunggu...</div>
 </template>

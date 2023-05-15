@@ -18,6 +18,15 @@ export default {
             }
             return false;
         },
+        checkRoleExpert() {
+            if (
+                !this.roles.includes(this.$store.state.PAKAR) &&
+                this.roles.includes(this.$store.state.MEMBER_WELDER)
+            ) {
+                return true;
+            }
+            return false;
+        },
     },
 };
 </script>
@@ -29,6 +38,13 @@ export default {
                     class="btn btn-primary btn-sm"
                     :to="{ name: 'Member' }"
                     >Daftar Member</router-link
+                >
+            </li>
+            <li class="notification-list pt-1" v-if="checkRoleExpert()">
+                <router-link
+                    class="btn btn-primary btn-sm"
+                    :to="{ name: 'Register Expert' }"
+                    >Daftar Pakar</router-link
                 >
             </li>
             <li class="dropdown notification-list">
