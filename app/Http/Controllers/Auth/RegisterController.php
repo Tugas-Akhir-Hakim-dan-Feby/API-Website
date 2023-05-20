@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Traits\SendEmail;
 use App\Models\Role as ModelsRole;
 use App\Repositories\User\UserRepository;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -28,12 +29,21 @@ class RegisterController extends Controller
     public function __invoke(RegisterRequest $request)
     {
         $request->merge([
-            'password' => bcrypt(Str::random(8))
+            'password' => Hash::make($request->input('password')),
         ]);
+
+        $validated = $request->validated();
+
+        if ($validated['password'] !== $validated['password_confirmation']) {
+            return response()->json([
+                'message' => 'Konfirmasi password tidak sesuai',
+                'status_code' => 422
+            ], 422);
+        }
 
         $user = DB::transaction(function () use ($request) {
             $role = $this->roleRepository->findById(ModelsRole::GUEST, 'api');
-            $user = $this->userRepository->create($request->all());
+            $user = $this->userRepository->create($request->validated());
 
             $user->assignRole($role);
             $this->sendEmail($user->email);
