@@ -1,31 +1,199 @@
 <script>
-import Navbar from "./components/Navbar.vue";
-import Sidebar from "./components/Sidebar.vue";
-import Footer from "./components/Footer.vue";
-
-export default {
-    components: {
-        Navbar,
-        Sidebar,
-        Footer,
-    },
-};
+    export default {
+        data() {
+            return {
+                currentTime: null,
+                examPacketId: null,
+                examId: null,
+                exam: {},
+                examPacket: {},
+                participantAnswer: "",
+            };
+        },
+        beforeMount() {
+            setTimeout(() => {
+                this.examId = this.$route.params.examId;
+                this.examPacketId = this.$route.params.examPacketId;
+                this.getExam();
+                this.getExamPacket();
+            }, 1000);
+        },
+        mounted() {
+            this.updateTime(); // Call the updateTime method initially
+            setInterval(this.updateTime, 1000); // Update time every second
+        },
+        methods: {
+            getExamPacket() {
+                this.$store
+                    .dispatch("showData", ["exam-packet", this.examPacketId])
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((err) => {});
+            },
+            getExam() {
+                this.$store
+                    .dispatch("showData", ["exam", this.examId])
+                    .then((response) => {
+                        this.exam = response.data;
+                    })
+                    .catch((err) => {});
+            },
+            updateTime() {
+                const date = new Date();
+                const hours = this.formatTime(date.getHours());
+                const minutes = this.formatTime(date.getMinutes());
+                const seconds = this.formatTime(date.getSeconds());
+                this.currentTime = `${hours}:${minutes}:${seconds}`;
+            },
+            formatTime(time) {
+                return time < 10 ? `0${time}` : time;
+            },
+        },
+    };
 </script>
-
 <template>
-    <div class="main-wrapper main-wrapper-1">
-        <div class="navbar-bg"></div>
-        <Navbar />
-        <Sidebar />
-        <!-- Main Content -->
-        <router-view></router-view>
-        <Footer />
+    <div class="wrapper">
+        <div class="leftside-menu">
+            <div class="h-100" id="leftside-menu-container" data-simplebar="">
+                <ul>
+                    <li class="active">1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-page">
+            <div class="content">
+                <div class="navbar-custom">
+                    <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="notification-list pt-2">
+                            <span class="btn btn-success disabled">{{
+                                currentTime
+                            }}</span>
+                        </li>
+                    </ul>
+                    <button class="button-menu-mobile open-left">
+                        <i class="mdi mdi-menu"></i>
+                    </button>
+                </div>
+
+                <div class="container-fluid mt-3" id="contentQuestion">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Pertanyaan</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>{{ exam.question }}</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Jawaban</h4>
+                                </div>
+                                <div class="card-body">
+                                    <ul>
+                                        <li
+                                            v-for="(
+                                                    answer, index
+                                                ) in exam.answers"
+                                            :key="index"
+                                            class="shadow-sm d-flex align-items-center justify-content-between"
+                                        >
+                                            <p class="m-0">
+                                                {{
+                                                    answer.answer == 1
+                                                        ? "Benar"
+                                                        : "Salah"
+                                                }}
+                                            </p>
+                                            <input
+                                                type="radio"
+                                                :value="answer.uuid"
+                                                :name="`answer_${index}`"
+                                                v-model="participantAnswer"
+                                            />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <footer class="footer bg-white">
+        <div class="container-fluid">
+            <div class="row"></div>
+        </div>
+    </footer>
 </template>
 
-<style lang="scss">
-#app .main-footer {
-    padding: 20px 30px 20px 280px;
-    margin-top: 40px;
-}
+<style scoped>
+    .sidebar-enable .leftside-menu ul {
+        padding-right: 0.88rem;
+        padding-left: 1rem;
+    }
+    .sidebar-enable .leftside-menu ul li {
+        width: 100%;
+    }
+    .leftside-menu ul {
+        flex-wrap: wrap;
+        padding-right: 2rem;
+        display: flex;
+        justify-content: space-between;
+        list-style-type: none;
+    }
+    .leftside-menu ul li {
+        padding: 10px;
+        margin-bottom: 20px;
+        margin-right: 5px;
+        width: 25%;
+        border: 1px solid white;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+    }
+    .leftside-menu ul li.active {
+        /* border: 1px solid #0acf97;
+        background-color: #0acf97; */
+        border: 1px solid #727cf5;
+        background-color: #727cf5;
+    }
+
+    #contentQuestion .card-body ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    #contentQuestion .card-body ul li {
+        margin-bottom: 1rem;
+        padding: 10px;
+        padding-inline: 20px;
+        border: 1px solid #fafbfe;
+        border-radius: 20px;
+    }
+    #contentQuestion .card-body ul li:hover {
+        background-color: #fafbfe;
+    }
+    #contentQuestion .card-body ul li input {
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+    }
 </style>

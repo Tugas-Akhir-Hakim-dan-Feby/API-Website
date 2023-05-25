@@ -21,6 +21,7 @@ export default {
                 search: "",
             },
             metaPagination: {},
+            roles: [],
             msg: "",
             uuid: null,
             isLoading: false,
@@ -29,10 +30,19 @@ export default {
     },
     mounted() {
         this.getExamPackets();
+        this.getUser();
     },
     methods: {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
+        },
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.roles = response.roles;
+                })
+                .catch((err) => {});
         },
         getExamPackets() {
             this.isLoading = true;
@@ -41,10 +51,12 @@ export default {
                 `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
-            ].join("&");
+            ];
+
+            params.push([`sort_direction=desc`]);
 
             this.$store
-                .dispatch("getData", ["exam-packet", params])
+                .dispatch("getData", ["exam-packet", params.join("&")])
                 .then((response) => {
                     this.isLoading = false;
                     this.examPackets = response.data;
@@ -75,7 +87,7 @@ export default {
                 diff += 1440;
             }
 
-            return diff;
+            return diff.toFixed(0);
         },
         handleDelete(uuid) {
             this.uuid = uuid;
@@ -121,6 +133,18 @@ export default {
                     console.log(error);
                 });
         },
+        checkRoleWelderMember() {
+            if (!this.roles.includes(this.$store.state.MEMBER_WELDER)) {
+                return true;
+            }
+            return false;
+        },
+        checkSchedule(schedule) {
+            let now = dayjs();
+            schedule = dayjs(schedule).locale("id");
+
+            return now.isSame(schedule, "day");
+        },
     },
     components: { PageTitle, Success, Pagination, Confirm, Loader },
 };
@@ -140,6 +164,7 @@ export default {
                     <router-link
                         :to="{ name: 'Exam Packet Create' }"
                         class="btn btn-primary mb-2 me-3"
+                        v-if="checkRoleWelderMember()"
                     >
                         Tambah Paket
                     </router-link>
@@ -163,7 +188,7 @@ export default {
                             <th>Nama Paket</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
-                            <th>Status</th>
+                            <th v-if="checkRoleWelderMember()">Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -185,7 +210,7 @@ export default {
                                     )} Menit)`
                                 "
                             ></td>
-                            <td>
+                            <td v-if="checkRoleWelderMember()">
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -202,7 +227,7 @@ export default {
                                     />
                                 </div>
                             </td>
-                            <td>
+                            <td v-if="checkRoleWelderMember()">
                                 <router-link
                                     :to="{
                                         name: 'Exam Packet Detail',
@@ -218,6 +243,17 @@ export default {
                                 >
                                     Hapus
                                 </button>
+                            </td>
+                            <td v-else>
+                                <a
+                                    :href="`/attempt/${examPacket.uuid}/execution/${examPacket.exam?.uuid}`"
+                                    @click.native="reloadPage"
+                                    class="btn btn-primary btn-sm"
+                                    >Kerjakan</a
+                                >
+                                <!-- <span v-else class="badge bg-success"
+                                    >Sudah Dikerjakan</span
+                                > -->
                             </td>
                         </tr>
                     </tbody>
