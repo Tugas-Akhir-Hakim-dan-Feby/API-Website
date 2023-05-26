@@ -103,6 +103,19 @@ export default {
                             v-if="!isLoading">
                                 Lanjutkan
                             </button>
+                            <button
+                                class="btn btn-primary form-control"
+                                type="button"
+                                disabled
+                                v-if="isLoading"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
                         </div>
                         <div class="mb-3 text-center">
                             <router-link :to="{ name: 'Login' }"
