@@ -10,7 +10,7 @@ class Role
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with(['welderMember']);
+        $query->with(['welderMember.welderSkill']);
         $query->whereHas('roles', function ($query) {
             $query->whereIn('id', [ModelsRole::MEMBER_WELDER]);
         });
