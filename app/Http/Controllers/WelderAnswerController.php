@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Filters\WelderAnswer\ExamId;
 use App\Http\Requests\WelderAnswer\WelderAnswerCreateRequest;
 use App\Http\Resources\WelderAnswer\WelderAnswerCollection;
+use App\Http\Resources\WelderAnswer\WelderAnswerCorrection;
 use App\Http\Resources\WelderAnswer\WelderAnswerDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\WelderAnswer;
 use App\Repositories\Answer\AnswerRepository;
 use App\Repositories\Exam\ExamRepository;
+use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\WelderAnswer\WelderAnswerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -21,16 +23,18 @@ class WelderAnswerController extends Controller
 {
     use MessageFixer;
 
-    protected $answerRepository, $welderAnswerRepository, $examRepository;
+    protected $answerRepository, $welderAnswerRepository, $examRepository, $examPacketRepository;
 
     public function __construct(
         AnswerRepository $answerRepository,
         WelderAnswerRepository $welderAnswerRepository,
-        ExamRepository $examRepository
+        ExamRepository $examRepository,
+        ExamPacketRepository $examPacketRepository
     ) {
         $this->answerRepository = $answerRepository;
         $this->welderAnswerRepository = $welderAnswerRepository;
         $this->examRepository = $examRepository;
+        $this->examPacketRepository = $examPacketRepository;
     }
 
     public function index(Request $request)
@@ -43,6 +47,13 @@ class WelderAnswerController extends Controller
             ->thenReturn()->get();
 
         return new WelderAnswerCollection($examPackets);
+    }
+
+    public function correctAnswer(string $examPacketId)
+    {
+        $examPacket = $this->examPacketRepository->findOrFail($examPacketId);
+
+        return new WelderAnswerCorrection($examPacket);
     }
 
     public function create()

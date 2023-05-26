@@ -35,6 +35,8 @@ export default {
     },
     mounted() {
         this.numbering = localStorage.getItem("numbering");
+        $("body").on("keydown", this.onDisabled);
+        document.addEventListener("visibilitychange", this.onDisabled);
     },
     watch: {
         currentTime: {
@@ -137,6 +139,26 @@ export default {
             } else {
                 this.getExams();
             }
+        },
+        onDisabled(e) {
+            e.preventDefault();
+
+            if (
+                (e.ctrlKey || e.metaKey) &&
+                (e.key == "p" ||
+                    e.keyCode == 87 ||
+                    e.charCode == 16 ||
+                    e.charCode == 112 ||
+                    e.charCode == 9 ||
+                    e.keyCode == 80)
+            ) {
+                e.preventDefault();
+            }
+
+            iziToast.error({
+                message: "harap kerjakan dengan jujur!",
+                position: "topCenter",
+            });
         },
         handleSubmit() {
             this.isLoading = true;

@@ -133,17 +133,27 @@ export default {
                     console.log(error);
                 });
         },
-        checkRoleWelderMember() {
-            if (!this.roles.includes(this.$store.state.MEMBER_WELDER)) {
+        checkRoleWelderMember(role) {
+            if (this.roles.includes(role)) {
                 return true;
             }
             return false;
         },
-        checkSchedule(schedule) {
+        checkSchedule(schedule, timing) {
             let now = dayjs();
             schedule = dayjs(schedule).locale("id");
 
-            return now.isSame(schedule, "day");
+            let nowTime = now.hour() + ":" + now.minute();
+
+            if (
+                timing[1] <= nowTime &&
+                nowTime >= timing[0] &&
+                now.isSame(schedule, "day")
+            ) {
+                return true;
+            }
+
+            return false;
         },
     },
     components: { PageTitle, Success, Pagination, Confirm, Loader },
@@ -153,10 +163,9 @@ export default {
 <template>
     <PageTitle title="Kumpulan Paket Pertanyaan" />
 
-    <div class="card">
-        <div class="card-body position-relative">
-            <Loader v-if="isLoading" />
-
+    <div class="card position-relative">
+        <Loader v-if="isLoading" />
+        <div class="card-body">
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
@@ -164,7 +173,11 @@ export default {
                     <router-link
                         :to="{ name: 'Exam Packet Create' }"
                         class="btn btn-primary mb-2 me-3"
-                        v-if="checkRoleWelderMember()"
+                        v-if="
+                            checkRoleWelderMember($store.state.ADMIN_APP) ||
+                            checkRoleWelderMember($store.state.EXPERT) ||
+                            checkRoleWelderMember($store.state.ADMIN_HUB)
+                        "
                     >
                         Tambah Paket
                     </router-link>
@@ -188,7 +201,21 @@ export default {
                             <th>Nama Paket</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
-                            <th v-if="checkRoleWelderMember()">Status</th>
+                            <th
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
+                                Status
+                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -210,7 +237,19 @@ export default {
                                     )} Menit)`
                                 "
                             ></td>
-                            <td v-if="checkRoleWelderMember()">
+                            <td
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -227,7 +266,19 @@ export default {
                                     />
                                 </div>
                             </td>
-                            <td v-if="checkRoleWelderMember()">
+                            <td
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
                                 <router-link
                                     :to="{
                                         name: 'Exam Packet Detail',
@@ -249,11 +300,25 @@ export default {
                                     :href="`/attempt/${examPacket.uuid}/execution/${examPacket.exam?.uuid}`"
                                     @click.native="reloadPage"
                                     class="btn btn-primary btn-sm"
+                                    v-if="
+                                        checkSchedule(examPacket.schedule, [
+                                            examPacket.startTime,
+                                            examPacket.endTime,
+                                        ])
+                                    "
                                     >Kerjakan</a
                                 >
-                                <!-- <span v-else class="badge bg-success"
-                                    >Sudah Dikerjakan</span
-                                > -->
+                                <router-link
+                                    v-else
+                                    :to="{
+                                        name: 'Exam Packet Success',
+                                        params: {
+                                            examPacketId: examPacket.uuid,
+                                        },
+                                    }"
+                                    class="btn btn-sm btn-info"
+                                    >Detail</router-link
+                                >
                             </td>
                         </tr>
                     </tbody>
