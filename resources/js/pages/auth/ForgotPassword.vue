@@ -1,9 +1,38 @@
 <script>
 import Success from "../../components/notifications/Success.vue";
 export default {
+
+    data() {
+        return {
+            form: {
+                email: "",
+            },
+            errors: {},
+            msg: "",
+            isLoading: false,
+        };
+    },
     methods: {
         handleSubmit() {
-            $("#successModal").modal("show");
+            this.errors = {};
+            this.isLoading = true;
+
+            this.$store
+                .dispatch("postData", ["auth/forgot-password", this.form])
+                .then((response) => {
+                    this.isLoading = false;
+                    Cookie.set("token", response.token);
+                    window.location.replace("/");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    if (error.response.data.messages) {
+                        this.errors = error.response.data.messages;
+                    } else {
+                        $("#errorModal").modal("show");
+                        this.msg = error.response.data.message;
+                    }
+                });
         },
     },
 
@@ -56,11 +85,22 @@ export default {
                                 type="email"
                                 id="email"
                                 autofocus
+                                v-model="form.email"
+                                :class="{ 'is-invalid': errors.email }"
                                 class="form-control"
+                                :disabled="isLoading"
                             />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.email"
+                                v-for="(error, index) in errors.email"
+                                :key="index"
+                                v-html="error"
+                            ></div>
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-primary btn-block">
+                            <button class="btn btn-primary btn-block"
+                            v-if="!isLoading">
                                 Lanjutkan
                             </button>
                         </div>
