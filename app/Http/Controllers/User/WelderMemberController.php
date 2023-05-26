@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\WelderMember\Role;
+use App\Http\Filters\User\WelderMember\WelderSkillId;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
 use App\Http\Traits\MessageFixer;
@@ -47,7 +48,8 @@ class WelderMemberController extends Controller
         $welderMembers = app(Pipeline::class)
             ->send($this->userRepository->query())
             ->through([
-                Role::class
+                Role::class,
+                WelderSkillId::class
             ])
             ->thenReturn()
             ->paginate($request->per_page);
