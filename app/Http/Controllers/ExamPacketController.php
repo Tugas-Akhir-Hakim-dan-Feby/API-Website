@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\ExamPacket\Search;
+use App\Http\Filters\ExamPacket\Sort;
 use App\Http\Requests\ExamPacket\ExamPacketRequestStore;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
 use App\Http\Resources\ExamPacket\ExamPacketDetail;
@@ -30,9 +31,11 @@ class ExamPacketController extends Controller
         $examPackets = app(Pipeline::class)
             ->send($this->examPacketRepository->query())
             ->through([
-                Search::class
+                Search::class,
+                Sort::class
             ])
             ->thenReturn()
+            ->with(["exam"])
             ->paginate($request->per_page);
 
         return new ExamPacketCollection($examPackets);

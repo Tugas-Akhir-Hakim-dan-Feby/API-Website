@@ -21,6 +21,7 @@ export default {
                 search: "",
             },
             metaPagination: {},
+            roles: [],
             msg: "",
             uuid: null,
             isLoading: false,
@@ -29,10 +30,19 @@ export default {
     },
     mounted() {
         this.getExamPackets();
+        this.getUser();
     },
     methods: {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
+        },
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.roles = response.roles;
+                })
+                .catch((err) => {});
         },
         getExamPackets() {
             this.isLoading = true;
@@ -41,10 +51,12 @@ export default {
                 `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
-            ].join("&");
+            ];
+
+            params.push([`sort_direction=desc`]);
 
             this.$store
-                .dispatch("getData", ["exam-packet", params])
+                .dispatch("getData", ["exam-packet", params.join("&")])
                 .then((response) => {
                     this.isLoading = false;
                     this.examPackets = response.data;
@@ -75,7 +87,7 @@ export default {
                 diff += 1440;
             }
 
-            return diff;
+            return diff.toFixed(0);
         },
         handleDelete(uuid) {
             this.uuid = uuid;
@@ -121,6 +133,28 @@ export default {
                     console.log(error);
                 });
         },
+        checkRoleWelderMember(role) {
+            if (this.roles.includes(role)) {
+                return true;
+            }
+            return false;
+        },
+        checkSchedule(schedule, timing) {
+            let now = dayjs();
+            schedule = dayjs(schedule).locale("id");
+
+            let nowTime = now.hour() + ":" + now.minute();
+
+            if (
+                timing[1] <= nowTime &&
+                nowTime >= timing[0] &&
+                now.isSame(schedule, "day")
+            ) {
+                return true;
+            }
+
+            return false;
+        },
     },
     components: { PageTitle, Success, Pagination, Confirm, Loader },
 };
@@ -129,10 +163,9 @@ export default {
 <template>
     <PageTitle title="Kumpulan Paket Pertanyaan" />
 
-    <div class="card">
-        <div class="card-body position-relative">
-            <Loader v-if="isLoading" />
-
+    <div class="card position-relative">
+        <Loader v-if="isLoading" />
+        <div class="card-body">
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
@@ -140,6 +173,11 @@ export default {
                     <router-link
                         :to="{ name: 'Exam Packet Create' }"
                         class="btn btn-primary mb-2 me-3"
+                        v-if="
+                            checkRoleWelderMember($store.state.ADMIN_APP) ||
+                            checkRoleWelderMember($store.state.EXPERT) ||
+                            checkRoleWelderMember($store.state.ADMIN_HUB)
+                        "
                     >
                         Tambah Paket
                     </router-link>
@@ -163,7 +201,21 @@ export default {
                             <th>Nama Paket</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
-                            <th>Status</th>
+                            <th
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
+                                Status
+                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -185,7 +237,19 @@ export default {
                                     )} Menit)`
                                 "
                             ></td>
-                            <td>
+                            <td
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -202,7 +266,19 @@ export default {
                                     />
                                 </div>
                             </td>
-                            <td>
+                            <td
+                                v-if="
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_APP
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.EXPERT
+                                    ) ||
+                                    checkRoleWelderMember(
+                                        $store.state.ADMIN_HUB
+                                    )
+                                "
+                            >
                                 <router-link
                                     :to="{
                                         name: 'Exam Packet Detail',
@@ -218,6 +294,31 @@ export default {
                                 >
                                     Hapus
                                 </button>
+                            </td>
+                            <td v-else>
+                                <a
+                                    :href="`/attempt/${examPacket.uuid}/execution/${examPacket.exam?.uuid}`"
+                                    @click.native="reloadPage"
+                                    class="btn btn-primary btn-sm"
+                                    v-if="
+                                        checkSchedule(examPacket.schedule, [
+                                            examPacket.startTime,
+                                            examPacket.endTime,
+                                        ])
+                                    "
+                                    >Kerjakan</a
+                                >
+                                <router-link
+                                    v-else
+                                    :to="{
+                                        name: 'Exam Packet Success',
+                                        params: {
+                                            examPacketId: examPacket.uuid,
+                                        },
+                                    }"
+                                    class="btn btn-sm btn-info"
+                                    >Detail</router-link
+                                >
                             </td>
                         </tr>
                     </tbody>

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\Exam;
+namespace App\Repositories\WelderAnswer;
 
 use LaravelEasyRepository\Implementations\Eloquent;
-use App\Models\Exam;
+use App\Models\WelderAnswer;
 
-class ExamRepositoryImplement extends Eloquent implements ExamRepository
+class WelderAnswerRepositoryImplement extends Eloquent implements WelderAnswerRepository
 {
 
     /**
@@ -15,7 +15,7 @@ class ExamRepositoryImplement extends Eloquent implements ExamRepository
      */
     protected $model;
 
-    public function __construct(Exam $model)
+    public function __construct(WelderAnswer $model)
     {
         $this->model = $model;
     }
@@ -30,14 +30,8 @@ class ExamRepositoryImplement extends Eloquent implements ExamRepository
         return $this->model->where($data);
     }
 
-    public function findOrFail($id)
+    public function updateOrCreate(array $data1, array $data2)
     {
-        $exam = $this->model->where("uuid", $id)->first();
-
-        if (!$exam) {
-            abort(404);
-        }
-
-        return $exam;
+        return $this->model->updateOrCreate($data1, $data2);
     }
 }

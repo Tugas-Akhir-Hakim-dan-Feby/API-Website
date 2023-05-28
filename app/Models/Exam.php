@@ -29,9 +29,9 @@ class Exam extends Model
         "exam_packet_id",
     ];
 
-    public function correctAnswer(): HasOne
+    public function welderAnswer(): HasOne
     {
-        return $this->hasOne(Answer::class, "id", "answer_id");
+        return $this->hasOne(WelderAnswer::class, "exam_id", "id");
     }
 
     public function answers(): HasMany

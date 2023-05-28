@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\Exam\ByExamPacketId;
 use App\Http\Filters\Exam\Search;
 use App\Http\Requests\Exam\ExamRequest;
 use App\Http\Resources\Exam\ExamCollection;
@@ -32,7 +33,8 @@ class ExamController extends Controller
         $exams = app(Pipeline::class)
             ->send($this->examRepository->query())
             ->through([
-                Search::class
+                Search::class,
+                ByExamPacketId::class
             ])
             ->thenReturn()
             ->paginate($request->per_page);
@@ -77,7 +79,7 @@ class ExamController extends Controller
     public function show($id)
     {
         $exam = $this->examRepository->findOrFail($id);
-        $exam->load(["answers", "correctAnswer"]);
+        $exam->load(["answers", "welderAnswer.answer"]);
 
         return new ExamDetail($exam);
     }

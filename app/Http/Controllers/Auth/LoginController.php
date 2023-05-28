@@ -41,6 +41,18 @@ class LoginController extends Controller
                 return $this->warningMessage('harap verifikasi email terlebih dahulu');
             }
 
+            if ($this->checkRoleId($user->roles->pluck('id'), User::ADMIN_PUSAT)) {
+                if ($user->adminHub->status == 0) {
+                    return $this->warningMessage('akun anda di nonaktifkan Admin, harap hubungi Admin API-IWS untuk mengaktifkan akun anda');
+                }
+            }
+
+            if ($this->checkRoleId($user->roles->pluck('id'), User::ADMIN_CABANG)) {
+                if ($user->adminBranch->status == 0) {
+                    return $this->warningMessage('akun anda di nonaktifkan Admin, harap hubungi Admin API-IWS untuk mengaktifkan akun anda');
+                }
+            }
+
             if ($this->checkRoleId($user->roles->pluck('id'), User::MEMBER_WELDER)) {
                 if ($user->welderMember->status == 0) {
                     return $this->warningMessage('akun anda di nonaktifkan Admin, harap hubungi Admin API-IWS untuk mengaktifkan akun anda');
