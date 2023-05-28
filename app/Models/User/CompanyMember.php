@@ -31,6 +31,11 @@ class CompanyMember extends Model
         "user_id",
     ];
 
+    public function getCompanyLegalityAttribute($companyLegality)
+    {
+        return asset('storage/' . $companyLegality);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id', 'user_id');

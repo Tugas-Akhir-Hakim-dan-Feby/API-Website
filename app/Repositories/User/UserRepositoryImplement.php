@@ -30,6 +30,11 @@ class UserRepositoryImplement extends Eloquent implements UserRepository
         return $this->model->where($data)->first();
     }
 
+    public function findOrFail($id)
+    {
+        return $this->model->where('uuid', $id)->first();
+    }
+
     public function query()
     {
         return $this->model->query();

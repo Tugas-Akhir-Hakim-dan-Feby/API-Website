@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Filters\User\CompanyMember\Role as CompanyMemberRole;
+use App\Http\Filters\User\CompanyMember\Search;
 use App\Http\Requests\User\CompanyMember\CompanyRequestStore;
+use App\Http\Resources\User\CompanyMemberCollection;
+use App\Http\Resources\User\CompanyMemberDetail;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
 use App\Models\User;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,9 +31,18 @@ class CompanyMemberController extends Controller
         $this->userRepository = $userRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $companyMembers = app(Pipeline::class)
+            ->send($this->userRepository->query())
+            ->through([
+                CompanyMemberRole::class,
+                Search::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
+        return new CompanyMemberCollection($companyMembers);
     }
 
     public function create()
@@ -75,7 +89,14 @@ class CompanyMemberController extends Controller
 
     public function show($id)
     {
-        //
+        $companyMember = $this->userRepository->findOrFail($id);
+        if (!$companyMember) {
+            abort(404);
+        }
+
+        $companyMember->load(["companyMember"]);
+
+        return new CompanyMemberDetail($companyMember);
     }
 
     public function edit($id)

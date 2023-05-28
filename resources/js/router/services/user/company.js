@@ -15,13 +15,13 @@ export default [
     //         // requiresAuth: true,
     //     },
     // },
-    // {
-    //     path: "/user/company/:id/edit",
-    //     component: import("../../../pages/user/company/Edit.vue"),
-    //     name: "User Company Edit",
-    //     meta: {
-    //         // requiresAuth: true,
-    //     },
-    //     props: true,
-    // },
+    {
+        path: "/user/company/:id",
+        component: import("../../../pages/user/company/Show.vue"),
+        name: "User Company Show",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
 ];

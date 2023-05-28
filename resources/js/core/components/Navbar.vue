@@ -21,7 +21,7 @@ export default {
         checkRoleExpert() {
             if (
                 !this.roles.includes(this.$store.state.PAKAR) &&
-                this.roles.includes(this.$store.state.MEMBER_WELDER)
+                !this.roles.includes(this.$store.state.MEMBER_WELDER)
             ) {
                 return true;
             }
