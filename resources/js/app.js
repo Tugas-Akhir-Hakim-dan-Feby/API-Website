@@ -10,6 +10,9 @@ import { QuillEditor } from "@vueup/vue-quill";
 import router from "./router";
 import store from "./store";
 
+import VueChartkick from "vue-chartkick";
+import "chartkick/chart.js";
+
 import App from "./core/App.vue";
 import Auth from "./core/Auth.vue";
 import Attempt from "./core/Attempt.vue";
@@ -20,6 +23,7 @@ createApp(App)
     .use(router)
     .use(store)
     .use(iziToast)
+    .use(VueChartkick)
     .component("QuillEditor", QuillEditor)
     .mount("#app");
 

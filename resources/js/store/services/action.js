@@ -29,6 +29,19 @@ const process = {
                 );
             });
         },
+        showChart(context, param) {
+            return new Promise((resolve, reject) => {
+                Api.init();
+                Api.getChart(param[0] + "?" + param[1]).then(
+                    (response) => {
+                        resolve(response.data);
+                    },
+                    (error) => {
+                        reject(error);
+                    }
+                );
+            });
+        },
         postData(context, param) {
             return new Promise((resolve, reject) => {
                 Api.init();

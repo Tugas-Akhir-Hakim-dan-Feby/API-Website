@@ -1,11 +1,16 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
 import jsCookie from "js-cookie";
+import Admin from "./Admin.vue";
+import Expert from "./Expert.vue";
+import WelderMember from "./WelderMember.vue";
+import CompanyMember from "./CompanyMember.vue";
 
 export default {
     data() {
         return {
             user: {},
+            roles: {},
             isWarning: false,
             isSuccess: false,
             isNotExpert: false,
@@ -23,6 +28,7 @@ export default {
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
                     this.user = response.user;
+                    this.roles = response.roles;
 
                     if (
                         response.user.expert &&
@@ -44,8 +50,20 @@ export default {
         removeTokenNotExpert() {
             jsCookie.remove("isNotExpert");
         },
+        checkRole() {
+            if (
+                Array.isArray(this.roles) &&
+                (this.roles.includes(this.$store.state.ADMIN_HUB) ||
+                    this.roles.includes(this.$store.state.ADMIN_BRANCH) ||
+                    this.roles.includes(this.$store.state.ADMIN_APP))
+            ) {
+                return true;
+            }
+
+            return false;
+        },
     },
-    components: { PageTitle },
+    components: { PageTitle, Admin, Expert, WelderMember, CompanyMember },
 };
 </script>
 
@@ -87,87 +105,11 @@ export default {
         <strong>API-IWS</strong> !!!
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card widget-inline">
-                <div class="card-body p-0">
-                    <div class="row g-0">
-                        <div class="col-sm-6 col-lg-3">
-                            <router-link :to="{ name: 'User Branch' }"
-                                ><div
-                                    class="card rounded-0 shadow-none m-0 border-start border-light"
-                                >
-                                    <div class="card-body text-center">
-                                        <i
-                                            class="ri-list-check-2 text-muted font-24"
-                                        ></i>
-                                        <h3 class="text-dark">
-                                            <span>71</span>
-                                        </h3>
-                                        <p class="text-muted font-15 mb-0">
-                                            Jumlah Pengguna API Cabang
-                                        </p>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
+    <WelderMember :user="user" />
 
-                        <div class="col-sm-6 col-lg-3">
-                            <router-link :to="{ name: 'User Expert' }">
-                                <div
-                                    class="card rounded-0 shadow-none m-0 border-start border-light"
-                                >
-                                    <div class="card-body text-center">
-                                        <i
-                                            class="ri-group-line text-muted font-24"
-                                        ></i>
-                                        <h3 class="text-dark">
-                                            <span>31</span>
-                                        </h3>
-                                        <p class="text-muted font-15 mb-0">
-                                            Jumlah Pengguna Pakar
-                                        </p>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
+    <Admin v-if="checkRole()" />
 
-                        <div class="col-sm-6 col-lg-3">
-                            <router-link :to="{ name: 'User Company' }">
-                                <div
-                                    class="card rounded-0 shadow-none m-0 border-start border-light"
-                                >
-                                    <div class="card-body text-center">
-                                        <h3 class="text-dark">
-                                            <span>9</span>
-                                        </h3>
-                                        <p class="text-muted font-15 mb-0">
-                                            Jumlah Perusahaan Member
-                                        </p>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
+    <Expert />
 
-                        <div class="col-sm-6 col-lg-3">
-                            <router-link :to="{ name: 'User Member' }">
-                                <div
-                                    class="card rounded-0 shadow-none m-0 border-start border-light"
-                                >
-                                    <div class="card-body text-center">
-                                        <h3 class="text-dark">
-                                            <span>90</span>
-                                        </h3>
-                                        <p class="text-muted font-15 mb-0">
-                                            Jumlah Welder Member
-                                        </p>
-                                    </div>
-                                </div>
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <CompanyMember />
 </template>

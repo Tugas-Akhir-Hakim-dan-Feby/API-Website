@@ -28,6 +28,16 @@ const Api = {
             ],
         });
     },
+    getChart(resource, params) {
+        return axios.get(`${resource}`, {
+            params: params,
+            transformResponse: [
+                (data) => {
+                    return JSON.parse(data);
+                },
+            ],
+        });
+    },
     post(resource, params) {
         return axios.post(
             `${resource}`,
