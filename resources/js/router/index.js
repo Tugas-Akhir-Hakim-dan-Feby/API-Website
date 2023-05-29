@@ -14,6 +14,9 @@ router.beforeEach((to, from, next) => {
         if (!token) {
             window.location.href = "/auth/login";
         } else {
+            if (to.meta.middleware) {
+                to.meta.middleware(to, from.next);
+            }
             next();
         }
     }
@@ -22,6 +25,9 @@ router.beforeEach((to, from, next) => {
         if (token) {
             window.location.href = "/";
         } else {
+            if (to.meta.middleware) {
+                to.meta.middleware(to, from.next);
+            }
             next();
         }
     }

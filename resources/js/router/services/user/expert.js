@@ -1,3 +1,6 @@
+import { checkRoles } from "../../../store/utils/middleware";
+import store from "../../../store";
+
 export default [
     {
         path: "/user/expert",
@@ -6,6 +9,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
     },
     {
         path: "/user/expert/create",
@@ -14,6 +18,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
     },
     {
         path: "/user/expert/:id",
@@ -23,6 +28,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
     },
     {
         path: "/user/expert/:id/edit",
@@ -32,5 +38,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
     },
 ];

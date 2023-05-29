@@ -8,6 +8,7 @@ const store = createStore({
         ticket,
     },
     state: {
+        USER: null,
         ADMIN_APP: "Admin App",
         ADMIN_HUB: "Admin Pusat",
         ADMIN_BRANCH: "Admin Cabang",
@@ -17,6 +18,11 @@ const store = createStore({
         GUEST: "Guest",
         PAID: "PAID",
         PENDING: "PENDING",
+    },
+    mutations: {
+        setUser(state, user) {
+            state.USER = user;
+        },
     },
 });
 

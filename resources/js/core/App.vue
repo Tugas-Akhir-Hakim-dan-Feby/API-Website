@@ -3,6 +3,7 @@ import Footer from "./components/Footer.vue";
 import LeftSidebar from "./components/LeftSidebar.vue";
 import Navbar from "./components/Navbar.vue";
 import Cookie from "js-cookie";
+import { mapMutations } from "vuex";
 
 export default {
     data() {
@@ -11,6 +12,7 @@ export default {
             roles: {},
         };
     },
+    computed: {},
     watch: {
         "$route.params.search": {
             handler: function (search) {
@@ -19,6 +21,7 @@ export default {
                     .then((response) => {
                         this.user = response.user;
                         this.roles = response.roles;
+                        this.$store.commit("setUser", response.user);
                     })
                     .catch((error) => {
                         this.error = error.response.data;
