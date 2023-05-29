@@ -87,12 +87,12 @@ export default {
                         <ul class="side-nav-second-level">
                             <li>
                                 <router-link :to="{ name: 'User Hub' }"
-                                    >API Pusat</router-link
+                                    >Admin Pusat</router-link
                                 >
                             </li>
                             <li>
                                 <router-link :to="{ name: 'User Branch' }"
-                                    >API Cabang</router-link
+                                    >Admin Cabang</router-link
                                 >
                             </li>
                             <li>
