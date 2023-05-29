@@ -11,21 +11,14 @@ export default [
         },
         beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
     },
-    // {
-    //     path: "/user/company/create",
-    //     component: import("../../../pages/user/company/Create.vue"),
-    //     name: "User Company Create",
-    //     meta: {
-    //         // requiresAuth: true,
-    //     },
-    // },
-    // {
-    //     path: "/user/company/:id/edit",
-    //     component: import("../../../pages/user/company/Edit.vue"),
-    //     name: "User Company Edit",
-    //     meta: {
-    //         // requiresAuth: true,
-    //     },
-    //     props: true,
-    // },
+    {
+        path: "/user/member/:id",
+        component: () => import("../../../pages/user/member/Show.vue"),
+        name: "User Member Show",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+    },
 ];

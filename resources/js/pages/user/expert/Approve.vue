@@ -121,7 +121,6 @@ export default {
                     <th>Email Pengguna</th>
                     <th>Jenis Keahlian</th>
                     <th>Instansi</th>
-                    <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -132,22 +131,6 @@ export default {
                     <td v-html="user.email"></td>
                     <td v-html="user.welderMember?.welderSkill?.skillName"></td>
                     <td v-html="user.expert?.instance"></td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                :checked="user.welderMember?.status"
-                                @click="
-                                    onUpdateStatus(
-                                        user.uuid,
-                                        user.welderMember?.status
-                                    )
-                                "
-                            />
-                        </div>
-                    </td>
                     <td>
                         <router-link
                             :to="{

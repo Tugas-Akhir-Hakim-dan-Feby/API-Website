@@ -84,7 +84,7 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna API Pusat'" />
+    <PageTitle :title="'Daftar Pengguna Admin Pusat'" />
 
     <div class="card">
         <div class="card-body position-relative">

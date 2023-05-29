@@ -102,7 +102,7 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna API Cabang'" />
+    <PageTitle :title="'Daftar Pengguna Admin Cabang'" />
 
     <Error v-if="isError" :message="msg" />
 

@@ -7,6 +7,7 @@ use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Filters\User\WelderMember\WelderSkillId;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
+use App\Http\Resources\User\WelderMemberDetail;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
@@ -109,46 +110,28 @@ class WelderMemberController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User\WelderMember  $welderMember
-     * @return \Illuminate\Http\Response
-     */
-    public function show(WelderMember $welderMember)
+    public function show(string $id)
     {
-        //
+        $welderMember = $this->userRepository->findOrFail($id);
+        if (!$welderMember) {
+            abort(404);
+        }
+
+        $welderMember->load(["welderMember.welderSkill"]);
+
+        return new WelderMemberDetail($welderMember);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User\WelderMember  $welderMember
-     * @return \Illuminate\Http\Response
-     */
     public function edit(WelderMember $welderMember)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User\WelderMember  $welderMember
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, WelderMember $welderMember)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User\WelderMember  $welderMember
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(WelderMember $welderMember)
     {
         //
