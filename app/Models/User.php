@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(AdminHub::class, 'user_id', 'id');
     }
+
+    public function branchadmin(): HasOne
+    {
+        return $this->hasOne(BranchAdmin::class, 'user_id', 'id');
+    }
 }
