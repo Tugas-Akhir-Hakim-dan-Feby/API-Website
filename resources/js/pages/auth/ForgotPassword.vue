@@ -20,9 +20,9 @@ export default {
                 class="col-lg-8 col-12 order-lg-1 order-1 min-vh-100 background-walk-y position-relative overlay-gradient-bottom"
             >
                 <img
-                    class="p-5"
-                    style="height: 100%"
-                    src="../../../images/api-iws.png"
+                    class=""
+                    style="height: 100%; width: 100%"
+                    src="../../../images/hero.png"
                     alt=""
                 />
             </div>

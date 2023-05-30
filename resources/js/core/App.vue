@@ -26,6 +26,7 @@ export default {
                     .catch((error) => {
                         this.error = error.response.data;
                         Cookie.remove("token");
+                        window.location.replace("/auth/login");
                     });
                 if (!Cookie.get("token")) {
                     window.location.replace("/auth/login");

@@ -53,14 +53,20 @@ export default {
 
                 <li
                     class="side-nav-title side-nav-item"
-                    v-if="checkRole($store.state.ADMIN_APP)"
+                    v-if="
+                        checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.ADMIN_HUB)
+                    "
                 >
                     Data Master
                 </li>
 
                 <li
                     class="side-nav-item"
-                    v-if="checkRole($store.state.ADMIN_APP)"
+                    v-if="
+                        checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.ADMIN_HUB)
+                    "
                 >
                     <router-link :to="{ name: 'Branch' }" class="side-nav-link">
                         <i class="mdi mdi-family-tree"></i>
@@ -70,7 +76,10 @@ export default {
 
                 <li
                     class="side-nav-item"
-                    v-if="checkRole($store.state.ADMIN_APP)"
+                    v-if="
+                        checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.ADMIN_HUB)
+                    "
                 >
                     <a
                         data-bs-toggle="collapse"
@@ -116,7 +125,10 @@ export default {
 
                 <li
                     class="side-nav-item"
-                    v-if="checkRole($store.state.ADMIN_APP)"
+                    v-if="
+                        checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.ADMIN_HUB)
+                    "
                 >
                     <router-link
                         :to="{ name: 'Welder Skill' }"
@@ -143,6 +155,7 @@ export default {
                     class="side-nav-item"
                     v-if="
                         checkRole($store.state.ADMIN_APP) ||
+                        checkRole($store.state.ADMIN_HUB) ||
                         checkRole($store.state.MEMBER_WELDER)
                     "
                 >
