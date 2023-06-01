@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->prefix('user/expert')->group(function () {
     Route::get('/', [ExpertController::class, 'index'])->name('api.user.expert.index');
     Route::post('/', [ExpertController::class, 'store'])->name('api.user.expert.store');
+    Route::post('/upload-excel', [ExpertController::class, 'uploadExcel'])->name('api.user.upload.excel');
     Route::get('/{id}', [ExpertController::class, 'show'])->name('api.user.expert.show');
     Route::put('/{id}', [ExpertController::class, 'update'])->name('api.user.expert.update');
     Route::delete('/{id}', [ExpertController::class, 'destroy'])->name('api.user.expert.destroy');

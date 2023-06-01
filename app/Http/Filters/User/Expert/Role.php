@@ -12,6 +12,10 @@ class Role
     {
         $query->with(['expert', 'welderMember.welderSkill']);
 
+        $query->whereHas('roles', function ($query) {
+            $query->where('id', User::PAKAR);
+        });
+
         return $next($query);
     }
 }

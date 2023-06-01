@@ -93,17 +93,25 @@ export default {
         <div
             class="d-md-flex d-block justify-content-between align-items-center mb-2"
         >
-            <div class="text-center">
-                <input
-                    type="search"
-                    class="form-control"
-                    placeholder="pencarian"
-                    @input="onSearch"
-                    v-model="filters.search"
-                />
-            </div>
+            <button
+                class="btn btn-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#uploadData"
+            >
+                Upload Data
+            </button>
 
             <div class="d-md-flex justify-content-between align-items-center">
+                <div class="text-center me-2">
+                    <input
+                        type="search"
+                        class="form-control"
+                        placeholder="pencarian"
+                        @input="onSearch"
+                        v-model="filters.search"
+                    />
+                </div>
+
                 <Pagination
                     :pagination="metaPagination"
                     @onPageChange="onPageChange($event)"
@@ -146,6 +154,52 @@ export default {
         </table>
     </div>
 
+    <div
+        class="modal fade"
+        id="uploadData"
+        tabindex="-1"
+        aria-labelledby="uploadDataLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadDataLabel">
+                        Upload Data
+                    </h5>
+                </div>
+                <form action="" method="post">
+                    <div class="modal-body">
+                        <div class="mb-0">
+                            <label>Masukan file excel</label>
+                            <input type="file" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <a
+                            href="/assets/files/sample-data-pakar.xlsx"
+                            target="_blank"
+                            >Download Sample</a
+                        >
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-secondary me-2"
+                                data-bs-dismiss="modal"
+                            >
+                                Batal
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Kirim
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <Success :url="{ name: 'User Expert' }" :msg="msg" />
     <Confirm @onDelete="onDelete" />
 </template>
