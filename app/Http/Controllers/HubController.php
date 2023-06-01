@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\User\Hub\Role as HubRole;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -10,12 +11,16 @@ use App\Http\Resources\Hub\HubDetail;
 use App\Http\Resources\Hub\HubCollection;
 use App\Repositories\User\UserRepository;
 use App\Http\Requests\Hub\HubRequestStore;
+use App\Http\Traits\FillableFixer;
+use App\Models\AdminHub;
 use App\Repositories\AdminHub\AdminHubRepository;
 use App\Models\Role;
-
+use Spatie\Permission\Models\Permission;
 
 class HubController extends Controller
 {
+    use FillableFixer;
+
     protected $userRepository, $adminHubRepository;
 
     public function __construct(UserRepository $userRepository, AdminHubRepository $adminHubRepository)
@@ -26,28 +31,48 @@ class HubController extends Controller
 
     public function index(Request $request)
     {
-        $adminhubs = $this->userRepository->findByCriteria(['role_id' =>Role::ADMIN_HUB]);
+        $adminhubs = app(Pipeline::class)
+            ->send($this->userRepository->query())
+            ->through([
+                HubRole::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
         return new HubCollection($adminhubs);
     }
 
     public function store(HubRequestStore $request)
     {
-
         return DB::transaction(function () use ($request) {
+            $role = Permission::find(Role::ADMIN_APP);
+
             $request->merge([
-                'password' => bcrypt(Str::random(10))
+                'uuid' => Str::uuid(),
+                'password' => bcrypt(Str::random(10)),
+                'role_id' => Role::ADMIN_APP
             ]);
-            $user = $this->userRepository->create($request->all());
+            $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
+            $user = $this->userRepository->create($fillableUser);
+            $user->syncRoles($role);
+
             $request->merge([
-                'user_id' => $user->id
+                'uuid' => Str::uuid(),
+                'user_id' => $user->id,
+                'status' => AdminHub::ACTIVE
             ]);
-            return $this->adminHubRepository->create($request->all());
+            $fillableAdminHub = $this->onlyFillables($request->all(), $this->adminHubRepository->getFillable());
+
+            $user->adminHub()->create($fillableAdminHub);
+            DB::commit();
+            return $user;
         });
     }
 
     public function show($id)
     {
         $adminhubs = $this->userRepository->findOrFail($id);
+        $adminhubs->load(['adminHub']);
         return new HubDetail($adminhubs);
     }
 
@@ -66,7 +91,7 @@ class HubController extends Controller
         $user = $this->userRepository->findOrFail($id);
 
         return DB::transaction(function () use ($user) {
-            if ($user->adminHub){
+            if ($user->adminHub) {
                 $user->adminHub->delete();
             }
 

@@ -20,6 +20,16 @@ class UserRepositoryImplement extends Eloquent implements UserRepository
         $this->model = $model;
     }
 
+    public function query()
+    {
+        return $this->model->query();
+    }
+
+    public function getFillable()
+    {
+        return $this->model->getFillable();
+    }
+
     public function findByEmail(string $email)
     {
         return $this->model->where('email', $email)->first();

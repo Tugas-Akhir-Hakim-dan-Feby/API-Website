@@ -9,7 +9,11 @@ class AdminHub extends Model
 {
     use HasFactory;
 
-    protected $fillable =[
+    const ACTIVE = 1;
+
+    const DEACTIVE = 1;
+
+    protected $fillable = [
         'user_id',
         'position',
         'phone',
