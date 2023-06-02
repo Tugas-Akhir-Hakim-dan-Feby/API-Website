@@ -7,6 +7,7 @@ use App\Http\Filters\User\Expert\Approved;
 use App\Http\Filters\User\Expert\Role as ExpertRole;
 use App\Http\Filters\User\Expert\Search;
 use App\Http\Requests\User\Expert\ExpertRequestStore;
+use App\Http\Requests\User\Expert\UploadFileRequest;
 use App\Http\Resources\User\Expert\ExpertCollection;
 use App\Http\Resources\User\Expert\ExpertDetail;
 use App\Http\Traits\MessageFixer;
@@ -114,12 +115,15 @@ class ExpertController extends Controller
         }
     }
 
-    public function uploadExcel(Request $request)
+    public function uploadExcel(UploadFileRequest $request)
     {
         DB::beginTransaction();
 
         try {
+            DB::commit();
             Excel::import(new ExpertImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

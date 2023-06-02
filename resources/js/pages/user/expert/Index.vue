@@ -6,7 +6,7 @@ import NotApprove from "./NotApprove.vue";
 export default {
     data() {
         return {
-            counNotApprove: 0,
+            countNotApprove: 0,
             isNotApproved: false,
         };
     },
@@ -20,7 +20,7 @@ export default {
             this.$store
                 .dispatch("getData", ["user/expert", params])
                 .then((response) => {
-                    this.counNotApprove = response.data.length;
+                    this.countNotApprove = response.data.length;
                 })
                 .catch((err) => {});
         },
@@ -59,7 +59,7 @@ export default {
                     <span
                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                     >
-                        {{ counNotApprove < 99 ? counNotApprove : "99+" }}
+                        {{ countNotApprove < 99 ? countNotApprove : "99+" }}
                         <span class="visually-hidden">unread messages</span>
                     </span>
                 </a>

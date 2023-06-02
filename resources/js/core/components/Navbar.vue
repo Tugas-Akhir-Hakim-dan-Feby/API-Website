@@ -2,6 +2,16 @@
 import Cookie from "js-cookie";
 export default {
     props: ["user", "roles"],
+    data() {
+        return {
+            roleMemberWelderId: 6,
+        };
+    },
+    computed: {
+        isMemberWelder() {
+            return this.user.roleId == this.roleMemberWelderId;
+        },
+    },
     methods: {
         handleLogout() {
             this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
@@ -13,15 +23,6 @@ export default {
             if (
                 this.roles.includes(this.$store.state.GUEST) &&
                 this.roles.length < 2
-            ) {
-                return true;
-            }
-            return false;
-        },
-        checkRoleExpert() {
-            if (
-                !this.roles.includes(this.$store.state.PAKAR) &&
-                !this.roles.includes(this.$store.state.MEMBER_WELDER)
             ) {
                 return true;
             }
@@ -40,7 +41,7 @@ export default {
                     >Daftar Member</router-link
                 >
             </li>
-            <li class="notification-list pt-1" v-if="checkRoleExpert()">
+            <li class="notification-list pt-1" v-if="isMemberWelder">
                 <router-link
                     class="btn btn-primary btn-sm"
                     :to="{ name: 'Register Expert' }"

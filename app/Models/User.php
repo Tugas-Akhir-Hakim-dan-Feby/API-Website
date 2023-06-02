@@ -51,6 +51,8 @@ class User extends Authenticatable
         'password',
         'uuid',
         'role_id',
+        'email_verified_at',
+        'remember_token'
     ];
 
     /**
@@ -62,6 +64,7 @@ class User extends Authenticatable
         'id',
         'password',
         'remember_token',
+        'email_verified_at',
     ];
 
     /**

@@ -1,4 +1,6 @@
 <script>
+import axios from "axios";
+import api from "../../../store/services/api";
 import Success from "../../../components/notifications/Success.vue";
 import Confirm from "../../../components/notifications/Confirm.vue";
 import Pagination from "../../../components/Pagination.vue";
@@ -18,8 +20,20 @@ export default {
                 search: "",
             },
             msg: "",
+            errorMessage: {},
+            excelFile: null,
             isLoading: false,
+            uploadProgress: 0,
         };
+    },
+    computed: {
+        dataExcel() {
+            let formData = new FormData();
+
+            formData.append("file", this.excelFile);
+
+            return formData;
+        },
     },
     mounted() {
         this.getUsers();
@@ -49,8 +63,35 @@ export default {
                     this.isLoading = false;
                 });
         },
+        async handleUploadData() {
+            try {
+                api.init();
+                await axios
+                    .post("user/expert/upload-excel", this.dataExcel, {
+                        onUploadProgress: (progressEvent) => {
+                            this.uploadProgress = 100;
+                        },
+                    })
+                    .then((response) => {
+                        $("#uploadData").modal("hide");
+                        this.excelFile = null;
+                        this.getUsers();
+                    });
+            } catch (error) {
+                if (error.response.data.status_code == 500) {
+                    $("#uploadData").modal("hide");
+                    this.errorMessage = error.response.data;
+                }
+            } finally {
+                this.excelFile = null;
+                this.uploadProgress = 0;
+            }
+        },
         handleDelete() {
             $("#confirmModal").modal("show");
+        },
+        uploadExcelData(e) {
+            this.excelFile = e.target.files[0];
         },
         onDelete() {
             $("#confirmModal").modal("hide");
@@ -89,12 +130,26 @@ export default {
 <template>
     <Loader v-if="isLoading" />
 
+    <div
+        class="alert alert-danger alert-dismissible text-bg-danger border-0 fade show"
+        role="alert"
+        v-if="errorMessage.status_code == 500"
+    >
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+        ></button>
+        {{ errorMessage.message }}
+    </div>
+
     <div class="table-responsive">
         <div
             class="d-md-flex d-block justify-content-between align-items-center mb-2"
         >
             <button
-                class="btn btn-primary btn-sm"
+                class="btn btn-primary btn-sm mb-3"
                 data-bs-toggle="modal"
                 data-bs-target="#uploadData"
             >
@@ -170,18 +225,34 @@ export default {
                         Upload Data
                     </h5>
                 </div>
-                <form action="" method="post">
+                <form @submit.prevent="handleUploadData" method="post">
                     <div class="modal-body">
-                        <div class="mb-0">
+                        <div class="mb-0" v-if="uploadProgress < 1">
                             <label>Masukan file excel</label>
-                            <input type="file" class="form-control" />
+                            <input
+                                type="file"
+                                class="form-control"
+                                @change="uploadExcelData"
+                            />
+                        </div>
+                        <div class="progress" v-else>
+                            <div
+                                class="progress-bar progress-bar-striped progress-bar-animated"
+                                role="progressbar"
+                                :aria-valuenow="uploadProgress"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                :style="{ width: uploadProgress + '%' }"
+                            >
+                                Harap Tunggu!
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <a
                             href="/assets/files/sample-data-pakar.xlsx"
                             target="_blank"
-                            >Download Sample</a
+                            >Unduh Sampel Format</a
                         >
                         <div>
                             <button
