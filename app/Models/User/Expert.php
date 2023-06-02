@@ -27,6 +27,7 @@ class Expert extends Model
         "certificate_profession",
         "working_mail",
         "career",
+        "status",
         "uuid",
     ];
 

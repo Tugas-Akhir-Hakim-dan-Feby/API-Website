@@ -7,10 +7,12 @@ use App\Http\Filters\User\Expert\Approved;
 use App\Http\Filters\User\Expert\Role as ExpertRole;
 use App\Http\Filters\User\Expert\Search;
 use App\Http\Requests\User\Expert\ExpertRequestStore;
+use App\Http\Requests\User\Expert\UploadFileRequest;
 use App\Http\Resources\User\Expert\ExpertCollection;
 use App\Http\Resources\User\Expert\ExpertDetail;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
+use App\Imports\User\ExpertImport;
 use App\Models\User;
 use App\Models\User\Expert;
 use App\Repositories\User\UserRepository;
@@ -21,6 +23,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpertController extends Controller
 {
@@ -106,6 +109,21 @@ class ExpertController extends Controller
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function uploadExcel(UploadFileRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            DB::commit();
+            Excel::import(new ExpertImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
