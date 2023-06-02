@@ -22,6 +22,7 @@ export default {
             msg: "",
             errorMessage: {},
             excelFile: null,
+            isDisabled: false,
             isLoading: false,
             uploadProgress: 0,
         };
@@ -64,6 +65,8 @@ export default {
                 });
         },
         async handleUploadData() {
+            this.errorMessage = {};
+            this.isDisabled = true;
             try {
                 api.init();
                 await axios
@@ -73,16 +76,24 @@ export default {
                         },
                     })
                     .then((response) => {
+                        this.isDisabled = false;
                         $("#uploadData").modal("hide");
                         this.excelFile = null;
                         this.getUsers();
                     });
             } catch (error) {
+                this.isDisabled = false;
+
+                if (error.response.data.status_code == 422) {
+                    this.errorMessage = error.response.data;
+                }
+
                 if (error.response.data.status_code == 500) {
                     $("#uploadData").modal("hide");
                     this.errorMessage = error.response.data;
                 }
             } finally {
+                this.isDisabled = false;
                 this.excelFile = null;
                 this.uploadProgress = 0;
             }
@@ -233,7 +244,20 @@ export default {
                                 type="file"
                                 class="form-control"
                                 @change="uploadExcelData"
+                                :class="{
+                                    'is-invalid': errorMessage?.messages?.file,
+                                }"
+                                :disabled="isDisabled"
                             />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errorMessage?.messages?.file"
+                                v-for="(error, index) in errorMessage?.messages
+                                    ?.file"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
                         </div>
                         <div class="progress" v-else>
                             <div
@@ -259,11 +283,25 @@ export default {
                                 type="button"
                                 class="btn btn-secondary me-2"
                                 data-bs-dismiss="modal"
+                                :disabled="isDisabled"
                             >
                                 Batal
                             </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button class="btn btn-primary" v-if="!isDisabled">
                                 Kirim
+                            </button>
+                            <button
+                                class="btn btn-primary"
+                                type="button"
+                                disabled
+                                v-if="isDisabled"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
                             </button>
                         </div>
                     </div>

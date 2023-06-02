@@ -12,11 +12,13 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use Spatie\Permission\Models\Role;
 
-class ExpertImport implements ToCollection, WithHeadingRow
+class ExpertImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use MessageFixer;
     /**
@@ -64,5 +66,21 @@ class ExpertImport implements ToCollection, WithHeadingRow
         }
 
         return;
+    }
+
+    public function rules(): array
+    {
+        return [
+            "email" => [Rule::unique('users'), 'required'],
+            "name" => ['required'],
+            "password" => ['required'],
+            "instance" => ['required'],
+            "nik" => ['required'],
+            "date_birth" => ['required'],
+            "birth_place" => ['required'],
+            "skill" => ['required'],
+            "working_status" => ['required'],
+            "status" => ['required'],
+        ];
     }
 }
