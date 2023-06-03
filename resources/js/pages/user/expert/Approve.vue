@@ -160,7 +160,7 @@ export default {
             class="d-md-flex d-block justify-content-between align-items-center mb-2"
         >
             <button
-                class="btn btn-primary btn-sm mb-3"
+                class="btn btn-primary btn-sm mb-md-0 mb-sm-2"
                 data-bs-toggle="modal"
                 data-bs-target="#uploadData"
             >

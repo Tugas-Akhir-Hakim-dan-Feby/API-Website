@@ -23,6 +23,7 @@ class CompanyMember extends Model
         'company_legality',
         'phone',
         'facsmile',
+        'status',
         'uuid',
     ];
 

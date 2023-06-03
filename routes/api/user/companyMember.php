@@ -7,6 +7,7 @@ Route::get('/user/company-member', [CompanyMemberController::class, 'index'])->n
 
 Route::middleware(['auth:sanctum'])->prefix('user/company-member')->group(function () {
     Route::post('/', [CompanyMemberController::class, 'store'])->name('api.user.company.member.store');
+    Route::post('/upload-excel', [CompanyMemberController::class, 'uploadExcel'])->name('api.company.member.upload.excel');
     Route::get('/{id}', [CompanyMemberController::class, 'show'])->name('api.user.company.member.show');
     Route::put('/{id}', [CompanyMemberController::class, 'update'])->name('api.user.company.member.update');
     Route::delete('/{id}', [CompanyMemberController::class, 'destroy'])->name('api.user.company.member.destroy');
