@@ -2,11 +2,13 @@
 import PageTitle from "../../../components/PageTitle.vue";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import Loader from "../../../components/Loader.vue";
 
 export default {
     props: ["id"],
     data() {
         return {
+            isLoading: false,
             user: {},
         };
     },
@@ -15,12 +17,16 @@ export default {
     },
     methods: {
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user/expert", this.id])
                 .then((response) => {
+                    this.isLoading = false;
                     this.user = response.data;
                 })
-                .catch((error) => {});
+                .catch((error) => {
+                    this.isLoading = false;
+                });
         },
         getCreatedAt(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
@@ -28,11 +34,19 @@ export default {
         getDateBirth(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
+        checkFile(file) {
+            let url = window.location.origin + "/storage";
+
+            if (file && file.length > url.length) {
+                return true;
+            }
+            return false;
+        },
         onBack() {
             this.$router.push({ name: "User Expert" });
         },
     },
-    components: { PageTitle },
+    components: { PageTitle, Loader },
 };
 </script>
 
@@ -41,18 +55,23 @@ export default {
         :title="'Detail Pakar ' + user.name"
         :isBack="true"
         @onBack="onBack"
-    />
+    >
+        <button
+            class="btn btn-sm btn-primary"
+            v-if="user.expert?.status == 'NOT-APPROVED'"
+        >
+            Konfirmasi
+        </button>
+    </PageTitle>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 position-relative">
+            <Loader v-if="isLoading" />
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-5">
-                            <a
-                                href="javascript: void(0);"
-                                class="text-center d-block mb-4"
-                            >
+                            <div class="text-center d-block mb-4">
                                 <img
                                     :src="
                                         user.welderMember
@@ -62,9 +81,9 @@ export default {
                                     class="img-fluid"
                                     style="max-width: 280px"
                                     :alt="user.name"
+                                    onerror="this.src=null; this.src='https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png'"
                                 />
-                            </a>
-
+                            </div>
                             <div
                                 class="d-lg-flex d-none justify-content-center"
                             ></div>
@@ -127,7 +146,7 @@ export default {
                             <thead class="table-light">
                                 <tr>
                                     <th>Dokumen</th>
-                                    <th>Aksi</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -143,9 +162,16 @@ export default {
                                                     ?.certificateCompetency
                                             "
                                             target="_blank"
+                                            v-if="
+                                                checkFile(
+                                                    user.expert
+                                                        ?.certificateCompetency
+                                                )
+                                            "
                                             ><i class="mdi mdi-download"></i>
                                             Unduh</a
                                         >
+                                        <p v-else>belum tersedia</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -158,9 +184,13 @@ export default {
                                         <a
                                             :href="user.expert?.career"
                                             target="_blank"
+                                            v-if="
+                                                checkFile(user.expert?.career)
+                                            "
                                             ><i class="mdi mdi-download"></i>
                                             Unduh</a
                                         >
+                                        <p v-else>belum tersedia</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -172,9 +202,15 @@ export default {
                                         <a
                                             :href="user.expert?.workingMail"
                                             target="_blank"
+                                            v-if="
+                                                checkFile(
+                                                    user.expert?.workingMail
+                                                )
+                                            "
                                             ><i class="mdi mdi-download"></i>
                                             Unduh</a
                                         >
+                                        <p v-else>belum tersedia</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -189,9 +225,16 @@ export default {
                                                     ?.certificateProfession
                                             "
                                             target="_blank"
+                                            v-if="
+                                                checkFile(
+                                                    user.expert
+                                                        ?.certificateProfession
+                                                )
+                                            "
                                             ><i class="mdi mdi-download"></i>
                                             Unduh</a
                                         >
+                                        <p v-else>belum tersedia</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -203,9 +246,16 @@ export default {
                                                     ?.certificateSchool
                                             "
                                             target="_blank"
+                                            v-if="
+                                                checkFile(
+                                                    user.expert
+                                                        ?.certificateSchool
+                                                )
+                                            "
                                             ><i class="mdi mdi-download"></i>
                                             Unduh</a
                                         >
+                                        <p v-else>belum tersedia</p>
                                     </td>
                                 </tr>
                                 <tr

@@ -129,6 +129,14 @@ export default {
                     <td v-html="user.welderMember?.welderSkill?.skillName"></td>
                     <td v-html="user.expert?.instance"></td>
                     <td>
+                        <router-link
+                            :to="{
+                                name: 'User Expert Show',
+                                params: { id: user.uuid },
+                            }"
+                            class="btn btn-sm btn-info me-2"
+                            >Detail</router-link
+                        >
                         <a
                             href="#"
                             class="btn btn-sm btn-primary me-2"

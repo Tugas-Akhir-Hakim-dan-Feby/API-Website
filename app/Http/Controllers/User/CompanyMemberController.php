@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Filters\User\CompanyMember\Role as CompanyMemberRole;
 use App\Http\Filters\User\CompanyMember\Search;
 use App\Http\Requests\User\CompanyMember\CompanyRequestStore;
+use App\Http\Requests\User\CompanyMember\UploadFileRequest;
 use App\Http\Resources\User\CompanyMemberCollection;
 use App\Http\Resources\User\CompanyMemberDetail;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
+use App\Imports\User\CompanyMemberImport;
 use App\Models\User;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
@@ -18,6 +20,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 class CompanyMemberController extends Controller
@@ -81,6 +84,21 @@ class CompanyMemberController extends Controller
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $user->payment);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function uploadExcel(UploadFileRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            DB::commit();
+            Excel::import(new CompanyMemberImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

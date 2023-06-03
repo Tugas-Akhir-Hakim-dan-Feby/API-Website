@@ -1,11 +1,15 @@
 <script>
 import PageTitle from "../../../components/PageTitle.vue";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+import Loader from "../../../components/Loader.vue";
 
 export default {
     props: ["id"],
     data() {
         return {
             user: {},
+            isLoading: false,
         };
     },
     mounted() {
@@ -13,18 +17,33 @@ export default {
     },
     methods: {
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user/company-member", this.id])
                 .then((response) => {
+                    this.isLoading = false;
                     this.user = response.data;
                 })
-                .catch((error) => {});
+                .catch((error) => {
+                    this.isLoading = false;
+                });
+        },
+        getCreatedAt(date) {
+            return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
         onBack() {
             this.$router.back();
         },
+        checkFile(file) {
+            let url = window.location.origin + "/storage";
+
+            if (file && file.length > url.length) {
+                return true;
+            }
+            return false;
+        },
     },
-    components: { PageTitle },
+    components: { PageTitle, Loader },
 };
 </script>
 <template>
@@ -35,6 +54,7 @@ export default {
     />
 
     <div class="card">
+        <Loader v-if="isLoading" />
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-7">
@@ -44,7 +64,8 @@ export default {
                             v-html="user.companyMember?.companyName"
                         ></h3>
                         <p class="mb-1">
-                            Terdaftar: {{ user.companyMember?.createdAt }}
+                            Terdaftar:
+                            {{ getCreatedAt(user.companyMember?.createdAt) }}
                         </p>
                         <div class="mt-3">
                             <h6 class="font-14">Pimpinan Perusahaan:</h6>
@@ -81,7 +102,7 @@ export default {
                     </div>
                     <div class="mb-3">
                         <h6 class="font-14">Email Pengguna:</h6>
-                        <p v-html="user.name"></p>
+                        <p v-html="user.email"></p>
                     </div>
                 </div>
             </div>
@@ -104,8 +125,14 @@ export default {
                                 <a
                                     target="_blank"
                                     :href="user.companyMember?.companyLegality"
+                                    v-if="
+                                        checkFile(
+                                            user.companyMember?.companyLegality
+                                        )
+                                    "
                                     ><i class="mdi mdi-download"></i> Unduh</a
                                 >
+                                <p v-else>belum tersedia</p>
                             </td>
                         </tr>
                     </tbody>
