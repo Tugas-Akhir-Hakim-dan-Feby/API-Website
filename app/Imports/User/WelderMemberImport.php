@@ -2,11 +2,8 @@
 
 namespace App\Imports\User;
 
-use App\Http\Traits\MessageFixer;
 use App\Models\User;
-use App\Models\User\Expert;
 use App\Models\WelderSkill;
-use App\Repositories\User\UserRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
@@ -19,9 +16,10 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Spatie\Permission\Models\Role;
 
-class ExpertImport implements ToCollection, WithHeadingRow, WithValidation
+class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use SkipsFailures;
+
     /**
      * @param Collection $collection
      */
@@ -55,18 +53,10 @@ class ExpertImport implements ToCollection, WithHeadingRow, WithValidation
                 "status" => $collect["status"],
             ]);
 
-            $user->expert()->create([
-                "uuid" => Str::uuid(),
-                "status" => Expert::APPROVED,
-                "instance" => $collect["instance"]
-            ]);
-
-            $roles = Role::whereIn('id', [User::PAKAR, User::MEMBER_WELDER, User::GUEST])->get();
+            $roles = Role::whereIn('id', [User::MEMBER_WELDER, User::GUEST])->get();
 
             $user->syncRoles($roles);
         }
-
-        return;
     }
 
     public function rules(): array
@@ -75,7 +65,6 @@ class ExpertImport implements ToCollection, WithHeadingRow, WithValidation
             "email" => [Rule::unique('users'), 'required'],
             "name" => ['required'],
             "password" => ['required'],
-            "instance" => ['required'],
             "nik" => ['required'],
             "date_birth" => ['required'],
             "birth_place" => ['required'],

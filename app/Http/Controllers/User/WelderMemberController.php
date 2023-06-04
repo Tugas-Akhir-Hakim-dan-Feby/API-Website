@@ -5,12 +5,14 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Filters\User\WelderMember\WelderSkillId;
+use App\Http\Requests\User\WelderMember\UploadFileRequest;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
 use App\Http\Resources\User\WelderMemberDetail;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
+use App\Imports\User\WelderMemberImport;
 use App\Models\User;
 use App\Models\User\WelderMember;
 use App\Repositories\Payment\PaymentRepository;
@@ -24,6 +26,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class WelderMemberController extends Controller
@@ -104,6 +107,21 @@ class WelderMemberController extends Controller
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $user->payment);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function uploadExcel(UploadFileRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            DB::commit();
+            Excel::import(new WelderMemberImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
