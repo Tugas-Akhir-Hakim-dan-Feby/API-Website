@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -16,6 +17,8 @@ use Spatie\Permission\Models\Role;
 
 class CompanyMemberImport implements ToCollection, WithHeadingRow, WithValidation
 {
+    use SkipsFailures;
+
     /**
      * @param Collection $collection
      */

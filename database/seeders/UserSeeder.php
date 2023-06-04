@@ -165,6 +165,7 @@ class UserSeeder extends Seeder
         ]);
 
         $expert->expert()->create([
+            "status" => "APPROVED",
             "instance" => "Politeknik Negeri Indramayu",
             "certificate_competency" => fake()->image(storage_path("app/public/certificate_competency")),
             "certificate_profession" => fake()->image(storage_path("app/public/certificate_profession")),
