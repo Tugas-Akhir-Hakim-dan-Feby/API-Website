@@ -42,37 +42,37 @@ export default {
         </div>
         <div class="col-lg-8">
             <div class="card">
-                <div class="card-body">
-                    <div
-                        class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show"
-                        role="alert"
-                        v-if="typeof errors == 'string'"
-                    >
-                        <button
-                            type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="alert"
-                            aria-label="Close"
-                        ></button>
-                        <strong>Galat - </strong> {{ errors }}
-                    </div>
+                <form @submit.prevent="handleSubmit" method="post">
+                    <div class="card-body">
+                        <div
+                            class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show"
+                            role="alert"
+                            v-if="typeof errors == 'string'"
+                        >
+                            <button
+                                type="button"
+                                class="btn-close btn-close-white"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                            <strong>Galat - </strong> {{ errors }}
+                        </div>
 
-                    <div
-                        class="alert alert-success alert-dismissible bg-success text-white border-0 fade show"
-                        role="alert"
-                        v-if="showAlert"
-                    >
-                        <button
-                            type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="alert"
-                            aria-label="Close"
-                        ></button>
-                        <strong>berhasil - </strong> password berhasil
-                        diperbaharui
-                    </div>
+                        <div
+                            class="alert alert-success alert-dismissible bg-success text-white border-0 fade show"
+                            role="alert"
+                            v-if="showAlert"
+                        >
+                            <button
+                                type="button"
+                                class="btn-close btn-close-white"
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                            ></button>
+                            <strong>berhasil - </strong> password berhasil
+                            diperbaharui
+                        </div>
 
-                    <form @submit.prevent="handleSubmit" method="post">
                         <div class="row mb-3">
                             <label class="col-3 col-form-label"
                                 >Password Saat Ini</label
@@ -151,11 +151,11 @@ export default {
                                 ></div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="card-footer d-flex justify-content-end">
-                    <button class="btn btn-success btn-sm">Simpan</button>
-                </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-end">
+                        <button class="btn btn-success btn-sm">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
