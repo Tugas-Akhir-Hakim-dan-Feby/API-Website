@@ -23,7 +23,7 @@ class UpdatePasswordController extends Controller
     public function __invoke(UpdatePasswordRequest $request)
     {
         $user = Auth::user();
-        $user = $this->userRepository->findOrFail($user->id);
+        $user = $this->userRepository->findOrFail($user->uuid);
 
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([

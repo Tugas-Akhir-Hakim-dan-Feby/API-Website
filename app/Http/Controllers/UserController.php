@@ -39,6 +39,10 @@ class UserController extends Controller
             $user->load("expert");
         }
 
+        if ($user->isAdminHub()) {
+            $user->load("adminHub");
+        }
+
         if ($user->document) {
             $data["document"] = $user->document;
         }
