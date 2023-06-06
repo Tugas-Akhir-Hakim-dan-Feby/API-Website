@@ -1,7 +1,7 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
 import ChangePassword from "./profile/ChangePassword.vue";
-import ProfileAdmin from "./profile/ProfileAdmin.vue";
+import ProfileAdminHub from "./profile/ProfileAdminHub.vue";
 import ProfileAdminApp from "./profile/ProfileAdminApp.vue";
 
 export default {
@@ -16,12 +16,12 @@ export default {
             return false;
         },
     },
-    components: { PageTitle, ProfileAdmin, ChangePassword, ProfileAdminApp },
+    components: { PageTitle, ProfileAdminHub, ChangePassword, ProfileAdminApp },
 };
 </script>
 <template>
     <ProfileAdminApp v-if="checkRoles($store.state.ADMIN_APP)" />
-    <ProfileAdmin
+    <ProfileAdminHub
         v-if="
             checkRoles($store.state.ADMIN_HUB) ||
             checkRoles($store.state.ADMIN_BRANCH)
