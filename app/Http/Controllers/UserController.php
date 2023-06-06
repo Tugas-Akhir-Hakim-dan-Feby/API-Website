@@ -43,6 +43,10 @@ class UserController extends Controller
             $user->load("adminHub");
         }
 
+        if ($user->isAdminBranch()) {
+            $user->load("adminBranch.branch");
+        }
+
         if ($user->document) {
             $data["document"] = $user->document;
         }
