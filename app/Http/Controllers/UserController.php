@@ -47,6 +47,10 @@ class UserController extends Controller
             $user->load("adminBranch.branch");
         }
 
+        if ($user->isMemberCompany()) {
+            $user->load("companyMember");
+        }
+
         if ($user->document) {
             $data["document"] = $user->document;
         }

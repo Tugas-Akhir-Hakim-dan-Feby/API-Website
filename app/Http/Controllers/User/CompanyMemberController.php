@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Filters\User\CompanyMember\Role as CompanyMemberRole;
 use App\Http\Filters\User\CompanyMember\Search;
 use App\Http\Requests\User\CompanyMember\CompanyRequestStore;
+use App\Http\Requests\User\CompanyMember\CompanyRequestUpdate;
+use App\Http\Requests\User\CompanyMember\UpdateDocumentRequest;
 use App\Http\Requests\User\CompanyMember\UploadFileRequest;
 use App\Http\Resources\User\CompanyMemberCollection;
 use App\Http\Resources\User\CompanyMemberDetail;
@@ -20,6 +22,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
@@ -117,14 +120,56 @@ class CompanyMemberController extends Controller
         return new CompanyMemberDetail($companyMember);
     }
 
-    public function edit($id)
+    public function update(CompanyRequestUpdate $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($id);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            $user->update([
+                "name" => $request->name,
+                "email" => $request->email
+            ]);
+
+            $user->companyMember()->update($request->except(["name", "email", "id"]));
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
-    public function update(Request $request, $id)
+    public function updateDocument(UpdateDocumentRequest $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($id);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->companyMember->company_legality) {
+                $path = str_replace(url('storage') . '/', '', $user->companyMember->company_legality);
+                Storage::delete($path);
+
+                $user->companyMember()->update([
+                    "company_legality" => $request->file('document')->store('company_legality')
+                ]);
+            }
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy($id)
