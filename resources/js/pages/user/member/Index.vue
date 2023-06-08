@@ -150,6 +150,7 @@ export default {
                         class="btn btn-primary btn-sm mb-md-0 mb-sm-2"
                         data-bs-toggle="modal"
                         data-bs-target="#uploadData"
+                        v-if="$can('upload-excel', 'Weldermember')"
                     >
                         Upload Data
                     </button>
@@ -162,11 +163,13 @@ export default {
                                 type="search"
                                 class="form-control"
                                 placeholder="pencarian"
+                                v-if="$can('search', 'Weldermember')"
                             />
                         </div>
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
+                            v-if="$can('pagination', 'Weldermember')"
                         />
                     </div>
                 </div>
@@ -201,6 +204,7 @@ export default {
                                         name: 'User Member Show',
                                         params: { id: user.uuid },
                                     }"
+                                    v-if="$can('show', 'Weldermember')"
                                     class="btn btn-sm btn-info me-2"
                                     >Detail</router-link
                                 >

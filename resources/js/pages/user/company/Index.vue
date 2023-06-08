@@ -150,6 +150,7 @@ export default {
                         class="btn btn-primary btn-sm mb-md-0 mb-sm-2"
                         data-bs-toggle="modal"
                         data-bs-target="#uploadData"
+                        v-if="$can('upload-excel', 'Companymember')"
                     >
                         Upload Data
                     </button>
@@ -164,11 +165,13 @@ export default {
                                 placeholder="pencarian"
                                 v-model="filters.search"
                                 @input="onSearch"
+                                v-if="$can('search', 'Companymember')"
                             />
                         </div>
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
+                            v-if="$can('pagination', 'Companymember')"
                         />
                     </div>
                 </div>
@@ -197,6 +200,7 @@ export default {
                                         name: 'User Company Show',
                                         params: { id: user.uuid },
                                     }"
+                                    v-if="$can('show', 'Companymember')"
                                     class="btn btn-sm btn-info me-2"
                                     >Detail</router-link
                                 >

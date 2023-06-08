@@ -75,16 +75,21 @@ export default {
     <Edit :examPacket="examPacket" @onSuccessEdit="onSuccessEdit" />
 
     <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div
+            class="card-header d-flex justify-content-between align-items-center"
+        >
             <h4>Daftar Pertanyaan</h4>
-            <router-link
-                :to="{
-                    name: 'Exam Create',
-                    params: { id: id },
-                }"
-                class="btn btn-primary"
-                >Tambah Pertanyaan</router-link
-            >
+            <div>
+                <router-link
+                    :to="{
+                        name: 'Exam Create',
+                        params: { id: id },
+                    }"
+                    v-if="$can('create', 'Exam')"
+                    class="btn btn-sm btn-primary"
+                    >Tambah Pertanyaan</router-link
+                >
+            </div>
         </div>
         <div class="card-body position-relative">
             <Loader v-if="isLoading" />
@@ -120,12 +125,14 @@ export default {
                                             examId: exam.uuid,
                                         },
                                     }"
+                                    v-if="$can('update', 'Exam')"
                                     class="btn btn-warning btn-sm me-2 text-white"
                                 >
                                     Edit
                                 </router-link>
                                 <button
                                     class="btn btn-danger btn-sm"
+                                    v-if="$can('delete', 'Exam')"
                                     @click="handleDeleteExam(exam.uuid)"
                                 >
                                     Hapus

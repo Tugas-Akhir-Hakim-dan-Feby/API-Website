@@ -47,7 +47,7 @@ export default {
                     <span>Data Pakar yang Di Setujui</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$can('confirmation', 'Expert')">
                 <a
                     href="#expertNotApprove"
                     data-bs-toggle="tab"

@@ -79,12 +79,14 @@ export default {
                         placeholder="pencarian"
                         @keyup="onSearch"
                         v-model="filters.search"
+                        v-if="$can('search', 'Article')"
                     />
                 </div>
 
                 <Pagination
                     :pagination="metaPagination"
                     @onPageChange="onPageChange($event)"
+                    v-if="$can('pagination', 'Article')"
                 />
             </div>
         </div>
@@ -128,6 +130,7 @@ export default {
                                     name: 'Article Detail',
                                     params: { slug: article.articleSlug },
                                 }"
+                                v-if="$can('show', 'Article')"
                                 class="text-reset"
                                 >{{ article.articleTitle }}</router-link
                             >
@@ -142,6 +145,7 @@ export default {
                                     name: 'Article Detail',
                                     params: { slug: article.articleSlug },
                                 }"
+                                v-if="$can('show', 'Article')"
                                 >Baca Selengkapnya</router-link
                             >
                         </h5>
@@ -153,6 +157,7 @@ export default {
         <Pagination
             :pagination="metaPagination"
             @onPageChange="onPageChange($event)"
+            v-if="$can('pagination', 'Article')"
         />
     </div>
 </template>

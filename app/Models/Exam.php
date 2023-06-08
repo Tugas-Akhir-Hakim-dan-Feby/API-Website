@@ -34,6 +34,11 @@ class Exam extends Model
         return $this->hasOne(WelderAnswer::class, "exam_id", "id");
     }
 
+    public function correctAnswer(): HasOne
+    {
+        return $this->hasOne(Answer::class, 'id', 'answer_id');
+    }
+
     public function answers(): HasMany
     {
         return $this->hasMany(Answer::class, "exam_id", "id");

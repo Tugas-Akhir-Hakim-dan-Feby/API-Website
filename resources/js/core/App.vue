@@ -4,6 +4,7 @@ import LeftSidebar from "./components/LeftSidebar.vue";
 import Navbar from "./components/Navbar.vue";
 import Cookie from "js-cookie";
 import { mapMutations } from "vuex";
+import { AbilityBuilder, Ability, defineAbility } from "@casl/ability";
 
 export default {
     data() {
@@ -21,6 +22,19 @@ export default {
                     .then((response) => {
                         this.user = response.user;
                         this.roles = response.roles;
+
+                        var permission = response.permission;
+                        const { can, rules } = new AbilityBuilder(Ability);
+                        for (var prop in permission) {
+                            if (permission.hasOwnProperty(prop)) {
+                                can(
+                                    permission[prop],
+                                    prop.charAt(0).toUpperCase() + prop.slice(1)
+                                );
+                            }
+                        }
+                        this.$ability.update(rules);
+
                         this.$store.commit("setUser", response.user);
                     })
                     .catch((error) => {

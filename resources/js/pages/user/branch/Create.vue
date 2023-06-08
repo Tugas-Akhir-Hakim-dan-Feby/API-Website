@@ -279,10 +279,10 @@ export default {
             <div class="card-footer border-top d-flex justify-content-between">
                 <router-link
                     :to="{ name: 'User Branch' }"
-                    class="btn btn-secondary"
+                    class="btn btn-sm btn-secondary"
                     >Batal</router-link
                 >
-                <button class="btn btn-primary">Simpan</button>
+                <button class="btn btn-sm btn-primary">Simpan</button>
             </div>
         </form>
     </div>

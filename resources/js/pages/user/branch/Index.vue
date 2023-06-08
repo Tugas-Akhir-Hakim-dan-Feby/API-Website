@@ -113,10 +113,13 @@ export default {
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"
                 >
-                    <div class="text-center">
+                    <div
+                        class="text-center"
+                        v-if="$can('create', 'Adminbranch')"
+                    >
                         <router-link
                             :to="{ name: 'User Branch Create' }"
-                            class="btn btn-primary mb-2"
+                            class="btn btn-primary mb-2 btn-sm"
                             >Tambah Pengguna</router-link
                         >
                     </div>
@@ -131,11 +134,13 @@ export default {
                                 placeholder="pencarian"
                                 @keyup="onSearch"
                                 v-model="filters.search"
+                                v-if="$can('search', 'Adminbranch')"
                             />
                         </div>
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
+                            v-if="$can('pagination', 'Adminbranch')"
                         />
                     </div>
                 </div>
@@ -151,7 +156,9 @@ export default {
                             <th>Cabang</th>
                             <th>Jabatan</th>
                             <th>Jenis Kelamin</th>
-                            <th>Status</th>
+                            <th v-if="$can('update-status', 'Adminbranch')">
+                                Status
+                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -172,7 +179,7 @@ export default {
                             <td
                                 v-html="getGender(user.adminBranch?.gender)"
                             ></td>
-                            <td>
+                            <td v-if="$can('update-status', 'Adminbranch')">
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -194,6 +201,7 @@ export default {
                                         name: 'User Branch Edit',
                                         params: { id: user.uuid },
                                     }"
+                                    v-if="$can('update', 'Adminbranch')"
                                     class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >

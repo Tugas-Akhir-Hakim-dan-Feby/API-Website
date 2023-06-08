@@ -41,7 +41,7 @@ export default {
         <div class="h-100" id="leftside-menu-container" data-simplebar="">
             <ul class="side-nav">
                 <li class="side-nav-title side-nav-item">Navigasi</li>
-                <li class="side-nav-item">
+                <li class="side-nav-item" v-if="$can('index', 'Dashboard')">
                     <router-link
                         :to="{ name: 'Dashboard' }"
                         class="side-nav-link"
@@ -53,21 +53,12 @@ export default {
 
                 <li
                     class="side-nav-title side-nav-item"
-                    v-if="
-                        checkRole($store.state.ADMIN_APP) ||
-                        checkRole($store.state.ADMIN_HUB)
-                    "
+                    v-if="$can('index', 'Adminhub')"
                 >
                     Data Master
                 </li>
 
-                <li
-                    class="side-nav-item"
-                    v-if="
-                        checkRole($store.state.ADMIN_APP) ||
-                        checkRole($store.state.ADMIN_HUB)
-                    "
-                >
+                <li class="side-nav-item" v-if="$can('index', 'Branch')">
                     <router-link :to="{ name: 'Branch' }" class="side-nav-link">
                         <i class="mdi mdi-family-tree"></i>
                         <span> Data Cabang </span>
@@ -77,8 +68,11 @@ export default {
                 <li
                     class="side-nav-item"
                     v-if="
-                        checkRole($store.state.ADMIN_APP) ||
-                        checkRole($store.state.ADMIN_HUB)
+                        $can('index', 'Adminhub') ||
+                        $can('index', 'Adminbranch') ||
+                        $can('index', 'Expert') ||
+                        $can('index', 'Companymember') ||
+                        $can('index', 'Weldermember')
                     "
                 >
                     <a
@@ -94,27 +88,27 @@ export default {
                     </a>
                     <div class="collapse" id="user">
                         <ul class="side-nav-second-level">
-                            <li>
+                            <li v-if="$can('index', 'Adminhub')">
                                 <router-link :to="{ name: 'User Hub' }"
                                     >Admin Pusat</router-link
                                 >
                             </li>
-                            <li>
+                            <li v-if="$can('index', 'Adminbranch')">
                                 <router-link :to="{ name: 'User Branch' }"
                                     >Admin Cabang</router-link
                                 >
                             </li>
-                            <li>
+                            <li v-if="$can('index', 'Expert')">
                                 <router-link :to="{ name: 'User Expert' }"
                                     >Pakar</router-link
                                 >
                             </li>
-                            <li>
+                            <li v-if="$can('index', 'Companymember')">
                                 <router-link :to="{ name: 'User Company' }"
                                     >Perusahaan Member</router-link
                                 >
                             </li>
-                            <li>
+                            <li v-if="$can('index', 'Weldermember')">
                                 <router-link :to="{ name: 'User Member' }"
                                     >Welder Member</router-link
                                 >
@@ -123,13 +117,7 @@ export default {
                     </div>
                 </li>
 
-                <li
-                    class="side-nav-item"
-                    v-if="
-                        checkRole($store.state.ADMIN_APP) ||
-                        checkRole($store.state.ADMIN_HUB)
-                    "
-                >
+                <li class="side-nav-item" v-if="$can('index', 'Welderskill')">
                     <router-link
                         :to="{ name: 'Welder Skill' }"
                         class="side-nav-link"
@@ -139,7 +127,7 @@ export default {
                     </router-link>
                 </li>
 
-                <li class="side-nav-item">
+                <li class="side-nav-item" v-if="$can('index', 'Article')">
                     <router-link
                         :to="{ name: 'Article' }"
                         class="side-nav-link"
@@ -151,14 +139,7 @@ export default {
                     </router-link>
                 </li>
 
-                <li
-                    class="side-nav-item"
-                    v-if="
-                        checkRole($store.state.ADMIN_APP) ||
-                        checkRole($store.state.ADMIN_HUB) ||
-                        checkRole($store.state.MEMBER_WELDER)
-                    "
-                >
+                <li class="side-nav-item" v-if="$can('index', 'Exampacket')">
                     <router-link
                         :to="{ name: 'Exam Packet' }"
                         class="side-nav-link"

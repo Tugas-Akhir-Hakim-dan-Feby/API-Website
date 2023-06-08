@@ -124,7 +124,11 @@ export default {
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
                 <div class="text-center">
-                    <button class="btn btn-primary mb-2" @click="onCreate">
+                    <button
+                        class="btn btn-primary mb-2 btn-sm"
+                        @click="onCreate"
+                        v-if="$can('create', 'Welderskill')"
+                    >
                         Tambah Keahlian
                     </button>
                 </div>
@@ -139,12 +143,14 @@ export default {
                             placeholder="pencarian"
                             @keyup="onSearch"
                             v-model="filters.search"
+                            v-if="$can('search', 'Welderskill')"
                         />
                     </div>
 
                     <Pagination
                         :pagination="metaPagination"
                         @onPageChange="onPageChange($event)"
+                        v-if="$can('pagination', 'Welderskill')"
                     />
                 </div>
             </div>
@@ -176,6 +182,7 @@ export default {
                             <td>
                                 <button
                                     @click="onEdit(skill.uuid)"
+                                    v-if="$can('update', 'Welderskill')"
                                     class="btn btn-warning text-white btn-sm me-2"
                                 >
                                     Edit
@@ -183,6 +190,7 @@ export default {
                                 <button
                                     class="btn btn-danger btn-sm"
                                     @click="handleDelete(skill.uuid)"
+                                    v-if="$can('delete', 'Welderskill')"
                                 >
                                     Hapus
                                 </button>

@@ -1,9 +1,9 @@
-import { defineAbility } from "@casl/ability";
-import Cookies from "js-cookie";
+import { AbilityBuilder, Ability, defineAbility } from "@casl/ability";
+import Cookie from "js-cookie";
+import { defaultsDeep } from "lodash";
 
 export default defineAbility((can) => {
-    if (Cookies.get("user") !== undefined) {
-        can("manage", "all");
+    if (Cookie.get("token") !== undefined) {
         var permission = "";
         for (var prop in permission) {
             if (permission.hasOwnProperty(prop)) {

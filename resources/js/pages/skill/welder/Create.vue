@@ -75,14 +75,14 @@ export default {
                 </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
-                <button class="btn btn-secondary" @click="onCancel">
+                <button class="btn btn-sm btn-secondary" @click="onCancel">
                     Batal
                 </button>
-                <button class="btn btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-success" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-success"
+                    class="btn btn-sm btn-success"
                     type="button"
                     disabled
                     v-if="isLoading"

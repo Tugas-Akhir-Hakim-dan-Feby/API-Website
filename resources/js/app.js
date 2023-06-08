@@ -5,10 +5,12 @@ import "izitoast/dist/css/iziToast.min.css";
 import IconTitle from "../images/api-iws.png";
 
 import { createApp } from "vue";
-import iziToast from "izitoast";
 import { QuillEditor } from "@vueup/vue-quill";
+import { abilitiesPlugin } from "@casl/vue";
+import iziToast from "izitoast";
 import router from "./router";
 import store from "./store";
+import ability from "./store/services/ability";
 
 import VueChartkick from "vue-chartkick";
 import "chartkick/chart.js";
@@ -23,6 +25,9 @@ createApp(App)
     .use(router)
     .use(store)
     .use(iziToast)
+    .use(abilitiesPlugin, ability, {
+        useGlobalProperties: true,
+    })
     .use(VueChartkick)
     .component("QuillEditor", QuillEditor)
     .mount("#app");

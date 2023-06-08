@@ -17,7 +17,19 @@ class AuthenticatedController extends Controller
 
         return response()->json([
             'user' => $user,
-            'roles' => $user->roles->pluck('name')
+            'permission' => $this->permissionGenerate($user),
+            'roles' => $user->roles->pluck('name'),
         ]);
+    }
+
+    public function permissionGenerate($user)
+    {
+        $permission = [];
+        $perm = $user->getAllPermissions()->pluck('name');
+        foreach ($perm as $item) {
+            $var = explode('.', $item);
+            $permission[$var[0]][] = $var[1];
+        }
+        return $permission;
     }
 }

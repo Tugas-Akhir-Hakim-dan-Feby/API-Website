@@ -39,7 +39,7 @@ export default {
         setForm(exam) {
             this.form.examPacketId = this.id;
             this.form.question = exam.question;
-            this.form.correctAnswer = exam.correctAnswer.answer;
+            this.form.correctAnswer = exam.correctAnswer?.answer;
             this.form.answerType = exam.type;
 
             exam.answers.forEach((answer, key) => {
@@ -73,7 +73,6 @@ export default {
                 });
         },
         answerTrueFalse(e) {
-            console.log(e);
             this.form.answers = e[0];
             this.form.correctAnswer = e[1];
         },
@@ -142,7 +141,7 @@ export default {
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <router-link
-                    class="btn btn-secondary"
+                    class="btn btn-sm btn-secondary"
                     :to="{
                         name: 'Exam Packet Detail',
                         params: { id: id },
@@ -151,11 +150,11 @@ export default {
                 >
                     Batal
                 </router-link>
-                <button class="btn btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-success" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-success"
+                    class="btn btn-sm btn-success"
                     type="button"
                     disabled
                     v-if="isLoading"

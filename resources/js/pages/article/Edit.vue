@@ -183,10 +183,10 @@ export default {
                 <div class="card-footer d-flex justify-content-between">
                     <router-link
                         :to="{ name: 'Article' }"
-                        class="btn btn-secondary"
+                        class="btn btn-sm btn-secondary"
                         >Batal</router-link
                     >
-                    <button class="btn btn-success">Simpan</button>
+                    <button class="btn btn-sm btn-success">Simpan</button>
                 </div>
             </div>
         </form>

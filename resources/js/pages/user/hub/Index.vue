@@ -93,10 +93,10 @@ export default {
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"
                 >
-                    <div class="text-center">
+                    <div class="text-center" v-if="$can('create', 'Adminhub')">
                         <router-link
                             :to="{ name: 'User Hub Create' }"
-                            class="btn btn-primary mb-2"
+                            class="btn btn-primary mb-2 btn-sm"
                             >Tambah Pengguna</router-link
                         >
                     </div>
@@ -111,12 +111,14 @@ export default {
                                 placeholder="pencarian"
                                 @keyup="onSearch"
                                 v-model="filters.search"
+                                v-if="$can('search', 'Adminhub')"
                             />
                         </div>
 
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
+                            v-if="$can('pagination', 'Adminhub')"
                         />
                     </div>
                 </div>
@@ -131,7 +133,9 @@ export default {
                             <th>Email Pengguna</th>
                             <th>Jabatan</th>
                             <th>Jenis Kelamin</th>
-                            <th>Status</th>
+                            <th v-if="$can('update-status', 'Adminhub')">
+                                Status
+                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -147,7 +151,7 @@ export default {
                             <td v-html="user.email"></td>
                             <td v-html="user.adminHub?.position"></td>
                             <td v-html="getGender(user.adminHub?.gender)"></td>
-                            <td>
+                            <td v-if="$can('update-status', 'Adminhub')">
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -169,6 +173,7 @@ export default {
                                         name: 'User Hub Edit',
                                         params: { id: user.uuid },
                                     }"
+                                    v-if="$can('update', 'Adminhub')"
                                     class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >

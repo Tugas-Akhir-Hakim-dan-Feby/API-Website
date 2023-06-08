@@ -248,14 +248,14 @@ export default {
                             <div class="text-center mt-sm-0 mt-3 text-sm-end">
                                 <button
                                     type="button"
-                                    class="btn btn-success me-2"
+                                    class="btn btn-sm btn-success me-2"
                                     @click="handleEdit"
                                     v-if="isEdit && !isLoading"
                                 >
                                     Simpan
                                 </button>
                                 <button
-                                    class="btn btn-success me-2"
+                                    class="btn btn-sm btn-success me-2"
                                     type="button"
                                     disabled
                                     v-if="isEdit && isLoading"
@@ -269,7 +269,7 @@ export default {
                                 </button>
                                 <button
                                     type="button"
-                                    class="btn btn-light"
+                                    class="btn btn-sm btn-light"
                                     @click="isEdit = true"
                                     v-if="!isEdit"
                                 >
@@ -277,7 +277,7 @@ export default {
                                 </button>
                                 <button
                                     type="button"
-                                    class="btn btn-light"
+                                    class="btn btn-sm btn-light"
                                     @click="isEdit = false"
                                     v-else
                                 >

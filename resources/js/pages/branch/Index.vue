@@ -125,7 +125,11 @@ export default {
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
                 <div class="text-center">
-                    <button class="btn btn-primary mb-2" @click="onCreate">
+                    <button
+                        class="btn btn-primary btn-sm mb-2"
+                        @click="onCreate"
+                        v-if="$can('create', 'Branch')"
+                    >
                         Tambah Cabang
                     </button>
                 </div>
@@ -140,12 +144,14 @@ export default {
                             placeholder="pencarian"
                             @keyup="onSearch"
                             v-model="filters.search"
+                            v-if="$can('search', 'Branch')"
                         />
                     </div>
 
                     <Pagination
                         :pagination="metaPagination"
                         @onPageChange="onPageChange($event)"
+                        v-if="$can('pagination', 'Branch')"
                     />
                 </div>
             </div>
@@ -179,6 +185,7 @@ export default {
                             <td>
                                 <button
                                     @click="onEdit(branch.uuid)"
+                                    v-if="$can('update', 'Branch')"
                                     class="btn btn-warning btn-sm me-2 text-white"
                                 >
                                     Edit
@@ -186,6 +193,7 @@ export default {
                                 <button
                                     class="btn btn-danger btn-sm"
                                     @click="handleDelete(branch.uuid)"
+                                    v-if="$can('delete', 'Branch')"
                                 >
                                     Hapus
                                 </button>

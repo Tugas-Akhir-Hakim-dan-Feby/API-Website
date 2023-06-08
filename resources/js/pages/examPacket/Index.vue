@@ -172,12 +172,8 @@ export default {
                 <div class="text-center">
                     <router-link
                         :to="{ name: 'Exam Packet Create' }"
-                        class="btn btn-primary mb-2 me-3"
-                        v-if="
-                            checkRoleWelderMember($store.state.ADMIN_APP) ||
-                            checkRoleWelderMember($store.state.EXPERT) ||
-                            checkRoleWelderMember($store.state.ADMIN_HUB)
-                        "
+                        class="btn btn-sm btn-primary mb-2 me-3"
+                        v-if="$can('create', 'Exampacket')"
                     >
                         Tambah Paket
                     </router-link>
@@ -189,6 +185,7 @@ export default {
                     <Pagination
                         :pagination="metaPagination"
                         @onPageChange="onPageChange($event)"
+                        v-if="$can('pagination', 'Exampacket')"
                     />
                 </div>
             </div>
@@ -201,19 +198,7 @@ export default {
                             <th>Nama Paket</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
-                            <th
-                                v-if="
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_APP
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.EXPERT
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_HUB
-                                    )
-                                "
-                            >
+                            <th v-if="$can('update-status', 'Exampacket')">
                                 Status
                             </th>
                             <th>Aksi</th>
@@ -237,19 +222,7 @@ export default {
                                     )} Menit)`
                                 "
                             ></td>
-                            <td
-                                v-if="
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_APP
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.EXPERT
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_HUB
-                                    )
-                                "
-                            >
+                            <td v-if="$can('update-status', 'Exampacket')">
                                 <div class="form-check form-switch">
                                     <input
                                         class="form-check-input"
@@ -284,6 +257,7 @@ export default {
                                         name: 'Exam Packet Detail',
                                         params: { id: examPacket.uuid },
                                     }"
+                                    v-if="$can('show', 'Exampacket')"
                                     class="btn btn-info btn-sm me-2 text-white"
                                 >
                                     Detail
@@ -291,6 +265,7 @@ export default {
                                 <button
                                     class="btn btn-danger btn-sm"
                                     @click="handleDelete(examPacket.uuid)"
+                                    v-if="$can('delete', 'Exampacket')"
                                 >
                                     Hapus
                                 </button>

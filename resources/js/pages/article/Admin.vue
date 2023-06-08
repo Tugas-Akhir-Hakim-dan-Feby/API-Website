@@ -4,7 +4,7 @@ import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
-import PaginationUtil from "../../store/utils/pagination"
+import PaginationUtil from "../../store/utils/pagination";
 
 export default {
     data() {
@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         iteration(index) {
-            return PaginationUtil.iteration(index, this.metaPagination)
+            return PaginationUtil.iteration(index, this.metaPagination);
         },
         getArticles() {
             this.isLoading = true;
@@ -128,10 +128,10 @@ export default {
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
-                <div class="text-center">
+                <div class="text-center" v-if="$can('create', 'Article')">
                     <router-link
                         :to="{ name: 'Article Create' }"
-                        class="btn btn-primary mb-2 me-3"
+                        class="btn btn-primary btn-sm mb-2 me-3"
                     >
                         Tambah Berita
                     </router-link>
@@ -147,12 +147,14 @@ export default {
                             placeholder="pencarian"
                             @keyup="onSearch"
                             v-model="filters.search"
+                            v-if="$can('search', 'Article')"
                         />
                     </div>
 
                     <Pagination
                         :pagination="metaPagination"
                         @onPageChange="onPageChange($event)"
+                        v-if="$can('pagination', 'Article')"
                     />
                 </div>
             </div>
@@ -187,6 +189,7 @@ export default {
                                         name: 'Article Edit',
                                         params: { id: article.uuid },
                                     }"
+                                    v-if="$can('update', 'Article')"
                                     class="btn btn-sm btn-warning text-white me-2"
                                 >
                                     Edit
@@ -194,6 +197,7 @@ export default {
                                 <button
                                     class="btn btn-sm btn-danger"
                                     @click="handleDelete(article.uuid)"
+                                    v-if="$can('delete', 'Article')"
                                 >
                                     Hapus
                                 </button>

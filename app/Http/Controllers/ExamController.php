@@ -81,6 +81,14 @@ class ExamController extends Controller
         $exam = $this->examRepository->findOrFail($id);
         $exam->load(["answers", "welderAnswer.answer"]);
 
+        if (
+            auth()->user()->isAdminApp() ||
+            auth()->user()->isAdminHub() ||
+            auth()->user()->isExpert()
+        ) {
+            $exam->load(["correctAnswer"]);
+        }
+
         return new ExamDetail($exam);
     }
 

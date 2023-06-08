@@ -163,6 +163,7 @@ export default {
                 class="btn btn-primary btn-sm mb-md-0 mb-sm-2"
                 data-bs-toggle="modal"
                 data-bs-target="#uploadData"
+                v-if="$can('upload-excel', 'Expert')"
             >
                 Upload Data
             </button>
@@ -175,12 +176,14 @@ export default {
                         placeholder="pencarian"
                         @input="onSearch"
                         v-model="filters.search"
+                        v-if="$can('search', 'Expert')"
                     />
                 </div>
 
                 <Pagination
                     :pagination="metaPagination"
                     @onPageChange="onPageChange($event)"
+                    v-if="$can('pagination', 'Expert')"
                 />
             </div>
         </div>
@@ -211,6 +214,7 @@ export default {
                                 name: 'User Expert Show',
                                 params: { id: user.uuid },
                             }"
+                            v-if="$can('show', 'Expert')"
                             class="btn btn-sm btn-info me-2"
                             >Detail</router-link
                         >
