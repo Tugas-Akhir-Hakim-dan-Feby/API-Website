@@ -29,9 +29,14 @@ export default {
 };
 </script>
 <template>
-    <ProfileAdminApp v-if="checkRoles($store.state.ADMIN_APP)" />
-    <ProfileAdminHub v-if="checkRoles($store.state.ADMIN_HUB)" />
-    <ProfileAdminBranch v-if="checkRoles($store.state.ADMIN_BRANCH)" />
-    <ProfileCompanyMember v-if="checkRoles($store.state.MEMBER_COMPANY)" />
-    <ChangePassword />
+    <ProfileAdminApp
+        v-if="
+            $can('update-admin-app', 'Profile') ||
+            $can('update-guest', 'Profile')
+        "
+    />
+    <ProfileAdminHub v-if="$can('update-admin-hub', 'Profile')" />
+    <ProfileAdminBranch v-if="$can('update-admin-branch', 'Profile')" />
+    <ProfileCompanyMember v-if="$can('update-company-member', 'Profile')" />
+    <ChangePassword v-if="$can('update-password', 'Profile')" />
 </template>
