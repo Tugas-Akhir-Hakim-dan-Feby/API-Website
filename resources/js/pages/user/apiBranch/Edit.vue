@@ -6,26 +6,7 @@ export default {
     data() {
         return {
             msg: "",
-            branches: [
-                {
-                    id: 1,
-                    branchName: "Cabang 1",
-                    branchAddress: "Jl. Raya No. 1",
-                    branchPhone: "081234567890",
-                },
-                {
-                    id: 2,
-                    branchName: "Cabang 2",
-                    branchAddress: "Jl. Raya No. 2",
-                    branchPhone: "081234567890",
-                },
-                {
-                    id: 3,
-                    branchName: "Cabang 3",
-                    branchAddress: "Jl. Raya No. 3",
-                    branchPhone: "081234567890",
-                },
-            ],
+            branches: [],
         };
     },
     methods: {
