@@ -38,6 +38,14 @@ export default {
         onBack() {
             this.$router.back();
         },
+        checkFile(file) {
+            let url = window.location.origin + "/storage";
+
+            if (file && file.length > url.length) {
+                return true;
+            }
+            return false;
+        },
     },
     components: { PageTitle, Loader },
 };
@@ -62,6 +70,7 @@ export default {
                         class="img-fluid"
                         style="max-width: 280px"
                         :alt="user.name"
+                        onerror="this.src=null; this.src='https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png'"
                     />
                 </div>
                 <div class="col-lg-7">
@@ -115,11 +124,44 @@ export default {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Legalitas Perusahaan</td>
+                            <td>Pas Foto Formal Berwarna</td>
                             <td>
                                 <a
+                                    :href="user.welderMember?.pasPhoto"
                                     target="_blank"
-                                    :href="user.companyMember?.companyLegality"
+                                    v-if="checkFile(user.expert?.pasPhoto)"
+                                    ><i class="mdi mdi-download"></i> Unduh</a
+                                >
+                                <p v-else>belum tersedia</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ijazah Pendidikan Formal</td>
+                            <td>
+                                <a
+                                    :href="user.welderMember?.certificateSchool"
+                                    target="_blank"
+                                    v-if="
+                                        checkFile(
+                                            user.expert?.certificateSchool
+                                        )
+                                    "
+                                    ><i class="mdi mdi-download"></i> Unduh</a
+                                >
+                                <p v-else>belum tersedia</p>
+                            </td>
+                        </tr>
+                        <tr
+                            v-for="(
+                                welderDocument, index
+                            ) in user.welderDocuments"
+                            :key="index"
+                        >
+                            <td>Sertifikat Kompetensi Pengelasan Lainnya</td>
+                            <td>
+                                <a
+                                    :href="welderDocument.documentPath"
+                                    target="_blank"
                                     ><i class="mdi mdi-download"></i> Unduh</a
                                 >
                             </td>

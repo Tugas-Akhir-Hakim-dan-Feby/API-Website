@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Filters\User\WelderMember\WelderSkillId;
+use App\Http\Requests\User\WelderMember\UpdateDocumentRequest;
 use App\Http\Requests\User\WelderMember\UploadFileRequest;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
@@ -26,6 +27,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role as PermissionModelsRole;
 
@@ -148,6 +151,35 @@ class WelderMemberController extends Controller
     public function update(Request $request, WelderMember $welderMember)
     {
         //
+    }
+
+    public function updateDocument(UpdateDocumentRequest $request, $id)
+    {
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($id);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($request->hasFile('document_pas_photo')) {
+                if ($user->welderMember->pas_photo) {
+                    $path = str_replace(url('storage') . '/', '', $user->welderMember->pas_photo);
+                    Storage::delete($path);
+                }
+
+                $user->welderMember()->update([
+                    "pas_photo" => $request->file('document_pas_photo')->store('pas_photo')
+                ]);
+            }
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function destroy(WelderMember $welderMember)

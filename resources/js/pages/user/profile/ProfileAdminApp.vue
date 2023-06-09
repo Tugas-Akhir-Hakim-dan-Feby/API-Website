@@ -59,8 +59,8 @@ export default {
 <template>
     <div class="row mt-3">
         <div class="col-lg-4">
-            <h4>Informasi Pribadi</h4>
-            <p>Perbarui informasi profil akun Anda.</p>
+            <h4>Informasi Akun</h4>
+            <p>Perbaharui informasi profil akun Anda.</p>
         </div>
         <div class="col-lg-8">
             <div class="card">
