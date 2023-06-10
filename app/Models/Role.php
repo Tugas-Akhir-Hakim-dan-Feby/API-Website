@@ -23,6 +23,8 @@ class Role extends Model
 
     const GUEST = 7;
 
+    const ARTICLE = 8;
+
     protected $fillable = [
         'name',
         'guard_name',
