@@ -19,53 +19,55 @@ class RoleSeeder extends Seeder
     {
         $roles = ['Admin App', 'Admin Pusat', 'Admin Cabang', 'Pakar', 'Member Company', 'Member Welder', 'Guest'];
 
-        $access[1]['Dashboard'] = ['index'];
-        $access[1]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
-        $access[1]['AdminHub'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[1]['AdminBranch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[1]['Expert'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel', 'confirmation'];
-        $access[1]['CompanyMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
-        $access[1]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
-        $access[1]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[1]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[1]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[1]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
-        $access[1]['Profile'] = ['index', 'update-password', 'update-admin-app'];
+        $access[User::ADMIN_APP]['Dashboard'] = ['index'];
+        $access[User::ADMIN_APP]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_APP]['AdminHub'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_APP]['AdminBranch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_APP]['Expert'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel', 'confirmation'];
+        $access[User::ADMIN_APP]['CompanyMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
+        $access[User::ADMIN_APP]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
+        $access[User::ADMIN_APP]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_APP]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_APP]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
+        $access[User::ADMIN_APP]['Profile'] = ['index', 'update-password', 'update-admin-app'];
 
-        $access[2]['Dashboard'] = ['index'];
-        $access[2]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
-        $access[2]['AdminHub'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[2]['AdminBranch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[2]['Expert'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel', 'confirmation'];
-        $access[2]['CompanyMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
-        $access[2]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
-        $access[2]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[2]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[2]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[2]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
-        $access[2]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
+        $access[User::ADMIN_PUSAT]['Dashboard'] = ['index'];
+        $access[User::ADMIN_PUSAT]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_PUSAT]['AdminHub'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_PUSAT]['AdminBranch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_PUSAT]['Expert'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel', 'confirmation'];
+        $access[User::ADMIN_PUSAT]['CompanyMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
+        $access[User::ADMIN_PUSAT]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
+        $access[User::ADMIN_PUSAT]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_PUSAT]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_PUSAT]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_PUSAT]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
+        $access[User::ADMIN_PUSAT]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
 
-        $access[3]['Dashboard'] = ['index'];
-        $access[3]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[3]['Profile'] = ['index', 'update-password', 'update-admin-branch'];
+        $access[User::ADMIN_CABANG]['Dashboard'] = ['index'];
+        $access[User::ADMIN_CABANG]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::ADMIN_CABANG]['Profile'] = ['index', 'update-password', 'update-admin-branch'];
 
-        $access[4]['Dashboard'] = ['index'];
-        $access[4]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[4]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
-        $access[4]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
-        $access[4]['Profile'] = ['index', 'update-password', 'update-expert'];
+        $access[User::PAKAR]['Dashboard'] = ['index'];
+        $access[User::PAKAR]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::PAKAR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::PAKAR]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
+        $access[User::PAKAR]['Profile'] = ['index', 'update-password', 'update-expert'];
 
-        $access[5]['Dashboard'] = ['index'];
-        $access[5]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[5]['Profile'] = ['index', 'update-password', 'update-company-member'];
+        $access[User::MEMBER_COMPANY]['Dashboard'] = ['index'];
+        $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
+        $access[User::MEMBER_COMPANY]['Profile'] = ['index', 'update-password', 'update-company-member'];
 
-        $access[6]['Dashboard'] = ['index'];
-        $access[6]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
-        $access[6]['Profile'] = ['index', 'update-password', 'update-welder-member'];
+        $access[User::MEMBER_WELDER]['Dashboard'] = ['index'];
+        $access[User::MEMBER_WELDER]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
+        $access[User::MEMBER_WELDER]['Profile'] = ['index', 'update-password', 'update-welder-member'];
+        $access[User::MEMBER_WELDER]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet'];
+        $access[User::MEMBER_WELDER]['Exam'] = ['index', 'show', 'pagination'];
 
-        $access[7]['Dashboard'] = ['index'];
-        $access[7]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
-        $access[7]['Profile'] = ['index', 'update-password', 'update-guest'];
+        $access[User::GUEST]['Dashboard'] = ['index'];
+        $access[User::GUEST]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
+        $access[User::GUEST]['Profile'] = ['index', 'update-password', 'update-guest'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');
@@ -80,7 +82,7 @@ class RoleSeeder extends Seeder
         $permission['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $permission['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $permission['Article'] = ['index', 'index-guest', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet'];
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
 

@@ -16,6 +16,14 @@ export default [
         },
     },
     {
+        path: "/exam-packet/register",
+        component: () => import("../../../pages/examPacket/Register.vue"),
+        name: "Exam Packet Register",
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
         path: "/exam-packet/:examPacketId/success",
         component: () => import("../../../pages/examPacket/Success.vue"),
         name: "Exam Packet Success",

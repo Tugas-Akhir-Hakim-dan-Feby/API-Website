@@ -155,13 +155,16 @@ export default {
 
             return false;
         },
+        onBack() {
+            this.$router.push({ name: "Exam Packet" });
+        },
     },
     components: { PageTitle, Success, Pagination, Confirm, Loader },
 };
 </script>
 
 <template>
-    <PageTitle title="Kumpulan Paket Pertanyaan" />
+    <PageTitle title="Daftar Uji Kompetensi" :isBack="true" @onBack="onBack" />
 
     <div class="card position-relative">
         <Loader v-if="isLoading" />
@@ -169,22 +172,7 @@ export default {
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
-                <div class="text-center">
-                    <router-link
-                        :to="{ name: 'Exam Packet Create' }"
-                        class="btn btn-sm btn-primary mb-2 me-3"
-                        v-if="$can('create', 'Exampacket')"
-                    >
-                        Tambah Paket
-                    </router-link>
-                    <router-link
-                        :to="{ name: 'Exam Packet Register' }"
-                        class="btn btn-sm btn-primary mb-2 me-3"
-                        v-if="$can('register-packet', 'Exampacket')"
-                    >
-                        Daftar Uji Kompetensi
-                    </router-link>
-                </div>
+                <div class="text-center"></div>
 
                 <div
                     class="d-md-flex justify-content-between align-items-center"
@@ -202,13 +190,9 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Nama Paket</th>
+                            <th>Uji Kompetensi</th>
                             <th>Jadwal Ujian</th>
-                            <th>Tenggat Ujian</th>
-                            <th v-if="$can('update-status', 'Exampacket')">
-                                Status
-                            </th>
-                            <th>Aksi</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -219,87 +203,11 @@ export default {
                             <th v-html="iteration(index)"></th>
                             <td v-html="examPacket.name"></td>
                             <td v-html="getSchedule(examPacket.schedule)"></td>
-                            <td
-                                v-html="
-                                    `${examPacket.startTime} - ${
-                                        examPacket.endTime
-                                    } WIB (${getMinute(
-                                        examPacket.startTime,
-                                        examPacket.endTime
-                                    )} Menit)`
-                                "
-                            ></td>
-                            <td v-if="$can('update-status', 'Exampacket')">
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        style="cursor: pointer"
-                                        :checked="examPacket.status"
-                                        @click="
-                                            onUpdateStatus(
-                                                examPacket.uuid,
-                                                examPacket.status
-                                            )
-                                        "
-                                    />
-                                </div>
-                            </td>
-                            <td
-                                v-if="
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_APP
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.EXPERT
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_HUB
-                                    )
-                                "
-                            >
+                            <td>
                                 <router-link
-                                    :to="{
-                                        name: 'Exam Packet Detail',
-                                        params: { id: examPacket.uuid },
-                                    }"
-                                    v-if="$can('show', 'Exampacket')"
-                                    class="btn btn-info btn-sm me-2 text-white"
-                                >
-                                    Detail
-                                </router-link>
-                                <button
-                                    class="btn btn-danger btn-sm"
-                                    @click="handleDelete(examPacket.uuid)"
-                                    v-if="$can('delete', 'Exampacket')"
-                                >
-                                    Hapus
-                                </button>
-                            </td>
-                            <td v-else>
-                                <a
-                                    :href="`/attempt/${examPacket.uuid}/execution/${examPacket.exam?.uuid}`"
-                                    @click.native="reloadPage"
-                                    class="btn btn-primary btn-sm"
-                                    v-if="
-                                        checkSchedule(examPacket.schedule, [
-                                            examPacket.startTime,
-                                            examPacket.endTime,
-                                        ])
-                                    "
-                                    >Kerjakan</a
-                                >
-                                <router-link
-                                    v-else
-                                    :to="{
-                                        name: 'Exam Packet Success',
-                                        params: {
-                                            examPacketId: examPacket.uuid,
-                                        },
-                                    }"
-                                    class="btn btn-sm btn-info"
-                                    >Detail</router-link
+                                    to="/"
+                                    class="btn btn-sm btn-primary"
+                                    >Daftar</router-link
                                 >
                             </td>
                         </tr>
