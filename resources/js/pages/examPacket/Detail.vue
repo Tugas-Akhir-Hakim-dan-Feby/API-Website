@@ -70,9 +70,18 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Detail Paket" :isBack="true" @onBack="onBack($event)" />
+    <PageTitle
+        :title="`Detail Paket ${examPacket.name}`"
+        :isBack="true"
+        @onBack="onBack($event)"
+    />
 
-    <Edit :examPacket="examPacket" @onSuccessEdit="onSuccessEdit" />
+    <Edit
+        :examPacket="examPacket"
+        @onSuccessEdit="onSuccessEdit"
+        :edit="true"
+        :isShowParticipant="true"
+    />
 
     <div class="card">
         <div

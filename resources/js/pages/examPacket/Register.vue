@@ -23,9 +23,12 @@ export default {
             metaPagination: {},
             roles: [],
             msg: "",
+            titleExamPacket: "",
+            idExamPacket: "",
             uuid: null,
             isLoading: false,
             isError: false,
+            isRegistered: false,
         };
     },
     mounted() {
@@ -67,89 +70,48 @@ export default {
                     console.log(error);
                 });
         },
+        getCheckExamPacket(examPacketId) {
+            this.$store
+                .dispatch("showData", ["user-exam-packet/check", examPacketId])
+                .then((response) => {
+                    this.isRegistered = response;
+                });
+
+            return this.isRegistered;
+        },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
-        getMinute(startTime, endTime) {
-            const [startHours, startMinutes] = startTime.split(":");
-            const [endHours, endMinutes] = endTime.split(":");
-
-            const startDate = new Date();
-            startDate.setHours(startHours);
-            startDate.setMinutes(startMinutes);
-
-            const endDate = new Date();
-            endDate.setHours(endHours);
-            endDate.setMinutes(endMinutes);
-
-            let diff = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
-            if (diff < 0) {
-                diff += 1440;
-            }
-
-            return diff.toFixed(0);
-        },
-        handleDelete(uuid) {
-            this.uuid = uuid;
-            $("#confirmModal").modal("show");
-        },
-        onUpdateStatus(id, status) {
+        handleSubmit() {
             this.isLoading = true;
-            this.errors = {};
+
+            const form = {
+                examPacketId: this.idExamPacket,
+            };
+
             this.$store
-                .dispatch("updateData", ["exam-packet/update-status", id, {}])
+                .dispatch("postData", ["user-exam-packet", form])
                 .then((response) => {
                     this.isLoading = false;
-                    this.msg = `data berhasil diperbaharui.`;
-                    this.getExamPackets();
+                    $("#registerExam").modal("hide");
                     $("#successModal").modal("show");
+                    this.msg =
+                        "Registrasi berhasil. Silahkan periksa email anda untuk mengetahui info selebihnya.";
+                    this.getUser();
                 })
                 .catch((error) => {
                     this.isLoading = false;
-
-                    if (
-                        error.response.data.status == "ERROR" &&
-                        error.response.data.statusCode == 500
-                    ) {
-                        this.isError = true;
-                        this.msg = error.response.data.message;
-                    }
                 });
         },
         onPageChange(e) {
             this.pagination.page = e;
             this.getExamPackets();
         },
-        onDelete() {
-            this.$store
-                .dispatch("deleteData", ["exam-packet", this.uuid])
-                .then((response) => {
-                    $("#confirmModal").modal("hide");
-                    $("#successModal").modal("show");
-                    this.msg = "data berhasil dihapus.";
-                    this.getExamPackets();
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
-        checkRoleWelderMember(role) {
-            if (this.roles.includes(role)) {
-                return true;
-            }
-            return false;
-        },
         checkSchedule(schedule, timing) {
             let now = dayjs();
             schedule = dayjs(schedule).locale("id");
 
-            let nowTime = now.hour() + ":" + now.minute();
-
-            if (
-                timing[1] <= nowTime &&
-                nowTime >= timing[0] &&
-                now.isSame(schedule, "day")
-            ) {
+            if (now.isBefore(schedule, "day")) {
                 return true;
             }
 
@@ -192,23 +154,45 @@ export default {
                             <th>No.</th>
                             <th>Uji Kompetensi</th>
                             <th>Jadwal Ujian</th>
+                            <th>Alamat Tempat Ujian</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="examPackets.length < 1">
+                            <td colspan="5" class="text-center">
+                                Belum ada data uji kompetensi.
+                            </td>
+                        </tr>
                         <tr
+                            v-else
                             v-for="(examPacket, index) in examPackets"
                             :key="index"
                         >
                             <th v-html="iteration(index)"></th>
                             <td v-html="examPacket.name"></td>
                             <td v-html="getSchedule(examPacket.schedule)"></td>
+                            <td v-html="examPacket.practiceExamAddress"></td>
                             <td>
-                                <router-link
-                                    to="/"
-                                    class="btn btn-sm btn-primary"
-                                    >Daftar</router-link
+                                <button
+                                    class="badge border-0 btn-success ms-2"
+                                    style="cursor: auto"
+                                    v-if="getCheckExamPacket(examPacket.uuid)"
                                 >
+                                    Terdaftar
+                                </button>
+                                <button
+                                    class="btn btn-sm btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#registerExam"
+                                    @click="
+                                        (titleExamPacket = examPacket.name),
+                                            (idExamPacket = examPacket.uuid)
+                                    "
+                                    v-else
+                                >
+                                    Daftar
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -217,6 +201,85 @@ export default {
         </div>
     </div>
 
+    <div
+        class="modal fade"
+        id="registerExam"
+        tabindex="-1"
+        aria-labelledby="registerExamLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerExamLabel">
+                        Registrasi Paket Uji Kompetensi
+                    </h5>
+                </div>
+                <form @submit.prevent="handleSubmit" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Nama Peserta</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                :value="$store.state.USER.name"
+                                disabled
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label>Email Peserta</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                :value="$store.state.USER.email"
+                                disabled
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label>Nama Paket Uji Kompetensi</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                :value="titleExamPacket"
+                                disabled
+                            />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary me-2"
+                            data-bs-dismiss="modal"
+                            :disabled="isLoading"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <Success :msg="msg" />
     <Confirm @onDelete="onDelete" />
 </template>

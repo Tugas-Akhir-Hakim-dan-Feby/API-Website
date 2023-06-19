@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class ExamPacketRequestStore extends FormRequest
+class KeyCheckRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,38 +26,15 @@ class ExamPacketRequestStore extends FormRequest
      */
     public function rules()
     {
-        $request = [
-            "name" => "required",
-            "year" => "numeric",
-            "schedule" => "required",
+        return [
+            "key_packet" => "required"
         ];
-
-        if (request("method") != "put") {
-            $request["person_responsible"] = "required";
-            $request["practice_exam_address"] = "required";
-        }
-
-        if (request('is_period') == "true") {
-            $request["period"] = "required|numeric";
-        } else {
-            $request["start_time"] = "required";
-            $request["end_time"] = "required";
-        }
-
-        return $request;
     }
 
     public function attributes()
     {
         return [
-            "name" => "nama",
-            "year" => "tahun",
-            "schedule" => "jadwal",
-            "start_time" => "waktu mulai",
-            "end_time" => "waktu selesai",
-            "period" => "periode",
-            "practice_exam_address" => "alamat tempat ujian",
-            "person_responsible" => "penanggung jawab"
+            "key_packet" => "kunci paket",
         ];
     }
 

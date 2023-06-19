@@ -1,6 +1,7 @@
 <script>
 import Loader from "../../../components/Loader.vue";
 import iziToast from "izitoast";
+import cookie from "js-cookie";
 
 export default {
     data() {
@@ -20,23 +21,41 @@ export default {
             },
             participantAnswer: "",
             numbering: [],
+            errors: {},
+            form: {
+                keyPacket: "",
+            },
         };
     },
     beforeMount() {
-        setTimeout(() => {
-            this.examId = this.$route.params.examId;
-            this.examPacketId = this.$route.params.examPacketId;
-            this.getExams();
-            this.getExamPacket();
-        }, 1000);
-        setTimeout(() => {
-            this.getMinute(this.examPacket.startTime, this.examPacket.endTime);
-        }, 2000);
+        let examSession = cookie.get("examSession");
+        if (examSession) {
+            setTimeout(() => {
+                this.examId = this.$route.params.examId;
+                this.examPacketId = this.$route.params.examPacketId;
+                this.getExams();
+                this.getExamPacket();
+            }, 1000);
+            setTimeout(() => {
+                this.getMinute(
+                    this.examPacket.startTime,
+                    this.examPacket.endTime
+                );
+            }, 2000);
+        } else {
+            $("#loginExam").modal("show");
+        }
     },
     mounted() {
-        this.numbering = localStorage.getItem("numbering");
-        $("body").on("keydown", this.onDisabled);
-        document.addEventListener("visibilitychange", this.onDisabled);
+        let examSession = cookie.get("examSession");
+
+        if (examSession) {
+            this.numbering = localStorage.getItem("numbering");
+            $("body").on("keydown", this.onDisabled);
+            document.addEventListener("visibilitychange", this.onDisabled);
+        } else {
+            $("#loginExam").modal("show");
+        }
     },
     watch: {
         currentTime: {
@@ -57,6 +76,38 @@ export default {
         },
     },
     methods: {
+        handleLogin() {
+            this.errors = {};
+            this.isLoading = true;
+            const params = {
+                examPacketId: this.$route.params.examPacketId,
+                keyPacket: this.form.keyPacket,
+            };
+
+            this.$store
+                .dispatch("postData", ["user-exam-packet/key-check", params])
+                .then((response) => {
+                    this.isLoading = false;
+                    cookie.set("examSession", true);
+                    window.location.reload();
+                    $("#loginExam").modal("hide");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+
+                    if (
+                        error.response.data.status == "WARNING" &&
+                        error.response.data.statusCode == 400
+                    ) {
+                        iziToast.error({
+                            message: error.response.data.message,
+                            position: "topCenter",
+                        });
+                    } else {
+                        this.errors = error.response.data.messages;
+                    }
+                });
+        },
         getExamPacket() {
             this.$store
                 .dispatch("showData", ["exam-packet", this.examPacketId])
@@ -200,6 +251,8 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.participantAnswer = null;
+                    localStorage.removeItem("pageStory");
+                    cookie.remove("examSession");
                     $("#confirmModal").modal("hide");
                     window.location.href = `/exam-packet/${this.examPacketId}/success`;
                 })
@@ -210,6 +263,13 @@ export default {
                         position: "topCenter",
                     });
                 });
+        },
+        refreshPage() {
+            this.getExams();
+        },
+        onBack() {
+            $("#loginExam").modal("hide");
+            window.location.href = "/exam-packet";
         },
     },
     components: { Loader },
@@ -237,8 +297,14 @@ export default {
             <div class="content">
                 <div class="navbar-custom">
                     <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="notification-list pt-2 me-3">
+                            <button
+                                class="btn btn-sm btn-primary mdi mdi-autorenew"
+                                @click="refreshPage"
+                            ></button>
+                        </li>
                         <li class="notification-list pt-2">
-                            <span class="btn btn-success disabled">{{
+                            <span class="btn btn-sm btn-success disabled">{{
                                 currentTime
                             }}</span>
                         </li>
@@ -344,6 +410,73 @@ export default {
 
     <div
         class="modal fade"
+        id="loginExam"
+        tabindex="-1"
+        aria-labelledby="loginExamLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginExamLabel">konfirmasi</h5>
+                </div>
+                <form @submit.prevent="handleLogin" method="post">
+                    <div class="modal-body">
+                        <div>
+                            <label>Masukan Kunci Paket</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                :class="{ 'is-invalid': errors.keyPacket }"
+                                v-model="form.keyPacket"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.keyPacket"
+                                v-for="(error, index) in errors.keyPacket"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary"
+                            @click.native="onBack"
+                        >
+                            Kembali
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
         id="confirmModal"
         tabindex="-1"
         aria-labelledby="confirmModalLabel"
@@ -367,17 +500,31 @@ export default {
                 <div class="modal-footer">
                     <button
                         type="button"
-                        class="btn btn-secondary"
+                        class="btn btn-sm btn-secondary"
                         data-bs-dismiss="modal"
                     >
                         Batal
                     </button>
                     <button
                         type="button"
-                        class="btn btn-primary"
+                        class="btn btn-sm btn-primary"
                         @click="handleFinish()"
+                        v-if="!isLoading"
                     >
                         Simpan
+                    </button>
+                    <button
+                        class="btn btn-sm btn-primary"
+                        type="button"
+                        disabled
+                        v-if="isLoading"
+                    >
+                        <span
+                            class="spinner-border spinner-border-sm me-1"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                        Harap Tunggu...
                     </button>
                 </div>
             </div>

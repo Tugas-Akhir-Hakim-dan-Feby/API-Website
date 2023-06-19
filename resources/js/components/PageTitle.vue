@@ -28,7 +28,7 @@ export default {
 
                 <h4 class="page-title">
                     <i
-                        class="font-20 uil-arrow-left"
+                        class="font-20 mdi mdi-reply"
                         style="cursor: pointer"
                         v-if="isBack"
                         @click="onBack"

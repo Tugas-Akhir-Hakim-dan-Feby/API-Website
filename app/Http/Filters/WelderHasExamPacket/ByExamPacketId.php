@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Filters\Exam;
+namespace App\Http\Filters\WelderHasExamPacket;
 
-use App\Models\ExamPacket;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -14,10 +13,9 @@ class ByExamPacketId
             return $next($query);
         }
 
-        $query->with(['answers']);
-
-        $examPacket = ExamPacket::where('uuid', request('exam_packet_id'))->first();
-        $query->where('exam_packet_id', $examPacket->id);
+        $query->whereHas('examPacket', function ($query) {
+            $query->where('uuid', request('exam_packet_id'));
+        });
 
         return $next($query);
     }

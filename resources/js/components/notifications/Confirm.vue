@@ -37,7 +37,7 @@ export default {
                 <div class="modal-footer">
                     <button
                         type="button"
-                        class="btn btn-secondary"
+                        class="btn btn-sm btn-secondary"
                         data-bs-dismiss="modal"
                     >
                         Batal
@@ -45,7 +45,7 @@ export default {
                     <button
                         @click="onDelete"
                         type="button"
-                        class="btn btn-danger"
+                        class="btn btn-sm btn-danger"
                     >
                         <slot> Hapus </slot>
                     </button>

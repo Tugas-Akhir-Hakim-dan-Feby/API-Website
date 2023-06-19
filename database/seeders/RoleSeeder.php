@@ -28,7 +28,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_APP]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $access[User::ADMIN_APP]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::ADMIN_APP]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::ADMIN_APP]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_APP]['Profile'] = ['index', 'update-password', 'update-admin-app'];
 
@@ -51,7 +51,7 @@ class RoleSeeder extends Seeder
 
         $access[User::PAKAR]['Dashboard'] = ['index'];
         $access[User::PAKAR]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::PAKAR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::PAKAR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::PAKAR]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::PAKAR]['Profile'] = ['index', 'update-password', 'update-expert'];
 
@@ -62,7 +62,7 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_WELDER]['Dashboard'] = ['index'];
         $access[User::MEMBER_WELDER]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::MEMBER_WELDER]['Profile'] = ['index', 'update-password', 'update-welder-member'];
-        $access[User::MEMBER_WELDER]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet'];
+        $access[User::MEMBER_WELDER]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];
         $access[User::MEMBER_WELDER]['Exam'] = ['index', 'show', 'pagination'];
 
         $access[User::GUEST]['Dashboard'] = ['index'];
@@ -82,7 +82,7 @@ class RoleSeeder extends Seeder
         $permission['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $permission['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $permission['Article'] = ['index', 'index-guest', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet'];
+        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet', 'dashboard-admin', 'dashboard-member'];
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
 

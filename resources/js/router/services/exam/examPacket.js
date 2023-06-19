@@ -33,6 +33,15 @@ export default [
         props: true,
     },
     {
+        path: "/exam-packet/:id/detail/participant",
+        component: () => import("../../../pages/examPacket/Participant.vue"),
+        name: "Exam Packet Participant",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
         path: "/exam-packet/:id/detail",
         component: () => import("../../../pages/examPacket/Detail.vue"),
         name: "Exam Packet Detail",

@@ -2,19 +2,19 @@
 
 namespace App\Http\Filters\ExamPacket;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 
-class Search
+class CheckSchedule
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with("user");
+        $dateNow = Carbon::today()->toDateString();
 
-        if (!request()->has('search')) {
-            return $next($query);
+        if (auth()->user()->isMemberWelder()) {
+            $query->where("schedule", ">=", $dateNow);
         }
-        $query->where('name', 'LIKE', '%' . request('search') . '%');
 
         return $next($query);
     }
