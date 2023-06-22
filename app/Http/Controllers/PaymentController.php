@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessagePayment;
+use App\Http\Filters\Payment\ShowByUser;
+use App\Http\Resources\Payment\PaymentCollection;
 use App\Http\Resources\Payment\PaymentDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\Payment;
 use App\Repositories\Payment\PaymentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
@@ -21,6 +24,20 @@ class PaymentController extends Controller
     public function __construct(PaymentRepository $paymentRepository)
     {
         $this->paymentRepository = $paymentRepository;
+    }
+
+    public function index(Request $request)
+    {
+        $payments = app(Pipeline::class)
+            ->send($this->paymentRepository->query())
+            ->through([
+                ShowByUser::class
+            ])
+            ->thenReturn()
+            ->with(["user"])
+            ->paginate($request->per_page);
+
+        return new PaymentCollection($payments);
     }
 
     public function callback(Request $request)

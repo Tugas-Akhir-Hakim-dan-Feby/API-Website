@@ -139,6 +139,34 @@ export default {
                     </router-link>
                 </li>
 
+                <li class="side-nav-item">
+                    <a
+                        data-bs-toggle="collapse"
+                        href="#payment"
+                        aria-expanded="false"
+                        aria-controls="payment"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-account-cash"></i>
+                        <span> Data Pembayaran </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="payment">
+                        <ul class="side-nav-second-level">
+                            <li>
+                                <router-link :to="{ name: 'Payment Cost' }"
+                                    >Data Harga</router-link
+                                >
+                            </li>
+                            <li>
+                                <router-link :to="{ name: 'User Hub' }"
+                                    >Data Rekap Faktur</router-link
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="side-nav-item" v-if="$can('index', 'Exampacket')">
                     <router-link
                         :to="{ name: 'Exam Packet' }"
