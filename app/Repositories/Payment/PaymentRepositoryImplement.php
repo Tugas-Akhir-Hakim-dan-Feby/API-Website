@@ -20,6 +20,11 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository
         $this->model = $model;
     }
 
+    public function query()
+    {
+        return $this->model->query();
+    }
+
     public function findByCriteria(array $data)
     {
         return $this->model->where($data)->first();

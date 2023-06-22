@@ -12,6 +12,7 @@ import exam from "./services/exam/exam";
 import member from "./services/member";
 import invoice from "./services/invoice";
 import expert from "./services/expert";
+import payment from "./services/payment";
 
 const routes = [
     ...auth,
@@ -28,6 +29,7 @@ const routes = [
     ...member,
     ...invoice,
     ...expert,
+    ...payment,
     {
         path: "/",
         name: "Dashboard",
