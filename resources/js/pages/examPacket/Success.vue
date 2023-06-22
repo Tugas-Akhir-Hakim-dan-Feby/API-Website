@@ -90,7 +90,6 @@ export default {
                                     <th>Rincian</th>
                                     <th>Tanggal</th>
                                     <th>Presentase</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -103,24 +102,11 @@ export default {
                                     ></td>
                                     <td
                                         v-html="
-                                            examPacket.correctPrecentage + '%'
+                                            examPacket.correctPrecentage
+                                                ? `${examPacket.correctPrecentage} %`
+                                                : '0 %'
                                         "
                                     ></td>
-                                    <td>
-                                        <span
-                                            class="badge bg-success"
-                                            v-if="examPacket.status == 'LULUS'"
-                                            >{{ examPacket.status }}</span
-                                        >
-                                        <span
-                                            class="badge bg-danger"
-                                            v-else="
-                                                examPacket.status ==
-                                                'TIDAK LULUS'
-                                            "
-                                            >{{ examPacket.status }}</span
-                                        >
-                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Ujian Praktek</td>
@@ -130,23 +116,12 @@ export default {
                                         "
                                     ></td>
                                     <td
-                                        v-html="examPacket.practiceValue + '%'"
+                                        v-html="
+                                            examPacket.practiceValue
+                                                ? `${examPacket.practiceValue} %`
+                                                : `0 %`
+                                        "
                                     ></td>
-                                    <td>
-                                        <span
-                                            class="badge bg-success"
-                                            v-if="examPacket.status == 'LULUS'"
-                                            >{{ examPacket.status }}</span
-                                        >
-                                        <span
-                                            class="badge bg-danger"
-                                            v-else="
-                                                examPacket.status ==
-                                                'TIDAK LULUS'
-                                            "
-                                            >{{ examPacket.status }}</span
-                                        >
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

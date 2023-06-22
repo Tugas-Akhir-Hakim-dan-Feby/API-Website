@@ -5,6 +5,7 @@ import Pagination from "../../components/Pagination.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
 import Edit from "./Edit.vue";
+import util from "../../store/utils/util";
 
 export default {
     props: ["id"],
@@ -12,7 +13,7 @@ export default {
         return {
             userId: null,
             users: [],
-            examPacket: {},
+            examPacket: null,
             errors: {},
             pagination: {
                 perPage: 10,
@@ -28,12 +29,14 @@ export default {
             date: null,
             isLoading: false,
             examId: null,
+            keyPacket: "",
             msg: "",
         };
     },
     mounted() {
         this.getWelderHasExamPacket();
         this.getExamPacket();
+        this.keyPacket = util.randomString(8);
     },
     methods: {
         getExamPacket() {
@@ -99,6 +102,30 @@ export default {
                     this.errors = error.response.data.messages;
                 });
         },
+        handleResetKey() {
+            this.isLoading = true;
+
+            const params = {
+                userId: this.userId,
+                examPacketId: this.id,
+                keyPacket: this.keyPacket,
+            };
+
+            this.$store
+                .dispatch("postData", [
+                    "user-exam-packet/update-key-packet",
+                    params,
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getWelderHasExamPacket();
+                    $("#resetKeyPacket").modal("hide");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
+        },
         onSuccessEdit() {
             this.getExamPacket();
             this.msg = "data berhasil diperbaharui.";
@@ -123,14 +150,19 @@ export default {
 
 <template>
     <PageTitle
+        v-if="examPacket"
         :title="`Daftar Peserta Uji Kompetensi`"
         :isBack="true"
         @onBack="onBack($event)"
     />
 
-    <Edit :examPacket="examPacket" @onSuccessEdit="onSuccessEdit" />
+    <Edit
+        v-if="examPacket"
+        :examPacket="examPacket"
+        @onSuccessEdit="onSuccessEdit"
+    />
 
-    <div class="card position-relative">
+    <div v-if="examPacket" class="card position-relative">
         <Loader v-if="isLoading" />
         <div
             class="card-header d-flex justify-content-between align-items-center"
@@ -185,6 +217,14 @@ export default {
                                 >
                                     Masukan Nilai Praktek
                                 </button>
+                                <button
+                                    @click="userId = user.user.uuid"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#resetKeyPacket"
+                                    class="btn btn-warning btn-sm me-2 text-white"
+                                >
+                                    Reset Kunci Paket
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -193,6 +233,66 @@ export default {
         </div>
     </div>
 
+    <div
+        class="modal fade"
+        id="resetKeyPacket"
+        tabindex="-1"
+        aria-labelledby="resetKeyPacketLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetKeyPacketLabel">
+                        Reset Kunci Paket
+                    </h5>
+                </div>
+                <form @submit.prevent="handleResetKey" method="post">
+                    <div class="modal-body">
+                        <div>
+                            <label>Kunci Paket </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                v-model="keyPacket"
+                                readonly
+                            />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div
         class="modal fade"
         id="insertValuePractice"

@@ -34,7 +34,7 @@ class ExamController extends Controller
             ->send($this->examRepository->query())
             ->through([
                 Search::class,
-                ByExamPacketId::class
+                ByExamPacketId::class,
             ])
             ->thenReturn()
             ->paginate($request->per_page);

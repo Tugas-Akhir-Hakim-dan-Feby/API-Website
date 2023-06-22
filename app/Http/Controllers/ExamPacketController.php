@@ -86,7 +86,7 @@ class ExamPacketController extends Controller
     public function show($id)
     {
         $examPacket = $this->examPacketRepository->findOrFail($id);
-        $examPacket->load(["exams"]);
+        $examPacket->load(["exams", "examPacketHasWelder"]);
 
         return new ExamPacketDetail($examPacket);
     }

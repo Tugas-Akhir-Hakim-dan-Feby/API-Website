@@ -9,7 +9,7 @@ export default {
     props: ["id"],
     data() {
         return {
-            examPacket: {},
+            examPacket: null,
             errors: {},
             date: null,
             isLoading: false,
@@ -17,9 +17,12 @@ export default {
             msg: "",
         };
     },
-    mounted() {
-        this.getExamPacket();
+    beforeMount() {
+        if (this.id) {
+            this.getExamPacket();
+        }
     },
+    mounted() {},
     methods: {
         getExamPacket() {
             this.isLoading = true;
@@ -71,19 +74,21 @@ export default {
 
 <template>
     <PageTitle
+        v-if="examPacket"
         :title="`Detail Paket ${examPacket.name}`"
         :isBack="true"
         @onBack="onBack($event)"
     />
 
     <Edit
+        v-if="examPacket"
         :examPacket="examPacket"
         @onSuccessEdit="onSuccessEdit"
         :edit="true"
         :isShowParticipant="true"
     />
 
-    <div class="card">
+    <div class="card" v-if="examPacket && examPacket.exams">
         <div
             class="card-header d-flex justify-content-between align-items-center"
         >

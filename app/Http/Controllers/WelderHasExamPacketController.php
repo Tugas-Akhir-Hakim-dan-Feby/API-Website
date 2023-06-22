@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\WelderHasExamPacket\ByExamPacketId;
+use App\Http\Filters\WelderHasExamPacket\ByWelderId;
 use App\Http\Filters\WelderHasExamPacket\Search;
 use App\Http\Requests\ExamPacket\KeyCheckRequest;
 use App\Http\Requests\ExamPacket\ValuePracticeRequest;
@@ -45,7 +46,8 @@ class WelderHasExamPacketController extends Controller
             ->send($this->welderHasExamPacket->query())
             ->through([
                 ByExamPacketId::class,
-                Search::class
+                Search::class,
+                ByWelderId::class
             ])
             ->thenReturn()
             ->with(["examPacket.exam", "user"])
@@ -134,10 +136,85 @@ class WelderHasExamPacketController extends Controller
             ["user_id", auth()->user()->id]
         ]);
 
+        if ($welderExamPacket->status == WelderHasExamPacket::PUNISHMENT) {
+            return $this->warningMessage('ujian anda dibekukan, silahkan hubungi operator ujian!');
+        }
+
         if (!Hash::check($request->key_packet, $welderExamPacket->key_packet)) {
             return $this->warningMessage('kunci paket salah!');
         }
 
         return $this->successMessage("kunci paket cocok!", []);
+    }
+
+    public function updatePenalty(Request $request)
+    {
+        $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            ["exam_packet_id", $examPacket->id],
+            ["user_id", auth()->user()->id]
+        ]);
+
+        try {
+            $welderHasExamPacket->update([
+                "penalty" => $welderHasExamPacket->penalty - 1
+            ]);
+
+            DB::commit();
+            return $this->successMessage("nilai praktek berhasil disimpan", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateKeyPacket(Request $request)
+    {
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($request->user_id);
+        $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            "exam_packet_id" => $examPacket->id,
+            "user_id" => $user->id
+        ]);
+
+        try {
+            $welderHasExamPacket->update([
+                "key_packet" => Hash::make($request->key_packet),
+                "status" => 0
+            ]);
+
+            DB::commit();
+            return $this->successMessage("kunci paket berhasil diperbaharui", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function punishment(Request $request)
+    {
+        $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            ["exam_packet_id", $examPacket->id],
+            ["user_id", auth()->user()->id]
+        ]);
+
+        try {
+            $welderHasExamPacket->update([
+                "key_packet" => Str::random(6),
+                "status" => WelderHasExamPacket::PUNISHMENT
+            ]);
+
+            DB::commit();
+            return $this->successMessage("pembekuan ujian berlaku", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

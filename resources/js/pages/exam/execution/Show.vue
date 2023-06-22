@@ -2,15 +2,17 @@
 import Loader from "../../../components/Loader.vue";
 import iziToast from "izitoast";
 import cookie from "js-cookie";
-
+import debounce from "lodash/debounce";
 export default {
     data() {
         return {
             uuid: null,
             isLoading: false,
+            isOk: false,
             currentTime: null,
             examPacketId: null,
             examId: null,
+            message: "",
             exams: {},
             examAnswer: {},
             examPacket: {},
@@ -51,24 +53,16 @@ export default {
 
         if (examSession) {
             this.numbering = localStorage.getItem("numbering");
-            $("body").on("keydown", this.onDisabled);
-            document.addEventListener("visibilitychange", this.onDisabled);
+            document.addEventListener("keydown", this.onDisabled);
+            document.addEventListener("visibilitychange", this.onVisibleChange);
+            setTimeout(() => {
+                this.startTimer();
+            }, 4000);
         } else {
             $("#loginExam").modal("show");
         }
     },
     watch: {
-        currentTime: {
-            handler(value) {
-                if (value > 0) {
-                    setTimeout(() => {
-                        this.currentTime--;
-                    }, 1000);
-                }
-            },
-            immediate: true,
-        },
-
         uuid(newUuid) {
             if (newUuid) {
                 return newUuid;
@@ -76,6 +70,38 @@ export default {
         },
     },
     methods: {
+        startTimer() {
+            const [endHours, endMinutes] = this.examPacket.endTime.split(":");
+
+            const endTime = new Date();
+            endTime.setHours(endHours);
+            endTime.setMinutes(endMinutes);
+
+            const interval = setInterval(() => {
+                const currentTime = new Date();
+
+                if (currentTime >= endTime) {
+                    clearInterval(interval);
+                    this.currentTime = "Waktu telah habis";
+                } else {
+                    const remainingTime = endTime - currentTime;
+                    const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                    const minutes = Math.floor(
+                        (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+                    );
+                    const seconds = Math.floor(
+                        (remainingTime % (1000 * 60)) / 1000
+                    );
+
+                    this.currentTime = `${this.formatTime(
+                        hours
+                    )}:${this.formatTime(minutes)}:${this.formatTime(seconds)}`;
+                }
+            }, 1000);
+        },
+        formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        },
         handleLogin() {
             this.errors = {};
             this.isLoading = true;
@@ -131,6 +157,7 @@ export default {
                 `exam_packet_id=${this.examPacketId}`,
                 `per_page=${this.pagination.perPage}`,
                 `page=${page}`,
+                `random=true`,
             ].join("&");
 
             this.$store
@@ -193,23 +220,28 @@ export default {
         },
         onDisabled(e) {
             e.preventDefault();
+            this.isOk = true;
 
             if (
-                (e.ctrlKey || e.metaKey) &&
-                (e.key == "p" ||
-                    e.keyCode == 87 ||
-                    e.charCode == 16 ||
-                    e.charCode == 112 ||
-                    e.charCode == 9 ||
-                    e.keyCode == 80)
+                (e.key == "p" && (e.ctrlKey || e.metaKey)) ||
+                (e.key == "w" && (e.ctrlKey || e.metaKey)) ||
+                (e.key == "i" && (e.ctrlKey || e.metaKey)) ||
+                (e.key == "i" && e.shiftKey && (e.ctrlKey || e.metaKey)) ||
+                (e.key == "p" && e.shiftKey && (e.ctrlKey || e.metaKey))
             ) {
                 e.preventDefault();
+                this.handlePenalty(
+                    "anda melakukan percobaan kombinasi keyboard yang dilarang! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
+                );
             }
-
-            iziToast.error({
-                message: "harap kerjakan dengan jujur!",
-                position: "topCenter",
-            });
+        },
+        onVisibleChange(e) {
+            if (document.visibilityState != "visible") {
+                this.isOk = true;
+                this.handlePenalty(
+                    "anda melakukan percobaan pindah halaman dari halaman ujian! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
+                );
+            }
         },
         handleSubmit() {
             this.isLoading = true;
@@ -244,6 +276,8 @@ export default {
             let formData = {
                 answerId: this.participantAnswer,
                 examId: this.exams[0].uuid,
+                status: "finish",
+                examPacketId: this.examPacketId,
             };
 
             this.$store
@@ -263,6 +297,46 @@ export default {
                         position: "topCenter",
                     });
                 });
+        },
+        handlePenalty(message) {
+            if (this.isOk) {
+                this.message = message;
+                $("#announcmentPenalty").modal("show");
+            }
+            // if (this.examPacket.examPacketHasWelder?.penalty > 0) {
+            //     this.isLoading = true;
+
+            //     let formData = {
+            //         examPacketId: this.examPacketId,
+            //     };
+
+            //     this.$store
+            //         .dispatch("postData", [
+            //             "user-exam-packet/update-penalty",
+            //             formData,
+            //         ])
+            //         .then((response) => {
+            //             this.isLoading = false;
+            //             this.getExamPacket();
+            //         })
+            //         .catch((err) => {
+            //             this.isLoading = false;
+            //         });
+            // }
+        },
+        handleOk() {
+            let formData = {
+                examPacketId: this.examPacketId,
+            };
+
+            this.$store
+                .dispatch("postData", ["user-exam-packet/punishment", formData])
+                .then((response) => {
+                    localStorage.removeItem("pageStory");
+                    cookie.remove("examSession");
+                    window.location.href = "/exam-packet";
+                })
+                .catch((error) => {});
         },
         refreshPage() {
             this.getExams();
@@ -297,16 +371,47 @@ export default {
             <div class="content">
                 <div class="navbar-custom">
                     <ul class="list-unstyled topbar-menu float-end mb-0">
-                        <li class="notification-list pt-2 me-3">
-                            <button
-                                class="btn btn-sm btn-primary mdi mdi-autorenew"
-                                @click="refreshPage"
-                            ></button>
+                        <li class="notification-list topbar-dropdown">
+                            <a
+                                href="#"
+                                class="nav-link"
+                                style="cursor: default"
+                            >
+                                <span
+                                    class="btn btn-sm text-white disabled"
+                                    :class="
+                                        examPacket.examPacketHasWelder
+                                            ? examPacket.examPacketHasWelder
+                                                  .penalty > 2
+                                                ? 'btn-warning'
+                                                : 'btn-danger'
+                                            : ''
+                                    "
+                                    >Sisa Percobaan
+                                    {{
+                                        examPacket.examPacketHasWelder?.penalty
+                                    }}</span
+                                >
+                            </a>
                         </li>
-                        <li class="notification-list pt-2">
-                            <span class="btn btn-sm btn-success disabled">{{
-                                currentTime
-                            }}</span>
+                        <li class="notification-list topbar-dropdown">
+                            <a href="#" class="nav-link">
+                                <button
+                                    class="btn btn-sm btn-primary mdi mdi-autorenew"
+                                    @click="refreshPage"
+                                ></button>
+                            </a>
+                        </li>
+                        <li class="notification-list topbar-dropdown">
+                            <a
+                                href="#"
+                                class="nav-link"
+                                style="cursor: default"
+                            >
+                                <span class="btn btn-sm btn-success disabled">{{
+                                    currentTime
+                                }}</span>
+                            </a>
                         </li>
                     </ul>
                     <button class="button-menu-mobile open-left">
@@ -525,6 +630,38 @@ export default {
                             aria-hidden="true"
                         ></span>
                         Harap Tunggu...
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
+        id="announcmentPenalty"
+        tabindex="-1"
+        aria-labelledby="announcmentPenaltyLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="announcmentPenaltyLabel">
+                        Pemberitahuan
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <p v-html="message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        data-bs-dismiss="modal"
+                        @click="(isOk = false), handleOk()"
+                    >
+                        Tutup
                     </button>
                 </div>
             </div>

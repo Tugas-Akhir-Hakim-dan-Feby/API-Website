@@ -26,6 +26,8 @@ export default {
             uuid: null,
             isLoading: false,
             isError: false,
+            isSchedule: false,
+            isAfterSchedule: false,
         };
     },
     mounted() {
@@ -150,9 +152,28 @@ export default {
                 nowTime <= timing[1] &&
                 now.isSame(schedule, "day")
             ) {
+                this.isSchedule = true;
                 return true;
             }
 
+            this.isSchedule = false;
+            return false;
+        },
+        checkAfterSchedule(schedule, endTime) {
+            let now = dayjs();
+            schedule = dayjs(schedule).locale("id");
+
+            let nowTime = now.format("HH:mm");
+
+            if (
+                (now.isSame(schedule, "day") || schedule.diff(now) > 0) &&
+                nowTime >= endTime
+            ) {
+                this.isAfterSchedule = true;
+                return true;
+            }
+
+            this.isAfterSchedule = false;
             return false;
         },
     },
@@ -208,7 +229,7 @@ export default {
                             <th v-if="$can('update-status', 'Exampacket')">
                                 Status
                             </th>
-                            <th>Aksi</th>
+                            <th v-if="isSchedule || isAfterSchedule">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -323,7 +344,14 @@ export default {
                                     >Kerjakan</a
                                 >
                                 <router-link
-                                    v-else
+                                    v-else-if="
+                                        checkAfterSchedule(
+                                            welderHasExamPacket.examPacket
+                                                ?.schedule,
+                                            welderHasExamPacket.examPacket
+                                                ?.endTime
+                                        )
+                                    "
                                     :to="{
                                         name: 'Exam Packet Success',
                                         params: {
@@ -335,6 +363,7 @@ export default {
                                     class="btn btn-sm btn-info"
                                     >Lihat Hasil</router-link
                                 >
+                                <p v-else>-</p>
                             </td>
                         </tr>
                     </tbody>
