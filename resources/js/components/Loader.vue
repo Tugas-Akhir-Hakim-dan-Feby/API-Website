@@ -14,7 +14,7 @@
     position: absolute;
     transition: all 0.5s ease-in;
     transition-duration: 2s;
-    z-index: 99;
+    z-index: 1;
     width: 100%;
     height: 100%;
     align-self: center;

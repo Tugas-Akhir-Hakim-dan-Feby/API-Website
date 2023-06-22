@@ -28,7 +28,7 @@ export default {
                 <div class="modal-footer">
                     <button
                         type="button"
-                        class="btn btn-primary"
+                        class="btn btn-sm btn-primary"
                         data-bs-dismiss="modal"
                         v-if="!url"
                     >
@@ -37,7 +37,7 @@ export default {
                     <button
                         @click="handleOk"
                         type="button"
-                        class="btn btn-primary"
+                        class="btn btn-sm btn-primary"
                         v-else
                     >
                         OK

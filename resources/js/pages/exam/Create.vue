@@ -108,7 +108,7 @@ export default {
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <router-link
-                    class="btn btn-secondary"
+                    class="btn btn-sm btn-secondary"
                     :to="{
                         name: 'Exam Packet Detail',
                         params: { id: id },
@@ -117,11 +117,11 @@ export default {
                 >
                     Batal
                 </router-link>
-                <button class="btn btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-success" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-success"
+                    class="btn btn-sm btn-success"
                     type="button"
                     disabled
                     v-if="isLoading"

@@ -9,6 +9,7 @@ use App\Http\Resources\WelderAnswer\WelderAnswerCorrection;
 use App\Http\Resources\WelderAnswer\WelderAnswerDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\WelderAnswer;
+use App\Models\WelderHasExamPacket;
 use App\Repositories\Answer\AnswerRepository;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\ExamPacket\ExamPacketRepository;
@@ -86,6 +87,12 @@ class WelderAnswerController extends Controller
                 ]);
             } else {
                 $this->welderAnswerRepository->create($request->all());
+            }
+
+            if ($request->has('status')) {
+                $exam->examPacket->examPacketHasWelder()->welderAuth()->update([
+                    "status" => WelderHasExamPacket::FINISH
+                ]);
             }
 
             DB::commit();

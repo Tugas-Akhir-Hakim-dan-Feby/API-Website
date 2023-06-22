@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\ExamPacket\CheckSchedule;
 use App\Http\Filters\ExamPacket\Search;
+use App\Http\Filters\ExamPacket\ShowByExpert;
 use App\Http\Filters\ExamPacket\Sort;
+use App\Http\Filters\ExamPacket\SortByUser;
 use App\Http\Requests\ExamPacket\ExamPacketRequestStore;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
 use App\Http\Resources\ExamPacket\ExamPacketDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\ExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
+use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
@@ -19,11 +23,12 @@ class ExamPacketController extends Controller
 {
     use MessageFixer;
 
-    protected $examPacketRepository;
+    protected $examPacketRepository, $userRepository;
 
-    public function __construct(ExamPacketRepository $examPacketRepository)
+    public function __construct(ExamPacketRepository $examPacketRepository, UserRepository $userRepository)
     {
         $this->examPacketRepository = $examPacketRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function index(Request $request)
@@ -32,10 +37,12 @@ class ExamPacketController extends Controller
             ->send($this->examPacketRepository->query())
             ->through([
                 Search::class,
-                Sort::class
+                Sort::class,
+                CheckSchedule::class,
+                ShowByExpert::class
             ])
             ->thenReturn()
-            ->with(["exam"])
+            ->with(["exam", "examPacketHasWelders"])
             ->paginate($request->per_page);
 
         return new ExamPacketCollection($examPackets);
@@ -48,10 +55,24 @@ class ExamPacketController extends Controller
         try {
             $request->merge([
                 'uuid' => Str::uuid(),
-                'year' => date("Y")
+                'year' => date("Y"),
+                'user_id' => auth()->user()->id
             ]);
 
             $examPacket = $this->examPacketRepository->create($request->all());
+
+            $examPacket->examPacketHasExperts()->create([
+                'uuid' => Str::uuid(),
+                "user_id" => auth()->user()->id
+            ]);
+
+            foreach ($request->person_responsible as $userId) {
+                $user = $this->userRepository->findOrFail($userId);
+                $examPacket->examPacketHasExperts()->create([
+                    'uuid' => Str::uuid(),
+                    "user_id" => $user->id
+                ]);
+            }
 
             DB::commit();
 
@@ -65,7 +86,7 @@ class ExamPacketController extends Controller
     public function show($id)
     {
         $examPacket = $this->examPacketRepository->findOrFail($id);
-        $examPacket->load(["exams"]);
+        $examPacket->load(["exams", "examPacketHasWelder"]);
 
         return new ExamPacketDetail($examPacket);
     }
@@ -121,6 +142,10 @@ class ExamPacketController extends Controller
                 }
 
                 $examPacket->exams()->delete();
+            }
+
+            if ($examPacket->examPacketHasExperts) {
+                $examPacket->examPacketHasExperts()->delete();
             }
 
             $examPacket->delete();

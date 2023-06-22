@@ -16,9 +16,26 @@ export default [
         },
     },
     {
+        path: "/exam-packet/register",
+        component: () => import("../../../pages/examPacket/Register.vue"),
+        name: "Exam Packet Register",
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
         path: "/exam-packet/:examPacketId/success",
         component: () => import("../../../pages/examPacket/Success.vue"),
         name: "Exam Packet Success",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
+        path: "/exam-packet/:id/detail/participant",
+        component: () => import("../../../pages/examPacket/Participant.vue"),
+        name: "Exam Packet Participant",
         meta: {
             requiresAuth: true,
         },

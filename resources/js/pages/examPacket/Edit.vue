@@ -3,9 +3,23 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 
 export default {
-    props: ["examPacket"],
+    props: {
+        examPacket: {
+            default: {},
+            type: Object,
+        },
+        edit: {
+            default: false,
+            type: Boolean,
+        },
+        isShowParticipant: {
+            default: false,
+            type: Boolean,
+        },
+    },
     data() {
         return {
+            roles: [],
             errors: {},
             isLoading: false,
             isEdit: false,
@@ -14,8 +28,17 @@ export default {
     },
     mounted() {
         this.schedule = this.date;
+        this.getUser();
     },
     methods: {
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.roles = response.roles;
+                })
+                .catch((err) => {});
+        },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
@@ -49,6 +72,7 @@ export default {
                 schedule: this.examPacket.date,
                 startTime: this.examPacket.startTime,
                 endTime: this.examPacket.endTime,
+                _method: "put",
             };
             this.$store
                 .dispatch("updateData", [
@@ -63,8 +87,13 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    console.log(error);
                 });
+        },
+        checkRole(role) {
+            if (this.roles.includes(role)) {
+                return true;
+            }
+            return false;
         },
     },
 };
@@ -267,19 +296,48 @@ export default {
                                     ></span>
                                     Harap Tunggu...
                                 </button>
+                                <router-link
+                                    class="btn btn-sm btn-light me-2"
+                                    :to="{
+                                        name: 'Exam Packet Participant',
+                                        params: { id: examPacket.uuid },
+                                    }"
+                                    v-if="
+                                        !isEdit &&
+                                        (examPacket.user?.name ==
+                                            $store.state.USER.uuid ||
+                                            checkRole($store.state.ADMIN_APP) ||
+                                            checkRole(
+                                                $store.state.ADMIN_HUB
+                                            )) &&
+                                        isShowParticipant
+                                    "
+                                >
+                                    Lihat Peserta
+                                </router-link>
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-light"
                                     @click="isEdit = true"
-                                    v-if="!isEdit"
+                                    v-if="
+                                        !isEdit &&
+                                        (examPacket.user?.name ==
+                                            $store.state.USER.uuid ||
+                                            checkRole($store.state.ADMIN_APP) ||
+                                            checkRole(
+                                                $store.state.ADMIN_HUB
+                                            )) &&
+                                        edit
+                                    "
                                 >
                                     Edit Paket
                                 </button>
+
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-light"
                                     @click="isEdit = false"
-                                    v-else
+                                    v-if="isEdit"
                                 >
                                     Batal
                                 </button>

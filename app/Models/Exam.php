@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -42,5 +43,10 @@ class Exam extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(Answer::class, "exam_id", "id");
+    }
+
+    public function examPacket(): HasOne
+    {
+        return $this->hasOne(ExamPacket::class, 'id', 'exam_packet_id');
     }
 }

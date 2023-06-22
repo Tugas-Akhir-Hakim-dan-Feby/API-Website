@@ -18,6 +18,7 @@ const store = createStore({
         GUEST: "Guest",
         PAID: "PAID",
         PENDING: "PENDING",
+        BASE_URL: window.origin,
     },
     mutations: {
         setUser(state, user) {

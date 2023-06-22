@@ -2,6 +2,8 @@
 import PageTitle from "../../components/PageTitle.vue";
 import Success from "../../components/notifications/Success.vue";
 import Util from "../../store/utils/util";
+import jsCookie from "js-cookie";
+import "select2";
 
 export default {
     data() {
@@ -11,15 +13,32 @@ export default {
                 schedule: "",
                 startTime: "",
                 endTime: "",
+                practiceExamAddress: "",
+                personResponsible: [],
             },
+            experUsers: [],
+            minDate: new Date().toISOString().split("T")[0],
             errors: {},
             isLoading: false,
         };
     },
     mounted() {
+        this.util();
+        // this.getExpertUsers ();
         Util.removeInvalidClass();
     },
     methods: {
+        getExpertUsers() {
+            this.$store
+                .dispatch("getData", ["user/expert", {}])
+                .then((response) => {
+                    this.experUsers = response.data.map((user) => ({
+                        id: user.uuid,
+                        text: user.name,
+                    }));
+                })
+                .catch((err) => {});
+        },
         handleSubmit() {
             this.isLoading = true;
             this.$store
@@ -33,6 +52,40 @@ export default {
                     this.errors = error.response.data.messages;
                 });
         },
+        util() {
+            $(this.$refs.personResponsible).select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/user/expert`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 5,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((user) => ({
+                                id: user.uuid,
+                                text: user.name,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+                minimumInputLength: 1,
+            });
+            $(this.$refs.personResponsible).on("change", () => {
+                this.form.personResponsible = $(
+                    this.$refs.personResponsible
+                ).val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
+        },
         onCancel() {
             this.$router.back(-1);
         },
@@ -43,7 +96,6 @@ export default {
 
 <template>
     <PageTitle title="Tambah Paket" />
-
     <div class="row">
         <div class="col-lg-6">
             <form @submit.prevent="handleSubmit" method="post">
@@ -65,7 +117,7 @@ export default {
                                 v-for="(error, index) in errors.name"
                                 :key="index"
                             >
-                                {{ error }}.
+                                {{ error }}
                             </div>
                         </div>
                         <div class="mb-2">
@@ -77,6 +129,7 @@ export default {
                                 :class="{ 'is-invalid': errors.schedule }"
                                 v-model="form.schedule"
                                 :disabled="isLoading"
+                                :min="minDate"
                             />
                             <div
                                 class="invalid-feedback"
@@ -84,7 +137,7 @@ export default {
                                 v-for="(error, index) in errors.schedule"
                                 :key="index"
                             >
-                                {{ error }}.
+                                {{ error }}
                             </div>
                         </div>
                         <div class="mb-2">
@@ -110,7 +163,7 @@ export default {
                                         ) in errors.startTime"
                                         :key="index"
                                     >
-                                        {{ error }}.
+                                        {{ error }}
                                     </div>
                                 </div>
                                 <div class="col-lg-6 mb-2">
@@ -131,8 +184,60 @@ export default {
                                         v-for="(error, index) in errors.endTime"
                                         :key="index"
                                     >
-                                        {{ error }}.
+                                        {{ error }}
                                     </div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="practice_exam_address"
+                                    >Alamat Tempat Ujian</label
+                                >
+                                <textarea
+                                    class="form-control form-validation"
+                                    id="practice_exam_address"
+                                    :class="{
+                                        'is-invalid':
+                                            errors.practiceExamAddress,
+                                    }"
+                                    v-model="form.practiceExamAddress"
+                                    :disabled="isLoading"
+                                ></textarea>
+                                <div
+                                    class="invalid-feedback"
+                                    v-if="errors.practiceExamAddress"
+                                    v-for="(
+                                        error, index
+                                    ) in errors.practiceExamAddress"
+                                    :key="index"
+                                >
+                                    {{ error }}
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label
+                                    >Penanggung Jawab
+                                    <span class="text-muted small"
+                                        >*diisi oleh pakar</span
+                                    ></label
+                                >
+                                <select
+                                    multiple
+                                    ref="personResponsible"
+                                    class="select2-hidden-accessible"
+                                    :class="{
+                                        'is-invalid': errors.personResponsible,
+                                    }"
+                                    :disabled="isLoading"
+                                ></select>
+                                <div
+                                    class="invalid-feedback"
+                                    v-if="errors.personResponsible"
+                                    v-for="(
+                                        error, index
+                                    ) in errors.personResponsible"
+                                    :key="index"
+                                >
+                                    {{ error }}
                                 </div>
                             </div>
                         </div>
