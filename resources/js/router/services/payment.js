@@ -15,4 +15,14 @@ export default [
             requiresAuth: true,
         },
     },
+    {
+        path: "/payment/recapitulation-invoice/:externalId",
+        component: () =>
+            import("../../pages/payment/RecapituationInvoiceDetail.vue"),
+        name: "Show Payment Recapitulation",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
 ];

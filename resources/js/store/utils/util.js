@@ -26,6 +26,15 @@ export default {
 
         return "Perempuan";
     },
+    getRupiah(amount) {
+        const formatter = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        });
+
+        return formatter.format(amount ?? 0);
+    },
     getAnswerQuestionData(type) {
         if (type == AnswerQuestion.MULTIPLE_CHOICE) {
             return "Pilihan Ganda";

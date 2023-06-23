@@ -159,7 +159,10 @@ export default {
                                 >
                             </li>
                             <li>
-                                <router-link :to="{ name: 'User Hub' }"
+                                <router-link
+                                    :to="{
+                                        name: 'Payment Recapitulation Invoice',
+                                    }"
                                     >Data Rekap Faktur</router-link
                                 >
                             </li>

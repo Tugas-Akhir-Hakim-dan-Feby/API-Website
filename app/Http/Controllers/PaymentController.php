@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessagePayment;
+use App\Http\Filters\Payment\Search;
+use App\Http\Filters\Payment\ShowByStatus;
 use App\Http\Filters\Payment\ShowByUser;
 use App\Http\Resources\Payment\PaymentCollection;
 use App\Http\Resources\Payment\PaymentDetail;
@@ -31,7 +33,9 @@ class PaymentController extends Controller
         $payments = app(Pipeline::class)
             ->send($this->paymentRepository->query())
             ->through([
-                ShowByUser::class
+                Search::class,
+                ShowByUser::class,
+                ShowByStatus::class
             ])
             ->thenReturn()
             ->with(["user"])
