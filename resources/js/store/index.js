@@ -19,6 +19,12 @@ const store = createStore({
         PAID: "PAID",
         PENDING: "PENDING",
         BASE_URL: window.origin,
+        COST: {
+            MEMBER_WELDER: 1,
+            MEMBER_COMPANY: 2,
+            ADVERTISEMENT: 3,
+            EXAM_INSTITUTE: 4,
+        },
     },
     mutations: {
         setUser(state, user) {

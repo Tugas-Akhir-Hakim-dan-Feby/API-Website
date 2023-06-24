@@ -2,6 +2,7 @@
 
 namespace App\Http\Traits;
 
+use App\Models\Cost;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -9,8 +10,11 @@ use Illuminate\Support\Str;
 
 trait PaymentFixer
 {
-    protected function pay()
+    protected function pay($costId)
     {
+        $cost = Cost::findOrFail($costId);
+        $description = $this->description($costId);
+
         $secret_key = 'Basic ' . config('xendit.key_auth');
         $external_id = Str::random(10);
         $data_request = Http::withHeaders([
@@ -25,10 +29,33 @@ trait PaymentFixer
             'uuid' => Str::uuid(),
             'user_id' => Auth::user()->id,
             'external_id' => $external_id,
-            'description' => 'pembayaran welder member',
-            'amount' => 100000,
+            'description' => $description,
+            'amount' => $cost->nominal_price,
             'payment_link' => $response->invoice_url,
             'status' => $response->status,
         ]);
+    }
+
+    protected function description($costId)
+    {
+        $description = "pembayaran";
+
+        if ($costId == Cost::WELDER_MEMBER) {
+            $description = "pembayaran welder member";
+        }
+
+        if ($costId == Cost::COMPANY_MEMBER) {
+            $description = "pembayaran perusahaan member";
+        }
+
+        if ($costId == Cost::ADVERTISEMENT) {
+            $description = "pembayaran iklan";
+        }
+
+        if ($costId == Cost::TEST_INSTITUTION) {
+            $description = "pembayaran lembaga sertfikasi";
+        }
+
+        return $description;
     }
 }

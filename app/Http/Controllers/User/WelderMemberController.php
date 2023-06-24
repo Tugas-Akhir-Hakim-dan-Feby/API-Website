@@ -14,6 +14,7 @@ use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
 use App\Imports\User\WelderMemberImport;
+use App\Models\Cost;
 use App\Models\User;
 use App\Models\User\WelderMember;
 use App\Repositories\Payment\PaymentRepository;
@@ -82,7 +83,6 @@ class WelderMemberController extends Controller
             'welder_skill_id' => $welderSkill->id
         ]);
 
-
         try {
             if ($request->hasFile("document_certificate_school")) {
                 $request->merge([
@@ -100,7 +100,7 @@ class WelderMemberController extends Controller
                 $this->upload($request->file("document_certificate_competency"), $user->welderDocuments(), "welder_document");
             }
 
-            $this->pay();
+            $this->pay(Cost::WELDER_MEMBER);
 
             $user->update([
                 "role_id" => $role->id

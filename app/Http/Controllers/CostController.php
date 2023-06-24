@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Cost\CostCollection;
+use App\Http\Resources\Cost\CostDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\Cost;
 use App\Repositories\Cost\CostRepository;
@@ -32,7 +33,12 @@ class CostController extends Controller
 
     public function show(string $id)
     {
-        //
+        $cost = $this->costRepository->find($id);
+        if (!$cost) {
+            abort(404);
+        }
+
+        return new CostDetail($cost);
     }
 
     public function update(Request $request, string $id)

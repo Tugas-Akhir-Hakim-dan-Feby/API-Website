@@ -15,6 +15,7 @@ use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
 use App\Imports\User\CompanyMemberImport;
+use App\Models\Cost;
 use App\Models\User;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
@@ -78,7 +79,7 @@ class CompanyMemberController extends Controller
                 ]);
             }
 
-            $this->pay();
+            $this->pay(Cost::COMPANY_MEMBER);
 
             $user->update([
                 "role_id" => $role->id
