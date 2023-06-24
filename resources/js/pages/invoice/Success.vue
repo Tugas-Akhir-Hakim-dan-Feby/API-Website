@@ -15,10 +15,17 @@ export default {
                 }
 
                 if (value == 0) {
+                    localStorage.removeItem("isPayment");
                     this.$router.push({ name: "Dashboard" });
                 }
             },
             immediate: true,
+        },
+    },
+    methods: {
+        redirect() {
+            localStorage.removeItem("isPayment");
+            this.$router.push({ name: "Dashboard" });
         },
     },
 };
@@ -37,9 +44,7 @@ export default {
                     {{ timer }} detik lagi, kembali ke Dashboard
                 </div>
                 <div class="text-center">
-                    <router-link :to="{ name: 'Dashboard' }"
-                        >Kembali</router-link
-                    >
+                    <a href="#" @click="redirect()">Kembali</a>
                 </div>
             </div>
         </div>
