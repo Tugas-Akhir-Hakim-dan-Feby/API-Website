@@ -553,6 +553,7 @@ export default {
                             type="button"
                             class="btn btn-sm btn-secondary"
                             @click.native="onBack"
+                            :disabled="isLoading"
                         >
                             Kembali
                         </button>

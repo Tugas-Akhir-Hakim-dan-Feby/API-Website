@@ -121,7 +121,10 @@ export default {
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >
                 <div class="text-center">
-                    <button class="btn btn-primary mb-2" @click="onCreate">
+                    <button
+                        class="btn btn-sm btn-primary mb-2"
+                        @click="onCreate"
+                    >
                         Tambah Keahlian
                     </button>
                 </div>

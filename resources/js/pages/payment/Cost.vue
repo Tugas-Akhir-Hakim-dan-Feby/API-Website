@@ -1,11 +1,189 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
-export default { components: { PageTitle } };
+import Loader from "../../components/Loader.vue";
+import Pagination from "../../components/Pagination.vue";
+import util from "../../store/utils/util";
+
+import Success from "../../components/notifications/Success.vue";
+export default {
+    data() {
+        return {
+            costs: [],
+            cost: {},
+            errors: {},
+            form: {
+                nominalPrice: "",
+            },
+            isLoading: false,
+        };
+    },
+    mounted() {
+        this.getCosts();
+    },
+    methods: {
+        getCosts() {
+            this.isLoading = true;
+            this.$store
+                .dispatch("getData", ["cost", ""])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.costs = response.data;
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                });
+        },
+        getRupiah(amount) {
+            return util.getRupiah(amount);
+        },
+        setCost(cost) {
+            this.cost = cost;
+        },
+        handleSubmit() {
+            this.errors = {};
+            this.isLoading = true;
+            this.$store
+                .dispatch("updateData", ["cost", this.cost.uuid, this.form])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getCosts();
+                    $("#editCost").modal("hide");
+                    $("#successModal").modal("show");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
+        },
+    },
+    components: { PageTitle, Pagination, Loader, Success },
+};
 </script>
 <template>
     <PageTitle :title="'Data Harga'" />
 
-    <div class="card">
-        <div class="card-body"></div>
+    <div class="card position-relative">
+        <Loader v-if="isLoading" />
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Jenis Harga</th>
+                            <th>Nominal Harga</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="costs.length < 1">
+                            <td colspan="4" class="text-center">
+                                data harga tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(cost, index) in costs" :key="index">
+                            <th v-html="index + 1"></th>
+                            <td v-html="cost.typePrice"></td>
+                            <td v-html="getRupiah(cost.nominalPrice)"></td>
+                            <td>
+                                <button
+                                    class="btn btn-warning text-white btn-sm me-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editCost"
+                                    @click="setCost(cost)"
+                                >
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <Success msg="data harga berhasil diperbaharui." />
+    <div
+        class="modal fade"
+        id="editCost"
+        tabindex="-1"
+        aria-labelledby="editCostLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCostLabel">Edit Harga</h5>
+                </div>
+                <form @submit.prevent="handleSubmit" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Jenis Harga</label>
+                            <input
+                                type="text"
+                                disabled
+                                class="form-control"
+                                :value="cost.typePrice"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label>Nominal Harga</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                v-model="form.nominalPrice"
+                                :class="{ 'is-invalid': errors.nominalPrice }"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.nominalPrice"
+                                v-for="(error, index) in errors.nominalPrice"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                            <p>
+                                harga sebelumnya
+                                <strong>{{
+                                    getRupiah(cost.nominalPrice)
+                                }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary"
+                            data-bs-dismiss="modal"
+                            :disabled="isLoading"
+                        >
+                            Kembali
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </template>
