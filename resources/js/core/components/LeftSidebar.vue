@@ -139,7 +139,7 @@ export default {
                     </router-link>
                 </li>
 
-                <li class="side-nav-item">
+                <li class="side-nav-item" v-if="$can('cost', 'Payment')">
                     <a
                         data-bs-toggle="collapse"
                         href="#payment"

@@ -153,5 +153,7 @@ class RoleSeeder extends Seeder
                 $user->assignRole(Role::where('id', ModelsRole::GUEST)->first());
             }
         }
+
+        $this->enableForeignKeys();
     }
 }
