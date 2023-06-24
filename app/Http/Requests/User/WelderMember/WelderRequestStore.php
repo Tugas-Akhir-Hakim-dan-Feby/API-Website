@@ -32,7 +32,6 @@ class WelderRequestStore extends FormRequest
             'date_birth' => 'required|date',
             'birth_place' => 'required',
             'working_status' => 'required|in:1,0',
-            'document_certificate_school' => 'required',
             'document_pas_photo' => 'required',
             'document_certificate_competency' => 'required',
         ];
