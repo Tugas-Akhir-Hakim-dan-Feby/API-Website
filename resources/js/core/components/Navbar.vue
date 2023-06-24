@@ -5,7 +5,11 @@ export default {
     data() {
         return {
             roleMemberWelderId: 6,
+            isPayment: null,
         };
+    },
+    mounted() {
+        this.isPayment = JSON.parse(localStorage.getItem("isPayment"));
     },
     computed: {
         isMemberWelder() {
@@ -38,10 +42,14 @@ export default {
                 <router-link
                     class="btn btn-primary btn-sm"
                     :to="{ name: 'Member' }"
+                    v-if="!isPayment"
                     >Daftar Member</router-link
                 >
             </li>
-            <li class="notification-list pt-1" v-if="isMemberWelder">
+            <li
+                class="notification-list pt-1"
+                v-if="isMemberWelder && !isPayment"
+            >
                 <router-link
                     class="btn btn-primary btn-sm"
                     :to="{ name: 'Register Expert' }"

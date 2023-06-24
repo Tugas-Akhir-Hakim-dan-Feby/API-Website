@@ -69,7 +69,7 @@ class WelderMemberController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => Auth::user()->uuid, 'role_id' => User::GUEST]);
+        $user = $this->userRepository->findByCriteria(['uuid' => Auth::user()->uuid]);
         if (!$user) {
             abort(404);
         }

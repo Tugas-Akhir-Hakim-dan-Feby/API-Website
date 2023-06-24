@@ -18,7 +18,13 @@ export default {
             isLoading: false,
         };
     },
-    mounted() {},
+    mounted() {
+        let isPayment = JSON.parse(localStorage.getItem("isPayment"));
+        if (isPayment) {
+            window.location.href =
+                "/invoice/" + isPayment.externalId + "/companyMember";
+        }
+    },
     computed: {
         formData() {
             let formData = new FormData();
@@ -51,9 +57,18 @@ export default {
                 ])
                 .then((response) => {
                     this.isLoading = false;
+                    localStorage.setItem(
+                        "isPayment",
+                        JSON.stringify({
+                            paymentType: "companyMember",
+                            externalId: response.data.externalId,
+                        })
+                    );
 
                     window.location.href =
-                        "/invoice/" + response.data.externalId + "/1212";
+                        "/invoice/" +
+                        response.data.externalId +
+                        "/companyMember";
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -230,10 +245,28 @@ export default {
                 </div>
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
-                <router-link :to="{ name: 'Member' }" class="btn btn-secondary"
+                <router-link
+                    :to="{ name: 'Member' }"
+                    class="btn btn-sm btn-secondary"
+                    :disabled="isLoading"
                     >Batal</router-link
                 >
-                <button class="btn btn-primary">Simpan</button>
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-sm btn-primary"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </div>
     </form>

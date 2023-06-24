@@ -10,8 +10,7 @@ export default {
             payment: {},
         };
     },
-    created() {
-    },
+    created() {},
     mounted() {
         this.getUser();
         this.getPayment();
@@ -55,7 +54,7 @@ export default {
         },
         redirect() {
             this.$router.push({ name: "Invoice Success" });
-        }
+        },
     },
     components: { PageTitle },
 };
@@ -77,7 +76,7 @@ export default {
                         </div>
                         <div class="float-end">
                             <h4
-                                class="m-0 btn text-white"
+                                class="m-0 btn btn-sm text-white"
                                 style="cursor: default"
                                 :class="
                                     payment.status == $store.state.PAID
@@ -152,14 +151,14 @@ export default {
                             <a
                                 href=""
                                 target="_blank"
-                                class="btn btn-info"
+                                class="btn-sm btn btn-info"
                                 v-if="payment.status == $store.state.PAID"
                                 >Cetak</a
                             >
                             <a
                                 :href="payment.paymentLink"
                                 target="_blank"
-                                class="btn btn-info"
+                                class="btn-sm btn btn-info"
                                 v-else
                                 >Bayar</a
                             >

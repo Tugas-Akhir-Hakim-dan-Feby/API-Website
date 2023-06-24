@@ -22,6 +22,12 @@ export default {
     },
     mounted() {
         this.getWelderSkills();
+
+        let isPayment = JSON.parse(localStorage.getItem("isPayment"));
+        if (isPayment) {
+            window.location.href =
+                "/invoice/" + isPayment.externalId + "/welderMember";
+        }
     },
     computed: {
         formData() {
@@ -66,8 +72,18 @@ export default {
                 ])
                 .then((response) => {
                     this.isLoading = false;
+                    localStorage.setItem(
+                        "isPayment",
+                        JSON.stringify({
+                            paymentType: "welderMember",
+                            externalId: response.data.externalId,
+                        })
+                    );
+
                     window.location.href =
-                        "/invoice/" + response.data.externalId + "/1212";
+                        "/invoice/" +
+                        response.data.externalId +
+                        "/welderMember";
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -230,7 +246,7 @@ export default {
                         {{ error }}.
                     </div>
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label>Ijazah Pendidikan Formal</label
                     ><input
                         type="file"
@@ -251,7 +267,7 @@ export default {
                     >
                         {{ error }}.
                     </div>
-                </div>
+                </div> -->
                 <div class="mb-3">
                     <label
                         >Sertifikat Pelatihan/Kompetensi Keahlian Pengelasan </label
@@ -277,10 +293,28 @@ export default {
                 </div>
             </div>
             <div class="card-footer border-top d-flex justify-content-between">
-                <router-link :to="{ name: 'Member' }" class="btn btn-secondary"
+                <router-link
+                    :to="{ name: 'Member' }"
+                    class="btn btn-sm btn-secondary"
+                    :disabled="isLoading"
                     >Batal</router-link
                 >
-                <button class="btn btn-primary">Simpan</button>
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-sm btn-primary"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </div>
     </form>

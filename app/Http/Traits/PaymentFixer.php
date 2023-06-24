@@ -21,7 +21,8 @@ trait PaymentFixer
             'Authorization' => $secret_key
         ])->post('https://api.xendit.co/v2/invoices', [
             'external_id' => $external_id,
-            'amount' => 100000
+            'amount' => $cost->nominal_price,
+            'success_redirect_url' => url('invoice/success')
         ]);
         $response = $data_request->object();
 

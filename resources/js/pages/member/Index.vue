@@ -13,6 +13,15 @@ export default {
     mounted() {
         this.getCostWelderMember();
         this.getCostCompanyMember();
+
+        let isPayment = JSON.parse(localStorage.getItem("isPayment"));
+        if (isPayment) {
+            window.location.href =
+                "/invoice/" +
+                isPayment.externalId +
+                "/" +
+                isPayment.paymentType;
+        }
     },
     methods: {
         getCostWelderMember() {
