@@ -69,7 +69,14 @@ export default {
 };
 </script>
 <template>
-    <PageTitle title="Data Rekapitulasi Faktur" />
+    <PageTitle title="Data Rekapitulasi Faktur">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Data Rekapitulasi Faktur</li>
+        </ol>
+    </PageTitle>
 
     <div class="card position-relative">
         <Loader v-if="isLoading" />
@@ -80,7 +87,7 @@ export default {
                 <div
                     class="d-md-flex justify-content-between align-items-center"
                 >
-                    <div class="me-md-2 me-0">
+                    <div class="me-md-2 me-0 mb-md-0 mb-2">
                         <select
                             class="form-select"
                             @change="onStatusChange()"

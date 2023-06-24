@@ -46,7 +46,19 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Tambah Pengguna API Pusat'" />
+    <PageTitle title="Tambah Pengguna API Pusat">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'User Hub' }"
+                    >Admin Pusat</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Tambah Pengguna</li>
+        </ol>
+    </PageTitle>
 
     <div class="card">
         <form @submit.prevent="handleSubmit">

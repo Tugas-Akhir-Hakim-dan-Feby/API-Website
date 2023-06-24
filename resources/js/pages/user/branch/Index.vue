@@ -102,13 +102,20 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna Admin Cabang'" />
+    <PageTitle title="Daftar Pengguna Admin Cabang">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Daftar Pengguna Admin Cabang</li>
+        </ol>
+    </PageTitle>
 
     <Error v-if="isError" :message="msg" />
 
-    <div class="card">
-        <div class="card-body position-relative">
-            <Loader v-if="isLoading" />
+    <div class="card position-relative">
+        <Loader v-if="isLoading" />
+        <div class="card-body">
             <div class="table-responsive">
                 <div
                     class="d-md-flex d-block justify-content-between align-items-center mb-2"

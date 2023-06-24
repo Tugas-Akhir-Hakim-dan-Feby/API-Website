@@ -100,8 +100,20 @@ export default {
 </script>
 
 <template>
-    <div class="container-fluid">
-        <PageTitle :title="'Edit Berita'" />
+    <div class="">
+        <PageTitle :title="'Edit Berita'">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'Dashboard' }"
+                        >Dashboard</router-link
+                    >
+                </li>
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'Article' }">Berita</router-link>
+                </li>
+                <li class="breadcrumb-item active">Edit Berita</li>
+            </ol>
+        </PageTitle>
 
         <Error v-if="isError" :message="msg" />
 
@@ -176,6 +188,7 @@ export default {
                         <img
                             :src="image.documentPath"
                             :alt="form.articleTitle"
+                            class="img-fluid"
                             height="250"
                         />
                     </div>

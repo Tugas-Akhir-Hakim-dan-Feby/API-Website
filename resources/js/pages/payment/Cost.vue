@@ -60,7 +60,14 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Data Harga'" />
+    <PageTitle :title="'Data Harga'">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Data Harga</li>
+        </ol>
+    </PageTitle>
 
     <div class="card position-relative">
         <Loader v-if="isLoading" />

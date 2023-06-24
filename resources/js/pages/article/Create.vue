@@ -61,8 +61,20 @@ export default {
 </script>
 
 <template>
-    <div class="container-fluid">
-        <PageTitle :title="'Tambah Berita'" />
+    <div class="">
+        <PageTitle :title="'Tambah Berita'">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'Dashboard' }"
+                        >Dashboard</router-link
+                    >
+                </li>
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'Article' }">Berita</router-link>
+                </li>
+                <li class="breadcrumb-item active">Tambah Berita</li>
+            </ol>
+        </PageTitle>
 
         <Error v-if="isError" :message="msg" />
 

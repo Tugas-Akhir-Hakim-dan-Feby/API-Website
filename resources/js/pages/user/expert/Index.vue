@@ -32,7 +32,14 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna Pakar'" />
+    <PageTitle title="Daftar Pengguna Pakar">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Daftar Pengguna Pakar</li>
+        </ol>
+    </PageTitle>
 
     <div class="card">
         <ul class="nav nav-tabs justify-content-around pt-2">

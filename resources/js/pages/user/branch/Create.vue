@@ -77,7 +77,19 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Tambah Pengguna API Cabang'" />
+    <PageTitle :title="'Tambah Pengguna Admin Cabang'">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'User Branch' }"
+                    >Admin Cabang</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Tambah Pengguna</li>
+        </ol>
+    </PageTitle>
 
     <Error v-if="isError" :message="msg" />
 

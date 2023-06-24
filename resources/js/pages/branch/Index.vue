@@ -77,16 +77,19 @@ export default {
             this.getBranches();
         },
         onDelete() {
+            this.isLoading = true;
+
             this.$store
                 .dispatch("deleteData", ["branch", this.uuid])
                 .then((response) => {
+                    this.isLoading = false;
                     $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
                     this.msg = "data berhasil dihapus.";
                     this.getBranches();
                 })
                 .catch((error) => {
-                    console.log(error);
+                    this.isLoading = false;
                 });
         },
         onSearch() {
@@ -112,7 +115,14 @@ export default {
 </script>
 
 <template>
-    <PageTitle :title="title" />
+    <PageTitle :title="title">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Data Cabang</li>
+        </ol>
+    </PageTitle>
 
     <CreateBranch v-if="isCreate" @onCancel="onCancel($e)" />
 

@@ -111,7 +111,14 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="title" />
+    <PageTitle :title="title">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Keahlian Welder</li>
+        </ol>
+    </PageTitle>
 
     <CreateSkill v-if="isCreate" @onCancel="onCancel($e)" />
 

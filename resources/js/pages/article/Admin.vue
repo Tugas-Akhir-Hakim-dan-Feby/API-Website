@@ -119,7 +119,14 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Kumpulan Berita" />
+    <PageTitle title="Kumpulan Berita">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Kumpulan Berita</li>
+        </ol>
+    </PageTitle>
 
     <div class="card">
         <div class="card-body position-relative">

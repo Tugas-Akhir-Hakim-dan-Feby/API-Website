@@ -51,7 +51,19 @@ export default {
         :title="'Detail Pengguna Member Perusahaan'"
         :isBack="true"
         @onBack="onBack"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'User Company' }"
+                    >Member Perusahaan</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Detail Perusahaan</li>
+        </ol>
+    </PageTitle>
 
     <div class="card">
         <Loader v-if="isLoading" />
@@ -73,8 +85,8 @@ export default {
                         </div>
                         <div class="mt-3">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <h6 class="font-14">Asal Perusahaan:</h6>
+                                <div class="col-md-8">
+                                    <h6 class="font-14">Alamat Perusahaan:</h6>
                                     <p
                                         v-html="
                                             user.companyMember?.companyAddress
@@ -82,14 +94,20 @@ export default {
                                     ></p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h6 class="font-14">No Telepon</h6>
-                                    <p v-html="user.companyMember?.phone"></p>
-                                </div>
-                                <div class="col-md-4">
-                                    <h6 class="font-14">No Fax</h6>
-                                    <p
-                                        v-html="user.companyMember?.facsmile"
-                                    ></p>
+                                    <div>
+                                        <h6 class="font-14">No Telepon</h6>
+                                        <p
+                                            v-html="user.companyMember?.phone"
+                                        ></p>
+                                    </div>
+                                    <div>
+                                        <h6 class="font-14">No Fax</h6>
+                                        <p
+                                            v-html="
+                                                user.companyMember?.facsmile
+                                            "
+                                        ></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

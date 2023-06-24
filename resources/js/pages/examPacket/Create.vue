@@ -95,7 +95,19 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Tambah Paket" />
+    <PageTitle title="Tambah Paket">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }">
+                    <span> Uji Kompetensi </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item active">Tambah Paket</li>
+        </ol>
+    </PageTitle>
     <div class="row">
         <div class="col-lg-6">
             <form @submit.prevent="handleSubmit" method="post">

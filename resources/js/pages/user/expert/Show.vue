@@ -56,12 +56,27 @@ export default {
         :isBack="true"
         @onBack="onBack"
     >
-        <button
-            class="btn btn-sm btn-primary"
-            v-if="user.expert?.status == 'NOT-APPROVED'"
-        >
-            Konfirmasi
-        </button>
+        <div class="d-flex">
+            <button
+                class="btn btn-sm btn-primary mb-1 me-2"
+                v-if="user.expert?.status == 'NOT-APPROVED'"
+            >
+                Konfirmasi
+            </button>
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'Dashboard' }"
+                        >Dashboard</router-link
+                    >
+                </li>
+                <li class="breadcrumb-item">
+                    <router-link :to="{ name: 'User Expert' }"
+                        >Pakar</router-link
+                    >
+                </li>
+                <li class="breadcrumb-item active">Detail Pakar</li>
+            </ol>
+        </div>
     </PageTitle>
 
     <div class="row">

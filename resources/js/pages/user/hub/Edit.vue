@@ -77,7 +77,19 @@ export default {
 </script>
 <template>
     {{ user }}
-    <PageTitle :title="'Edit Pengguna API Pusat'" />
+    <PageTitle title="Edit Pengguna API Pusat">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'User Hub' }"
+                    >Admin Pusat</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Edit Pengguna</li>
+        </ol>
+    </PageTitle>
 
     <div class="card">
         <form @submit.prevent="handleSubmit">

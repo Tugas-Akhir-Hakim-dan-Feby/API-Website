@@ -55,7 +55,20 @@ export default {
         :title="'Detail Pengguna Welder Member'"
         :isBack="true"
         @onBack="onBack"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'User Member' }"
+                    >Member Welder</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Detail Welder</li>
+        </ol>
+    </PageTitle>
+
     <div class="card">
         <Loader v-if="isLoading" />
         <div class="card-body">
@@ -130,22 +143,6 @@ export default {
                                     :href="user.welderMember?.pasPhoto"
                                     target="_blank"
                                     v-if="checkFile(user.expert?.pasPhoto)"
-                                    ><i class="mdi mdi-download"></i> Unduh</a
-                                >
-                                <p v-else>belum tersedia</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ijazah Pendidikan Formal</td>
-                            <td>
-                                <a
-                                    :href="user.welderMember?.certificateSchool"
-                                    target="_blank"
-                                    v-if="
-                                        checkFile(
-                                            user.expert?.certificateSchool
-                                        )
-                                    "
                                     ><i class="mdi mdi-download"></i> Unduh</a
                                 >
                                 <p v-else>belum tersedia</p>

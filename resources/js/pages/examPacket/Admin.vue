@@ -161,7 +161,16 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Kumpulan Paket Uji Kompetensi" />
+    <PageTitle title="Kumpulan Paket Uji Kompetensi">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">
+                Kumpulan Paket Uji Kompetensi
+            </li>
+        </ol>
+    </PageTitle>
 
     <div class="card position-relative">
         <Loader v-if="isLoading" />
@@ -203,7 +212,13 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="examPackets.length < 1">
+                            <td colspan="6" class="text-center">
+                                data paket uji kompetensi tidak ada
+                            </td>
+                        </tr>
                         <tr
+                            v-else
                             v-for="(examPacket, index) in examPackets"
                             :key="index"
                         >

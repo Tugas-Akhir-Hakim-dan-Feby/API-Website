@@ -86,7 +86,29 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Edit Pertanyaan" />
+    <PageTitle title="Edit Pertanyaan">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }">
+                    <span> Uji Kompetensi </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link
+                    :to="{
+                        name: 'Exam Packet Detail',
+                        params: { id: id },
+                    }"
+                >
+                    <span> Detail Paket </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item active">Edit Pertanyaan</li>
+        </ol>
+    </PageTitle>
 
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">

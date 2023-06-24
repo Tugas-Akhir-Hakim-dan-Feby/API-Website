@@ -99,7 +99,6 @@ export default {
                     });
             } catch (error) {
                 this.isDisabled = false;
-                console.log(error);
 
                 if (error.response.data.status_code == 422) {
                     this.errorMessage = error.response.data;
@@ -123,7 +122,16 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna Member Perusahaan'" />
+    <PageTitle title="Daftar Pengguna Member Perusahaan">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">
+                Daftar Pengguna Member Perusahaan
+            </li>
+        </ol>
+    </PageTitle>
 
     <div
         class="alert alert-danger alert-dismissible text-bg-danger border-0 fade show"

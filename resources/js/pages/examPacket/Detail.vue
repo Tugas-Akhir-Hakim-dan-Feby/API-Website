@@ -74,11 +74,22 @@ export default {
 
 <template>
     <PageTitle
-        v-if="examPacket"
         :title="`Detail Paket ${examPacket.name}`"
         :isBack="true"
         @onBack="onBack($event)"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }">
+                    <span> Uji Kompetensi </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item active">Detail Paket</li>
+        </ol>
+    </PageTitle>
 
     <Edit
         v-if="examPacket"
@@ -88,7 +99,7 @@ export default {
         :isShowParticipant="true"
     />
 
-    <div class="card" v-if="examPacket && examPacket.exams">
+    <div class="card">
         <div
             class="card-header d-flex justify-content-between align-items-center"
         >

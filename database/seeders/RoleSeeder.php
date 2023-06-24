@@ -31,6 +31,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::ADMIN_APP]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_APP]['Profile'] = ['index', 'update-password', 'update-admin-app'];
+        $access[User::ADMIN_APP]['Payment'] = ['cost', 'invoice'];
 
         $access[User::ADMIN_PUSAT]['Dashboard'] = ['index'];
         $access[User::ADMIN_PUSAT]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
@@ -44,6 +45,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_PUSAT]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
         $access[User::ADMIN_PUSAT]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_PUSAT]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
+        $access[User::ADMIN_PUSAT]['Payment'] = ['cost', 'invoice'];
 
         $access[User::ADMIN_CABANG]['Dashboard'] = ['index'];
         $access[User::ADMIN_CABANG]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
@@ -85,6 +87,7 @@ class RoleSeeder extends Seeder
         $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet', 'dashboard-admin', 'dashboard-member'];
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
+        $permission['Payment'] = ['cost', 'invoice'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {

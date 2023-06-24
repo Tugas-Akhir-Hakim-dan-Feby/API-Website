@@ -154,7 +154,29 @@ export default {
         :title="`Daftar Peserta Uji Kompetensi`"
         :isBack="true"
         @onBack="onBack($event)"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }">
+                    <span> Uji Kompetensi </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link
+                    :to="{
+                        name: 'Exam Packet Detail',
+                        params: { id: id },
+                    }"
+                >
+                    <span> Detail Paket </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item active">Peserta</li>
+        </ol>
+    </PageTitle>
 
     <Edit
         v-if="examPacket"
@@ -162,7 +184,7 @@ export default {
         @onSuccessEdit="onSuccessEdit"
     />
 
-    <div v-if="examPacket" class="card position-relative">
+    <div class="card position-relative">
         <Loader v-if="isLoading" />
         <div
             class="card-header d-flex justify-content-between align-items-center"

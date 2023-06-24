@@ -58,7 +58,19 @@ export default {
         :title="'Invoice #' + externalId"
         :isBack="true"
         @onBack="onBack($event)"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Payment Recapitulation Invoice' }"
+                    >Rekapitulasi Faktur</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Detail Faktur</li>
+        </ol>
+    </PageTitle>
 
     <div class="row">
         <div class="col-12">
