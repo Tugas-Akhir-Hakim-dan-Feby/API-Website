@@ -103,7 +103,8 @@ class WelderMemberController extends Controller
             $this->pay(Cost::WELDER_MEMBER);
 
             $user->update([
-                "role_id" => $role->id
+                "role_id" => $role->id,
+                'membership_card' => "MC-" . date('Ymd') . $user->id
             ]);
 
             $user->welderMember()->create($request->all());

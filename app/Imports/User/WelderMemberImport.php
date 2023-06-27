@@ -42,6 +42,8 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
                 'email_verified_at' => Carbon::now(),
                 'remember_token' => Str::random(60)
             ]);
+            $user->membership_card = "MW-" . date('Ymd') . $user->id;
+            $user->save();
 
             $user->welderMember()->create([
                 "uuid" => Str::uuid(),

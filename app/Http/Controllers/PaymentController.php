@@ -10,10 +10,12 @@ use App\Http\Resources\Payment\PaymentCollection;
 use App\Http\Resources\Payment\PaymentDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\Payment;
+use App\Models\User;
 use App\Repositories\Payment\PaymentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
@@ -52,8 +54,7 @@ class PaymentController extends Controller
         $role = Role::findById($payment->user->role_id, 'api');
 
         try {
-            $payment->update(['status' => $request->status]);
-            $payment->user->assignRole($role);
+            $this->assignRoles($payment, $role, $request);
 
             MessagePayment::dispatch($payment, $request->external_id);
 
@@ -80,5 +81,11 @@ class PaymentController extends Controller
         $payment->load('user');
 
         return new PaymentDetail($payment);
+    }
+
+    protected function assignRoles($payment, $role, $request)
+    {
+        $payment->update(['status' => $request->status]);
+        return $payment->user->assignRole($role);
     }
 }

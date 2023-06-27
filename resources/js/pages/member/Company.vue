@@ -12,6 +12,7 @@ export default {
                 phone: "",
                 facsmile: "",
                 documentCompanyLegality: "",
+                documentCompanyLogo: "",
             },
             welderSkills: [],
             errors: {},
@@ -39,6 +40,10 @@ export default {
             formData.append(
                 "document_company_legality",
                 this.form.documentCompanyLegality
+            );
+            formData.append(
+                "document_company_logo",
+                this.form.documentCompanyLogo
             );
 
             return formData;
@@ -86,6 +91,9 @@ export default {
         },
         uploadDocumentCompanyLegality(e) {
             this.form.documentCompanyLegality = e.target.files[0];
+        },
+        uploadDocumentCompanyLogo(e) {
+            this.form.documentCompanyLogo = e.target.files[0];
         },
     },
     components: { PageTitle },
@@ -238,6 +246,26 @@ export default {
                         class="invalid-feedback"
                         v-if="errors.documentCompanyLegality"
                         v-for="(error, index) in errors.documentCompanyLegality"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label>Logo Perusahaan</label
+                    ><input
+                        type="file"
+                        class="form-control"
+                        :class="{
+                            'is-invalid': errors.documentCompanyLogo,
+                        }"
+                        :disabled="isLoading"
+                        @change="uploadDocumentCompanyLogo"
+                    />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.documentCompanyLogo"
+                        v-for="(error, index) in errors.documentCompanyLogo"
                         :key="index"
                     >
                         {{ error }}.

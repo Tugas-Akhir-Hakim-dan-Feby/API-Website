@@ -15,7 +15,6 @@ class Search
 
         $query->where(function ($query) {
             $query->where('article_title', 'LIKE', '%' . request('search') . '%');
-            $query->orWhere('article_content', 'LIKE', '%' . request('search') . '%');
         });
 
         return $next($query);

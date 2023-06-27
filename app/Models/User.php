@@ -52,7 +52,8 @@ class User extends Authenticatable
         'uuid',
         'role_id',
         'email_verified_at',
-        'remember_token'
+        'remember_token',
+        'membership_card'
     ];
 
     /**

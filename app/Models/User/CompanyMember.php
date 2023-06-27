@@ -21,6 +21,7 @@ class CompanyMember extends Model
         'company_profile',
         'company_email',
         'company_legality',
+        'company_logo',
         'phone',
         'facsmile',
         'status',

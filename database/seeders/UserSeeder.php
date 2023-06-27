@@ -108,6 +108,10 @@ class UserSeeder extends Seeder
             'facsmile' => fake()->phoneNumber(),
         ]);
 
+        $companyMember->update([
+            'membership_card' => "MC-" . date('Ymd') . $companyMember->id
+        ]);
+
         return true;
     }
 
@@ -134,6 +138,10 @@ class UserSeeder extends Seeder
             "certificate_school" => fake()->image(storage_path("app/public/certificate_school")),
             "pas_photo" => fake()->image(storage_path("app/public/pas_photo")),
             "uuid" => Str::uuid(),
+        ]);
+
+        $welderMember->update([
+            'membership_card' => "MW-" . date('Ymd') . $welderMember->id
         ]);
 
         return true;
@@ -172,6 +180,11 @@ class UserSeeder extends Seeder
             "working_mail" => fake()->image(storage_path("app/public/working_mail")),
             "career" => fake()->image(storage_path("app/public/career")),
             "uuid" => Str::uuid(),
+        ]);
+
+
+        $expert->update([
+            'membership_card' => "MW-" . date('Ymd') . $expert->id
         ]);
 
         return true;

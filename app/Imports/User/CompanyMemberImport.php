@@ -35,8 +35,10 @@ class CompanyMemberImport implements ToCollection, WithHeadingRow, WithValidatio
                 "email" => $collect["email"],
                 "password" => Hash::make($collect["password"]),
                 'email_verified_at' => Carbon::now(),
-                'remember_token' => Str::random(60)
+                'remember_token' => Str::random(60),
             ]);
+            $user->membership_card = "MC-" . date('Ymd') . $user->id;
+            $user->save();
 
             $user->companyMember()->create([
                 "uuid" => Str::uuid(),

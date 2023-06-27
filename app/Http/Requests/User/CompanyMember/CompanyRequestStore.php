@@ -33,6 +33,7 @@ class CompanyRequestStore extends FormRequest
             'company_profile' => 'required',
             'company_email' => 'required|email',
             'document_company_legality' => 'required',
+            'document_company_logo' => 'required',
             'phone' => 'required|numeric',
             'facsmile' => 'required',
         ];
@@ -47,6 +48,7 @@ class CompanyRequestStore extends FormRequest
             'company_profile' => 'profil perusahaan',
             'company_email' => 'email perusahaan',
             'document_company_legality' => 'legalitas perusahaan',
+            'document_company_logo' => 'logo perusahaan',
             'phone' => 'no telepon',
             'facsmile' => 'fax',
         ];

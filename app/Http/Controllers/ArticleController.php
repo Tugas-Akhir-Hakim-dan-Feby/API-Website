@@ -49,6 +49,22 @@ class ArticleController extends Controller
         return new ArticleCollection($articles);
     }
 
+    public function all(Request $request)
+    {
+        $articles = app(Pipeline::class)
+            ->send($this->articleRepository->query())
+            ->through([
+                IsActive::class,
+                Search::class,
+                Author::class
+            ])
+            ->thenReturn()
+            ->with(['document', 'user.document'])
+            ->paginate($request->per_page);
+
+        return new ArticleCollection($articles);
+    }
+
     public function store(ArticleRequestStore $request)
     {
         DB::beginTransaction();

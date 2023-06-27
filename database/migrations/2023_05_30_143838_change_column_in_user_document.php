@@ -21,8 +21,7 @@ return new class extends Migration
         });
 
         Schema::table('user_welder_members', function (Blueprint $table) {
-            $table->string("certificate_school")->after("status")->nullable()->change();
-            $table->string("pas_photo")->after("certificate_school")->nullable()->change();
+            $table->string("pas_photo")->after("status")->nullable()->change();
         });
     }
 };

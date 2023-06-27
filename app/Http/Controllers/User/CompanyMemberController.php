@@ -79,10 +79,17 @@ class CompanyMemberController extends Controller
                 ]);
             }
 
+            if ($request->hasFile("document_company_logo")) {
+                $request->merge([
+                    "company_logo" => $this->storageFile($request->file("document_company_logo"), "company_logo")
+                ]);
+            }
+
             $this->pay(Cost::COMPANY_MEMBER);
 
             $user->update([
-                "role_id" => $role->id
+                "role_id" => $role->id,
+                'membership_card' => "MW-" . date('Ymd') . $user->id
             ]);
             $user->companyMember()->create($request->all());
 

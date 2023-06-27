@@ -52,6 +52,21 @@ class ExpertController extends Controller
         return new ExpertCollection($userExperts);
     }
 
+    public function all(Request $request)
+    {
+        $userExperts = app(Pipeline::class)
+            ->send($this->userRepository->query())
+            ->through([
+                ExpertRole::class,
+                Search::class,
+                Approved::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
+        return new ExpertCollection($userExperts);
+    }
+
     public function create()
     {
         //

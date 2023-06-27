@@ -27,7 +27,6 @@ class WelderMember extends Model
         'birth_place',
         'working_status',
         'status',
-        "certificate_school",
         "pas_photo",
         'uuid',
     ];
