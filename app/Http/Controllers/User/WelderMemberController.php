@@ -139,7 +139,7 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
-        $welderMember->load(["welderMember.welderSkill"]);
+        $welderMember->load(["welderMember.welderSkill", "welderDocuments"]);
 
         return new WelderMemberDetail($welderMember);
     }
