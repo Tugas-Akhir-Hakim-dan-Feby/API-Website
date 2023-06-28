@@ -35,7 +35,20 @@ class CompanyMember extends Model
 
     public function getCompanyLegalityAttribute($companyLegality)
     {
-        return asset('storage/' . $companyLegality);
+        if ($companyLegality) {
+            return asset('storage/' . $companyLegality);
+        }
+
+        return asset('assets/images/image-not-found.png');
+    }
+
+    public function getCompanyLogoAttribute($companyLogo)
+    {
+        if ($companyLogo) {
+            return asset('storage/' . $companyLogo);
+        }
+
+        return asset('assets/images/image-not-found.png');
     }
 
     public function user(): BelongsTo

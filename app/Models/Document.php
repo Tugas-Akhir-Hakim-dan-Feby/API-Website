@@ -20,6 +20,10 @@ class Document extends Model
 
     public function getDocumentPathAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return asset('assets/images/image-not-found.png');
     }
 }

@@ -44,11 +44,19 @@ class WelderMember extends Model
 
     public function getCertificateSchoolAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return asset('assets/images/image-not-found.png');
     }
 
     public function getPasPhotoAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return asset('assets/images/profile-not-found.webp');
     }
 }

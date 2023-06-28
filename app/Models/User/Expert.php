@@ -38,22 +38,38 @@ class Expert extends Model
 
     public function getCertificateCompetencyAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return null;
     }
 
     public function getCertificateProfessionAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return null;
     }
 
     public function getWorkingMailAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return null;
     }
 
     public function getCareerAttribute($image)
     {
-        return asset('storage/' . $image);
+        if ($image) {
+            return asset('storage/' . $image);
+        }
+
+        return null;
     }
 
     public function welderMember(): HasOne
