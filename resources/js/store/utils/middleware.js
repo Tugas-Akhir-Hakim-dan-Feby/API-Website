@@ -11,18 +11,23 @@ export function checkRoles(allowRoles) {
                     response.user.roles.forEach((role) => {
                         if (!allowRoles.includes(role.name)) {
                             next({ name: "Dashboard" });
+                            return;
                         }
                         next();
+                        return;
                     });
                 })
                 .catch((err) => {});
         } else {
             user.roles.forEach((role) => {
+                console.log(allowRoles.includes(role.name));
                 if (!allowRoles.includes(role.name)) {
                     next({ name: "Dashboard" });
+                    return;
                 }
+                next();
+                return;
             });
-            next();
         }
     };
 }
