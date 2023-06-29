@@ -38,6 +38,9 @@ export default {
                     this.isLoading = false;
                 });
         },
+        handlePrint() {
+            window.location.href = `/print/invoice/${this.externalId}`;
+        },
         onBack(e) {
             this.$router.push({ name: "Payment History" });
         },
@@ -158,12 +161,13 @@ export default {
 
                     <div class="d-print-none mt-4">
                         <div class="text-end">
-                            <a
-                                href=""
-                                target="_blank"
+                            <button
+                                @click="handlePrint"
                                 class="btn btn-info btn-sm"
-                                >Cetak</a
+                                v-if="payment.status == $store.state.PAID"
                             >
+                                Cetak
+                            </button>
                         </div>
                     </div>
                 </div>
