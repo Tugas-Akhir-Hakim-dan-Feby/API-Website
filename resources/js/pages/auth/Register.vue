@@ -44,6 +44,18 @@ export default {
             <div
                 class="col-lg-8 col-12 order-lg-1 order-1 min-vh-100 background-walk-y position-relative overlay-gradient-bottom"
             >
+                <div
+                    class="position-absolute"
+                    style="
+                        height: 100%;
+                        width: 100%;
+                        background: linear-gradient(
+                            0deg,
+                            rgba(0, 0, 0, 0.875) 27%,
+                            hsla(0, 0%, 100%, 0)
+                        );
+                    "
+                ></div>
                 <img
                     class=""
                     style="height: 100%; width: 100%"

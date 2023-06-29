@@ -1,4 +1,5 @@
 <script>
+import Error from "../../components/notifications/Error.vue";
 import Success from "../../components/notifications/Success.vue";
 
 export default {
@@ -34,11 +35,17 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    this.errors = error.response.data.messages;
+
+                    if (error.response.data.statusCode == 422) {
+                        this.errors = error.response.data.messages;
+                    } else {
+                        $("#errorModal").modal("show");
+                        this.msg = "token reset password sudah kedaluwarsa.";
+                    }
                 });
         },
     },
-    components: { Success },
+    components: { Success, Error },
 };
 </script>
 
@@ -134,6 +141,12 @@ export default {
                                     </button>
                                 </div>
                             </form>
+                            <hr />
+                            <div class="mb-3 text-center">
+                                <router-link :to="{ name: 'Login' }" class=""
+                                    >Kembali ke halaman login.
+                                </router-link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,4 +155,5 @@ export default {
     </div>
 
     <Success :msg="msg" :url="{ name: 'Login' }" />
+    <Error :msg="msg" />
 </template>
