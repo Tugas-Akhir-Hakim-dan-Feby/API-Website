@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Role as ModelsRole;
 use App\Models\User;
+use Carbon\Carbon;
 use Database\Seeders\Traits\DisableForeignKey;
 use Database\Seeders\Traits\TruncateTable;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -66,6 +68,7 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_WELDER]['Profile'] = ['index', 'update-password', 'update-welder-member'];
         $access[User::MEMBER_WELDER]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];
         $access[User::MEMBER_WELDER]['Exam'] = ['index', 'show', 'pagination'];
+        $access[User::MEMBER_WELDER]['Payment'] = ['history'];
 
         $access[User::GUEST]['Dashboard'] = ['index'];
         $access[User::GUEST]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
@@ -87,13 +90,15 @@ class RoleSeeder extends Seeder
         $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet', 'dashboard-admin', 'dashboard-member'];
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
-        $permission['Payment'] = ['cost', 'invoice'];
+        $permission['Payment'] = ['cost', 'invoice', 'history'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {
-                Permission::create([
+                DB::table('permissions')->insert([
                     'name' => strtolower($key) . '.' . $permission,
-                    'guard_name' => 'api'
+                    'guard_name' => 'api',
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
             }
         }

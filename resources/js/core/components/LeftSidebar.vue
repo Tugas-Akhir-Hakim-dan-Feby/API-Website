@@ -139,6 +139,18 @@ export default {
                     </router-link>
                 </li>
 
+                <li class="side-nav-item" v-if="$can('history', 'Payment')">
+                    <router-link
+                        :to="{
+                            name: 'Payment History',
+                        }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-account-cash"></i>
+                        <span> Riwayat Pembayaran </span>
+                    </router-link>
+                </li>
+
                 <li class="side-nav-item" v-if="$can('cost', 'Payment')">
                     <a
                         data-bs-toggle="collapse"
