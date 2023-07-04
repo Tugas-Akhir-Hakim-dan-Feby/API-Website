@@ -31,7 +31,10 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkRoles([store.state.MEMBER_WELDER]),
+        beforeEnter: checkRoles([
+            store.state.MEMBER_WELDER,
+            store.state.MEMBER_COMPANY,
+        ]),
     },
     {
         path: "/payment/recapitulation-invoice",
