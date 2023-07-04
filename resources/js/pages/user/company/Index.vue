@@ -10,6 +10,7 @@ import Loader from "../../../components/Loader.vue";
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             pagination: {
                 perPage: 10,
@@ -117,6 +118,27 @@ export default {
         uploadExcelData(e) {
             this.excelFile = e.target.files[0];
         },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/company-member", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
+        },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader },
 };
@@ -212,6 +234,12 @@ export default {
                                     class="btn btn-sm btn-info me-2"
                                     >Detail</router-link
                                 >
+                                <button
+                                    class="btn btn-sm btn-danger"
+                                    @click="handleDelete(user.uuid)"
+                                >
+                                    Hapus
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -310,5 +338,5 @@ export default {
         </div>
     </div>
     <Success :url="{ name: 'User Company' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Confirm @onDelete="onDelete" :msg="msg" />
 </template>

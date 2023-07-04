@@ -220,10 +220,11 @@ class ExpertController extends Controller
         try {
             $user->expert()->delete();
 
+            $user->removeRole(Role::findById(User::PAKAR, 'api'));
             $user->update(["role_id" => User::MEMBER_WELDER]);
 
             DB::commit();
-            return $this->successMessage("data berhasil diperbaharui", $user);
+            return $this->successMessage("data berhasil dihapus", $user);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
