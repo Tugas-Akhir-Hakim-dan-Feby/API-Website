@@ -11,6 +11,7 @@ import Error from "../../../components/alerts/Error.vue";
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             pagination: {
                 perPage: 10,
@@ -97,6 +98,27 @@ export default {
                 this.getUsers();
             }, 1000);
         },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/branch", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
+        },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader, Error },
 };
@@ -163,15 +185,12 @@ export default {
                             <th>Cabang</th>
                             <th>Jabatan</th>
                             <th>Jenis Kelamin</th>
-                            <th v-if="$can('update-status', 'Adminbranch')">
-                                Status
-                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="users.length < 1">
-                            <td colspan="8" class="text-center">
+                            <td colspan="7" class="text-center">
                                 data pengguna admin cabang tidak ada
                             </td>
                         </tr>
@@ -180,28 +199,14 @@ export default {
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
                             <td
-                                v-html="user.adminBranch?.branch?.branchName"
+                                v-html="
+                                    user.adminBranch?.branch?.branchName ?? '-'
+                                "
                             ></td>
                             <td v-html="user.adminBranch?.position"></td>
                             <td
                                 v-html="getGender(user.adminBranch?.gender)"
                             ></td>
-                            <td v-if="$can('update-status', 'Adminbranch')">
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        :checked="user.adminBranch?.status"
-                                        @click="
-                                            onUpdateStatus(
-                                                user.uuid,
-                                                user.adminBranch?.status
-                                            )
-                                        "
-                                    />
-                                </div>
-                            </td>
                             <td>
                                 <router-link
                                     :to="{
@@ -212,6 +217,13 @@ export default {
                                     class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >
+                                <button
+                                    class="btn btn-sm btn-danger"
+                                    @click="handleDelete(user.uuid)"
+                                    v-if="$store.state.USER.uuid != user.uuid"
+                                >
+                                    Hapus
+                                </button>
                             </td>
                         </tr>
                     </tbody>

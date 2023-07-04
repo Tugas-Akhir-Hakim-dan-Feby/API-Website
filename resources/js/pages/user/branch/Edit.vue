@@ -4,6 +4,9 @@ import Error from "../../../components/alerts/Error.vue";
 import Success from "../../../components/notifications/Success.vue";
 import Util from "../../../store/utils/util";
 
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+
 export default {
     props: ["id"],
     data() {
@@ -40,7 +43,7 @@ export default {
                 email: user.email,
                 phone: user.adminBranch?.phone,
                 birthPlace: user.adminBranch?.birthPlace,
-                dateBirth: user.adminBranch?.dateBirth,
+                dateBirth: this.getDateBirth(user.adminBranch?.dateBirth),
                 gender: user.adminBranch?.gender,
                 position: user.adminBranch?.position,
                 address: user.adminBranch?.address,
@@ -86,6 +89,9 @@ export default {
                         this.msg = error.response.data.message;
                     }
                 });
+        },
+        getDateBirth(date) {
+            return dayjs(date).locale("id").format("YYYY-MM-DD");
         },
         handleSubmit() {
             this.isLoading = true;
@@ -331,9 +337,25 @@ export default {
                 <router-link
                     :to="{ name: 'User Branch' }"
                     class="btn btn-sm btn-secondary"
+                    :disabled="isLoading"
                     >Batal</router-link
                 >
-                <button class="btn btn-sm btn-primary">Simpan</button>
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-sm btn-primary"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </form>
     </div>

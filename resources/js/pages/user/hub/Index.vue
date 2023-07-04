@@ -166,7 +166,7 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-if="users.length < 1">
-                            <td colspan="8" class="text-center">
+                            <td colspan="6" class="text-center">
                                 data pengguna admin pusat tidak ada
                             </td>
                         </tr>

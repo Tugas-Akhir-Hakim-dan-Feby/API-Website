@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class HubController extends Controller
@@ -163,6 +164,15 @@ class HubController extends Controller
             }
 
             if ($user->articles) {
+                foreach ($user->articles as $article) {
+                    if ($article->document) {
+                        $path = str_replace(url('storage') . '/', '', $article->document->document_path);
+                        Storage::delete($path);
+
+                        $article->document()->delete();
+                    }
+                }
+
                 $user->articles()->delete();
             }
 

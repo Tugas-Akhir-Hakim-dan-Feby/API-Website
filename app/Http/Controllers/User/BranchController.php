@@ -12,7 +12,7 @@ use App\Http\Resources\User\BranchCollection;
 use App\Http\Resources\User\BranchDetail;
 use App\Http\Traits\FillableFixer;
 use App\Http\Traits\MessageFixer;
-use App\Models\Role as AppModelsRole;
+use App\Models\User;
 use App\Models\User\Branch;
 use App\Repositories\Branch\BranchRepository;
 use App\Repositories\User\UserRepository;
@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\TryCatch;
 use Spatie\Permission\Models\Role as ModelsRole;
 
@@ -59,12 +60,14 @@ class BranchController extends Controller
         $branch = $this->branchRepository->findOrFail($request->branch_id);
 
         try {
-            $role = ModelsRole::find(AppModelsRole::ADMIN_CABANG);
+            $role = ModelsRole::find(User::ADMIN_CABANG);
 
             $request->merge([
                 'uuid' => Str::uuid(),
-                'password' => bcrypt(Str::random(10)),
-                'role_id' => AppModelsRole::ADMIN_CABANG
+                'password' => bcrypt('password'),
+                'role_id' => User::ADMIN_CABANG,
+                'remember_token' => Str::random(20),
+                'email_verified_at' => now()
             ]);
 
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
@@ -91,7 +94,7 @@ class BranchController extends Controller
 
     public function show($id)
     {
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
@@ -107,7 +110,7 @@ class BranchController extends Controller
         DB::beginTransaction();
 
         $branch = $this->branchRepository->findOrFail($request->branch_id);
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
@@ -136,7 +139,7 @@ class BranchController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
@@ -159,7 +162,7 @@ class BranchController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => AppModelsRole::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
 
         if (!$user) {
             abort(404);
@@ -172,6 +175,19 @@ class BranchController extends Controller
 
             if ($user->document) {
                 $user->document()->delete();
+            }
+
+            if ($user->articles) {
+                foreach ($user->articles as $article) {
+                    if ($article->document) {
+                        $path = str_replace(url('storage') . '/', '', $article->document->document_path);
+                        Storage::delete($path);
+
+                        $article->document()->delete();
+                    }
+                }
+
+                $user->articles()->delete();
             }
 
             $user->delete();
