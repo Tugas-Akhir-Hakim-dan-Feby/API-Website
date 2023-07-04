@@ -6,6 +6,7 @@ import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
 import Loader from "../../../components/Loader.vue";
+import PaginationUtil from "../../../store/utils/pagination";
 
 export default {
     data() {
@@ -41,6 +42,9 @@ export default {
         this.getUsers();
     },
     methods: {
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination);
+        },
         getUsers() {
             this.isLoading = true;
             let params = [
@@ -212,6 +216,7 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th>No. KTA</th>
                             <th>Nama Perusahaan</th>
                             <th>Nama Pengguna</th>
                             <th>Email</th>
@@ -219,8 +224,14 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in users" :key="index">
-                            <th v-html="index + 1"></th>
+                        <tr v-if="users.length < 1">
+                            <td colspan="6" class="text-center">
+                                data perusahaan member tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(user, index) in users" :key="index">
+                            <th v-html="iteration(index)"></th>
+                            <td v-html="user.membershipCard ?? '-'"></td>
                             <td v-html="user.companyMember?.companyName"></td>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
