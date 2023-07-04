@@ -10,6 +10,7 @@ import Loader from "../../../components/Loader.vue";
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             pagination: {
                 perPage: 10,
@@ -79,6 +80,27 @@ export default {
             this.pagination.page = e;
             this.getUsers();
         },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/hub", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
+        },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader },
 };
@@ -130,7 +152,6 @@ export default {
                     </div>
                 </div>
             </div>
-
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <thead>
@@ -140,9 +161,6 @@ export default {
                             <th>Email Pengguna</th>
                             <th>Jabatan</th>
                             <th>Jenis Kelamin</th>
-                            <th v-if="$can('update-status', 'Adminhub')">
-                                Status
-                            </th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -158,22 +176,6 @@ export default {
                             <td v-html="user.email"></td>
                             <td v-html="user.adminHub?.position"></td>
                             <td v-html="getGender(user.adminHub?.gender)"></td>
-                            <td v-if="$can('update-status', 'Adminhub')">
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        :checked="user.adminHub?.status"
-                                        @click="
-                                            onUpdateStatus(
-                                                user.uuid,
-                                                user.adminHub?.status
-                                            )
-                                        "
-                                    />
-                                </div>
-                            </td>
                             <td>
                                 <router-link
                                     :to="{
@@ -184,6 +186,13 @@ export default {
                                     class="btn btn-sm btn-warning me-2 text-white"
                                     >Edit</router-link
                                 >
+                                <button
+                                    class="btn btn-sm btn-danger"
+                                    @click="handleDelete(user.uuid)"
+                                    v-if="$store.state.USER.uuid != user.uuid"
+                                >
+                                    Hapus
+                                </button>
                             </td>
                         </tr>
                     </tbody>

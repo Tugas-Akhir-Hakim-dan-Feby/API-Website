@@ -58,8 +58,10 @@ class HubController extends Controller
         try {
             $request->merge([
                 'uuid' => Str::uuid(),
-                'password' => bcrypt(Str::random(10)),
-                'role_id' => ModelsRole::ADMIN_PUSAT
+                'password' => bcrypt('password'),
+                'role_id' => ModelsRole::ADMIN_PUSAT,
+                'remember_token' => Str::random(20),
+                'email_verified_at' => now()
             ]);
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
             $user = $this->userRepository->create($fillableUser);
@@ -153,11 +155,15 @@ class HubController extends Controller
 
         try {
             if ($user->adminHub) {
-                $user->adminHub->delete();
+                $user->adminHub()->delete();
             }
 
             if ($user->document) {
                 $user->document()->delete();
+            }
+
+            if ($user->articles) {
+                $user->articles()->delete();
             }
 
             $user->delete();
