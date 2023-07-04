@@ -20,7 +20,6 @@ export function checkRoles(allowRoles) {
                 .catch((err) => {});
         } else {
             user.roles.forEach((role) => {
-                console.log(allowRoles.includes(role.name));
                 if (!allowRoles.includes(role.name)) {
                     next({ name: "Dashboard" });
                     return;

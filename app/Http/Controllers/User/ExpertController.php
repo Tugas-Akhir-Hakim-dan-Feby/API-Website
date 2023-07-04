@@ -67,11 +67,6 @@ class ExpertController extends Controller
         return new ExpertCollection($userExperts);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(ExpertRequestStore $request)
     {
         DB::beginTransaction();
@@ -158,11 +153,6 @@ class ExpertController extends Controller
         return new ExpertDetail($user);
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
         //
@@ -219,6 +209,24 @@ class ExpertController extends Controller
 
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            $user->expert()->delete();
+
+            $user->update(["role_id" => User::MEMBER_WELDER]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

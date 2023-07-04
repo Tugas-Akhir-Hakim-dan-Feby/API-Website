@@ -70,10 +70,12 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_WELDER]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];
         $access[User::MEMBER_WELDER]['Exam'] = ['index', 'show', 'pagination'];
         $access[User::MEMBER_WELDER]['Payment'] = ['history'];
+        $access[User::MEMBER_WELDER]['Member'] = ['expert'];
 
         $access[User::GUEST]['Dashboard'] = ['index'];
         $access[User::GUEST]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::GUEST]['Profile'] = ['index', 'update-password', 'update-guest'];
+        $access[User::GUEST]['Member'] = ['index', 'company-member', 'welder-member'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');
@@ -92,6 +94,7 @@ class RoleSeeder extends Seeder
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
         $permission['Payment'] = ['cost', 'invoice', 'history'];
+        $permission['Member'] = ['index', 'company-member', 'welder-member', 'expert'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {
