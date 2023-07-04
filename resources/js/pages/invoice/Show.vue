@@ -158,7 +158,7 @@ export default {
                             <a
                                 :href="payment.paymentLink"
                                 target="_blank"
-                                class="btn-sm btn btn-info"
+                                class="btn-sm btn btn-primary"
                                 v-else
                                 >Bayar</a
                             >

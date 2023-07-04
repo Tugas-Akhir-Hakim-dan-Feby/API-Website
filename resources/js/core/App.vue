@@ -45,12 +45,19 @@ export default {
                 if (!Cookie.get("token")) {
                     window.location.replace("/auth/login");
                 }
+
+                this.checkPayment();
             },
             deep: true,
             immediate: true,
         },
     },
     methods: {
+        checkPayment() {
+            this.$store
+                .dispatch("showData", ["user", "check-payment"])
+                .then((response) => {});
+        },
         camelCase(string) {
             return string
                 .toLowerCase()

@@ -21,6 +21,7 @@ class Payment extends Model
         'amount',
         'payment_link',
         'description',
+        'recreated_at',
         'uuid'
     ];
 
@@ -32,5 +33,15 @@ class Payment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function isRecreated()
+    {
+        return $this->recreated_at !== null;
+    }
+
+    public function markAsRecreated()
+    {
+        $this->update(['recreated_at' => now()]);
     }
 }

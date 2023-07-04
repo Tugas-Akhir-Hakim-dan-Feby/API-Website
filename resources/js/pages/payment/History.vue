@@ -17,6 +17,7 @@ export default {
             filters: {
                 search: "",
                 status: "",
+                sortDirection: "desc",
             },
             isLoading: false,
         };
@@ -36,6 +37,7 @@ export default {
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
                 `status=${this.filters.status}`,
+                `sort_direction=${this.filters.sortDirection}`,
             ].join("&");
 
             this.$store
@@ -139,6 +141,7 @@ export default {
                             </td>
                             <td>
                                 <router-link
+                                    v-if="invoice.status == 'PAID'"
                                     :to="{
                                         name: 'Payment History Detail',
                                         params: {
@@ -149,6 +152,13 @@ export default {
                                 >
                                     Detail
                                 </router-link>
+                                <a
+                                    v-if="invoice.status == 'PENDING'"
+                                    :href="invoice.paymentLink"
+                                    target="_blank"
+                                    class="btn btn-primary text-white btn-sm me-2"
+                                    >Bayar</a
+                                >
                             </td>
                         </tr>
                     </tbody>

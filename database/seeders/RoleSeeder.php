@@ -62,6 +62,7 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_COMPANY]['Dashboard'] = ['index'];
         $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::MEMBER_COMPANY]['Profile'] = ['index', 'update-password', 'update-company-member'];
+        $access[User::MEMBER_COMPANY]['Payment'] = ['history'];
 
         $access[User::MEMBER_WELDER]['Dashboard'] = ['index'];
         $access[User::MEMBER_WELDER]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];

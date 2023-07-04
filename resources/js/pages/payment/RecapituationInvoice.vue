@@ -17,6 +17,7 @@ export default {
             filters: {
                 search: "",
                 status: "",
+                sortDirection: "desc",
             },
             isLoading: false,
         };
@@ -36,6 +37,7 @@ export default {
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
                 `status=${this.filters.status}`,
+                `sort_direction=${this.filters.sortDirection}`,
             ].join("&");
 
             this.$store

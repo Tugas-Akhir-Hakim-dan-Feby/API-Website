@@ -6,6 +6,7 @@ use App\Events\MessagePayment;
 use App\Http\Filters\Payment\Search;
 use App\Http\Filters\Payment\ShowByStatus;
 use App\Http\Filters\Payment\ShowByUser;
+use App\Http\Filters\Payment\Sort;
 use App\Http\Resources\Payment\PaymentCollection;
 use App\Http\Resources\Payment\PaymentDetail;
 use App\Http\Traits\MessageFixer;
@@ -35,6 +36,7 @@ class PaymentController extends Controller
         $payments = app(Pipeline::class)
             ->send($this->paymentRepository->query())
             ->through([
+                Sort::class,
                 Search::class,
                 ShowByUser::class,
                 ShowByStatus::class

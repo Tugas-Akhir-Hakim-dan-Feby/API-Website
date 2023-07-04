@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 trait PaymentFixer
 {
-    protected function pay($costId)
+    protected function pay($costId, $isLoggedIn = true, $user = null)
     {
         $cost = Cost::findOrFail($costId);
         $description = $this->description($costId);
@@ -26,15 +26,27 @@ trait PaymentFixer
         ]);
         $response = $data_request->object();
 
-        Payment::create([
-            'uuid' => Str::uuid(),
-            'user_id' => Auth::user()->id,
-            'external_id' => $external_id,
-            'description' => $description,
-            'amount' => $cost->nominal_price,
-            'payment_link' => $response->invoice_url,
-            'status' => $response->status,
-        ]);
+        if ($isLoggedIn) {
+            Payment::create([
+                'uuid' => Str::uuid(),
+                'user_id' => Auth::user()->id,
+                'external_id' => $external_id,
+                'description' => $description,
+                'amount' => $cost->nominal_price,
+                'payment_link' => $response->invoice_url,
+                'status' => $response->status,
+            ]);
+        } else {
+            Payment::create([
+                'uuid' => Str::uuid(),
+                'user_id' => $user->id,
+                'external_id' => $external_id,
+                'description' => $description,
+                'amount' => $cost->nominal_price,
+                'payment_link' => $response->invoice_url,
+                'status' => $response->status,
+            ]);
+        }
     }
 
     protected function description($costId)

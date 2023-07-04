@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\UploadImageRequest;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
+use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,11 +16,12 @@ class UserController extends Controller
 {
     use UploadDocument, MessageFixer;
 
-    protected $userRepository;
+    protected $userRepository, $paymentRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, PaymentRepository $paymentRepository)
     {
         $this->userRepository = $userRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
     public function me()
@@ -61,6 +63,15 @@ class UserController extends Controller
 
     public function show()
     {
+    }
+
+    public function checkPayments()
+    {
+        return DB::transaction(function () {
+            $this->paymentRepository->paymentUsers();
+
+            return $this->successMessage("data berhasil", []);
+        });
     }
 
     public function uploadImage(UploadImageRequest $request, $id)
