@@ -11,6 +11,7 @@ import Loader from "../../../components/Loader.vue";
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             pagination: {
                 perPage: 10,
@@ -80,6 +81,11 @@ export default {
             this.pagination.page = e;
             this.getUsers();
         },
+        onSearch() {
+            setTimeout(() => {
+                this.getUsers();
+            }, 1000);
+        },
         async handleUploadData() {
             this.errorMessage = {};
             this.isDisabled = true;
@@ -117,6 +123,27 @@ export default {
         },
         uploadExcelData(e) {
             this.excelFile = e.target.files[0];
+        },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/welder-member", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
         },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader },
@@ -172,6 +199,8 @@ export default {
                                 type="search"
                                 class="form-control"
                                 placeholder="pencarian"
+                                v-model="filters.search"
+                                @input="onSearch"
                                 v-if="$can('search', 'Weldermember')"
                             />
                         </div>
@@ -189,6 +218,7 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th>No. KTA</th>
                             <th>No. KTP</th>
                             <th>Nama Pengguna</th>
                             <th>Email</th>
@@ -197,8 +227,14 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in users" :key="index">
+                        <tr v-if="users.length < 1">
+                            <td colspan="7" class="text-center">
+                                data welder member tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="iteration(index)"></th>
+                            <td v-html="user.membershipCard ?? '-'"></td>
                             <td v-html="user.welderMember?.residentIdCard"></td>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
@@ -217,6 +253,12 @@ export default {
                                     class="btn btn-sm btn-info me-2"
                                     >Detail</router-link
                                 >
+                                <button
+                                    class="btn btn-sm btn-danger"
+                                    @click="handleDelete(user.uuid)"
+                                >
+                                    Hapus
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -314,6 +356,6 @@ export default {
             </div>
         </div>
     </div>
-    <Success :url="{ name: 'User Company' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Success :url="{ name: 'User Member' }" :msg="msg" />
+    <Confirm @onDelete="onDelete" :msg="msg" />
 </template>

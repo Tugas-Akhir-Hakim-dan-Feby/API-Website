@@ -22,6 +22,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -218,7 +219,29 @@ class ExpertController extends Controller
         }
 
         try {
-            $user->expert()->delete();
+            if ($user->expert) {
+                if ($user->expert?->certificate_competency) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_competency);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->certificate_profession) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_profession);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->working_mail) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->working_mail);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->career) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->career);
+                    Storage::delete($path);
+                }
+
+                $user->expert()->delete();
+            }
 
             $user->removeRole(Role::findById(User::PAKAR, 'api'));
             $user->update(["role_id" => User::MEMBER_WELDER]);
