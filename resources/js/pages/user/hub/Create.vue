@@ -233,9 +233,25 @@ export default {
                 <router-link
                     :to="{ name: 'User Hub' }"
                     class="btn btn-sm btn-secondary"
+                    :disabled="isLoading"
                     >Batal</router-link
                 >
-                <button class="btn btn-sm btn-primary">Simpan</button>
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-sm btn-primary"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </form>
     </div>

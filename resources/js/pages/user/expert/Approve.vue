@@ -10,6 +10,7 @@ import Loader from "../../../components/Loader.vue";
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             metaPagination: {},
             pagination: {
@@ -98,9 +99,6 @@ export default {
                 this.uploadProgress = 0;
             }
         },
-        handleDelete() {
-            $("#confirmModal").modal("show");
-        },
         uploadExcelData(e) {
             this.excelFile = e.target.files[0];
         },
@@ -132,6 +130,27 @@ export default {
             setTimeout(() => {
                 this.getUsers();
             }, 1000);
+        },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/expert", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
         },
     },
     components: { Pagination, Success, Confirm, Loader },
@@ -206,7 +225,11 @@ export default {
                     <th v-html="iteration(index)"></th>
                     <td v-html="user.name"></td>
                     <td v-html="user.email"></td>
-                    <td v-html="user.welderMember?.welderSkill?.skillName"></td>
+                    <td
+                        v-html="
+                            user.welderMember?.welderSkill?.skillName ?? '-'
+                        "
+                    ></td>
                     <td v-html="user.expert?.instance"></td>
                     <td>
                         <router-link
@@ -218,6 +241,12 @@ export default {
                             class="btn btn-sm btn-info me-2"
                             >Detail</router-link
                         >
+                        <button
+                            class="btn btn-sm btn-danger"
+                            @click="handleDelete(user.uuid)"
+                        >
+                            Hapus
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -314,5 +343,5 @@ export default {
         </div>
     </div>
     <Success :url="{ name: 'User Expert' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Confirm @onDelete="onDelete" :msg="msg" />
 </template>

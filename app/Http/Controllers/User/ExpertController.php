@@ -22,6 +22,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -65,11 +66,6 @@ class ExpertController extends Controller
             ->paginate($request->per_page);
 
         return new ExpertCollection($userExperts);
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(ExpertRequestStore $request)
@@ -158,11 +154,6 @@ class ExpertController extends Controller
         return new ExpertDetail($user);
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
         //
@@ -219,6 +210,47 @@ class ExpertController extends Controller
 
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->expert) {
+                if ($user->expert?->certificate_competency) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_competency);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->certificate_profession) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_profession);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->working_mail) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->working_mail);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->career) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->career);
+                    Storage::delete($path);
+                }
+
+                $user->expert()->delete();
+            }
+
+            $user->removeRole(Role::findById(User::PAKAR, 'api'));
+            $user->update(["role_id" => User::MEMBER_WELDER]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

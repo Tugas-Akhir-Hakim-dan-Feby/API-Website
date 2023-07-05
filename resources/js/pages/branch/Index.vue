@@ -78,12 +78,12 @@ export default {
         },
         onDelete() {
             this.isLoading = true;
+            $("#confirmModal").modal("hide");
 
             this.$store
                 .dispatch("deleteData", ["branch", this.uuid])
                 .then((response) => {
                     this.isLoading = false;
-                    $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
                     this.msg = "data berhasil dihapus.";
                     this.getBranches();

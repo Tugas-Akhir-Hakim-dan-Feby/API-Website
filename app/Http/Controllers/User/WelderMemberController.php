@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Filters\User\WelderMember\Role;
+use App\Http\Filters\User\WelderMember\Search;
 use App\Http\Filters\User\WelderMember\WelderSkillId;
 use App\Http\Requests\User\WelderMember\UpdateDocumentRequest;
 use App\Http\Requests\User\WelderMember\UploadFileRequest;
@@ -57,6 +58,7 @@ class WelderMemberController extends Controller
             ->send($this->userRepository->query())
             ->through([
                 Role::class,
+                Search::class,
                 WelderSkillId::class
             ])
             ->thenReturn()
@@ -183,8 +185,67 @@ class WelderMemberController extends Controller
         }
     }
 
-    public function destroy(WelderMember $welderMember)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->expert) {
+                if ($user->expert?->certificate_competency) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_competency);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->certificate_profession) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_profession);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->working_mail) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->working_mail);
+                    Storage::delete($path);
+                }
+
+                if ($user->expert?->career) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->career);
+                    Storage::delete($path);
+                }
+
+                $user->expert()->delete();
+            }
+
+            if ($user->welderDocuments) {
+                foreach ($user->welderDocuments as $welderDocument) {
+                    $path = str_replace(url('storage') . '/', '', $welderDocument->document_path);
+                    Storage::delete($path);
+                    $welderDocument->delete();
+                }
+            }
+
+            if ($user->welderMember) {
+                if ($user->welderMember?->pas_photo) {
+                    $path = str_replace(url('storage') . '/', '', $user->welderMember?->pas_photo);
+                    Storage::delete($path);
+                }
+
+                $user->welderMember()->delete();
+            }
+
+            $user->removeRole(PermissionModelsRole::findById(User::PAKAR, 'api'));
+            $user->removeRole(PermissionModelsRole::findById(User::MEMBER_WELDER, 'api'));
+            $user->update(["role_id" => User::GUEST]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

@@ -182,6 +182,50 @@ class CompanyMemberController extends Controller
 
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->companyMember?->company_legality) {
+                $path = str_replace(url('storage') . '/', '', $user->companyMember?->company_legality);
+                Storage::delete($path);
+            }
+
+            if ($user->companyMember?->company_logo) {
+                $path = str_replace(url('storage') . '/', '', $user->companyMember?->company_logo);
+                Storage::delete($path);
+            }
+
+            if ($user->companyMember) {
+                $user->companyMember()->delete();
+            }
+
+            if ($user->articles) {
+                foreach ($user->articles as $article) {
+                    if ($article->document) {
+                        $path = str_replace(url('storage') . '/', '', $article->document->document_path);
+                        Storage::delete($path);
+
+                        $article->document()->delete();
+                    }
+                }
+
+                $user->articles()->delete();
+            }
+
+            $user->removeRole(Role::findById(User::MEMBER_COMPANY, 'api'));
+            $user->update(["role_id", User::GUEST]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 }

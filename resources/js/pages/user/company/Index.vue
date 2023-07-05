@@ -6,10 +6,12 @@ import Confirm from "../../../components/notifications/Confirm.vue";
 import PageTitle from "../../../components/PageTitle.vue";
 import Pagination from "../../../components/Pagination.vue";
 import Loader from "../../../components/Loader.vue";
+import PaginationUtil from "../../../store/utils/pagination";
 
 export default {
     data() {
         return {
+            uuid: null,
             users: [],
             pagination: {
                 perPage: 10,
@@ -40,6 +42,9 @@ export default {
         this.getUsers();
     },
     methods: {
+        iteration(index) {
+            return PaginationUtil.iteration(index, this.metaPagination);
+        },
         getUsers() {
             this.isLoading = true;
             let params = [
@@ -117,6 +122,27 @@ export default {
         uploadExcelData(e) {
             this.excelFile = e.target.files[0];
         },
+        onDelete() {
+            this.isLoading = true;
+            $("#confirmModal").modal("hide");
+
+            this.$store
+                .dispatch("deleteData", ["user/company-member", this.uuid])
+                .then((response) => {
+                    this.getUsers();
+                    this.isLoading = false;
+                    this.msg = "data berhasil dihapus.";
+                    $("#successModal").modal("show");
+                })
+                .catch((err) => {
+                    this.isLoading = false;
+                });
+        },
+        handleDelete(uuid) {
+            this.uuid = uuid;
+            this.msg = "apakah anda yakin data ini akan dihapus?";
+            $("#confirmModal").modal("show");
+        },
     },
     components: { Pagination, PageTitle, Success, Confirm, Loader },
 };
@@ -190,6 +216,7 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th>No. KTA</th>
                             <th>Nama Perusahaan</th>
                             <th>Nama Pengguna</th>
                             <th>Email</th>
@@ -197,8 +224,14 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, index) in users" :key="index">
-                            <th v-html="index + 1"></th>
+                        <tr v-if="users.length < 1">
+                            <td colspan="6" class="text-center">
+                                data perusahaan member tidak ada
+                            </td>
+                        </tr>
+                        <tr v-else v-for="(user, index) in users" :key="index">
+                            <th v-html="iteration(index)"></th>
+                            <td v-html="user.membershipCard ?? '-'"></td>
                             <td v-html="user.companyMember?.companyName"></td>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
@@ -212,6 +245,12 @@ export default {
                                     class="btn btn-sm btn-info me-2"
                                     >Detail</router-link
                                 >
+                                <button
+                                    class="btn btn-sm btn-danger"
+                                    @click="handleDelete(user.uuid)"
+                                >
+                                    Hapus
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -310,5 +349,5 @@ export default {
         </div>
     </div>
     <Success :url="{ name: 'User Company' }" :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Confirm @onDelete="onDelete" :msg="msg" />
 </template>

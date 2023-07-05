@@ -14,6 +14,7 @@ use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -104,6 +105,11 @@ class User extends Authenticatable
     public function welderDocuments(): MorphMany
     {
         return $this->morphMany(WelderDocument::class, "documentable");
+    }
+
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class, 'user_id', 'id');
     }
 
     public function adminHub(): HasOne
