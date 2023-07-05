@@ -12,7 +12,12 @@ class WelderSkillId
         if (!request()->has('welder_skill_id')) {
             return $next($query);
         }
-        $query->whereHas("welderMember.welderSkill", function ($query) {
+
+        if (!request('welder_skill_id')) {
+            return $next($query);
+        }
+
+        $query->whereHas("welderHasSkills.welderSkill", function ($query) {
             $query->where('uuid', request('welder_skill_id'));
         });
 

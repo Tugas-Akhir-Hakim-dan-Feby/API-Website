@@ -127,6 +127,11 @@ class User extends Authenticatable
         return $this->hasOne(Expert::class, 'user_id', 'id');
     }
 
+    public function welderHasSkills(): HasMany
+    {
+        return $this->hasMany(WelderHasSkill::class, 'user_id', 'id');
+    }
+
     public function welderMember(): HasOne
     {
         return $this->hasOne(WelderMember::class, 'user_id', 'id');

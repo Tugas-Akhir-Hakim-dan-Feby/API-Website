@@ -77,12 +77,10 @@ class WelderMemberController extends Controller
         }
 
         $role = PermissionModelsRole::findById(User::MEMBER_WELDER, 'api');
-        $welderSkill = $this->welderSkillRepository->findOrFail($request->welder_skill_id);
 
         $request->merge([
             'uuid' => Str::uuid(),
-            'status' => WelderMember::INACTIVE,
-            'welder_skill_id' => $welderSkill->id
+            'status' => WelderMember::INACTIVE
         ]);
 
         try {
@@ -100,6 +98,13 @@ class WelderMemberController extends Controller
 
             if ($request->hasFile("document_certificate_competency")) {
                 $this->upload($request->file("document_certificate_competency"), $user->welderDocuments(), "welder_document");
+            }
+
+            foreach ($request->welder_skill_ids as $welderSkillId) {
+                $welderSkill = $this->welderSkillRepository->findOrFail($welderSkillId);
+                $user->welderHasSkills()->create([
+                    "welder_skill_id" => $welderSkill->id
+                ]);
             }
 
             $this->pay(Cost::WELDER_MEMBER);
@@ -218,6 +223,10 @@ class WelderMemberController extends Controller
                 }
 
                 $user->expert()->delete();
+            }
+
+            if ($user->welderHasSkills) {
+                $user->welderHasSkills()->delete();
             }
 
             if ($user->welderDocuments) {

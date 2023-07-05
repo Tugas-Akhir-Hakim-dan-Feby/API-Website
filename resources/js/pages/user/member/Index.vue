@@ -19,8 +19,10 @@ export default {
             },
             filters: {
                 search: "",
+                welderSkillId: "",
             },
             metaPagination: {},
+            welderSkills: [],
             msg: "",
             isDisabled: false,
             isLoading: false,
@@ -40,10 +42,19 @@ export default {
     },
     mounted() {
         this.getUsers();
+        this.getWelderSkills();
     },
     methods: {
         iteration(index) {
             return PaginationUtil.iteration(index, this.metaPagination);
+        },
+        getWelderSkills() {
+            this.$store
+                .dispatch("getData", ["skill/welder", ""])
+                .then((response) => {
+                    this.welderSkills = response.data;
+                })
+                .catch((err) => {});
         },
         getUsers() {
             this.isLoading = true;
@@ -52,6 +63,7 @@ export default {
                 `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
+                `welder_skill_id=${this.filters.welderSkillId}`,
             ].join("&");
 
             this.$store
@@ -82,6 +94,11 @@ export default {
             this.getUsers();
         },
         onSearch() {
+            setTimeout(() => {
+                this.getUsers();
+            }, 1000);
+        },
+        onSkillChange() {
             setTimeout(() => {
                 this.getUsers();
             }, 1000);
@@ -194,16 +211,35 @@ export default {
                     <div
                         class="d-md-flex justify-content-between align-items-center"
                     >
-                        <div class="text-center me-2">
+                        <div class="text-center mx-0 mx-sm-2 my-sm-0 my-3">
+                            <select
+                                class="form-select"
+                                v-model="filters.welderSkillId"
+                                @change="onSkillChange"
+                            >
+                                <option value="" selected>
+                                    Pilih Keahlian
+                                </option>
+                                <option
+                                    v-for="(welderSkill, index) in welderSkills"
+                                    :key="index"
+                                    :value="welderSkill.uuid"
+                                    v-html="welderSkill.skillName"
+                                ></option>
+                            </select>
+                        </div>
+
+                        <div class="text-center me-0 me-sm-2">
                             <input
                                 type="search"
                                 class="form-control"
-                                placeholder="pencarian"
+                                placeholder="Pencarian"
                                 v-model="filters.search"
                                 @input="onSearch"
                                 v-if="$can('search', 'Weldermember')"
                             />
                         </div>
+
                         <Pagination
                             :pagination="metaPagination"
                             @onPageChange="onPageChange($event)"
@@ -238,11 +274,19 @@ export default {
                             <td v-html="user.welderMember?.residentIdCard"></td>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
-                            <td
-                                v-html="
-                                    user.welderMember?.welderSkill?.skillName
-                                "
-                            ></td>
+                            <td>
+                                <ul>
+                                    <li
+                                        v-for="(
+                                            welderSkill, index
+                                        ) in user.welderHasSkills"
+                                        :key="index"
+                                        v-html="
+                                            welderSkill.welderSkill.skillName
+                                        "
+                                    ></li>
+                                </ul>
+                            </td>
                             <td>
                                 <router-link
                                     :to="{
