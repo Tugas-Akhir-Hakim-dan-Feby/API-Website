@@ -21,7 +21,6 @@ class WelderMember extends Model
 
     protected $fillable = [
         'user_id',
-        'welder_skill_id',
         'resident_id_card',
         'date_birth',
         'birth_place',
@@ -34,13 +33,7 @@ class WelderMember extends Model
     protected $hidden = [
         'id',
         'user_id',
-        'welder_skill_id',
     ];
-
-    public function welderSkill(): HasOne
-    {
-        return $this->hasOne(WelderSkill::class, 'id', 'welder_skill_id');
-    }
 
     public function getCertificateSchoolAttribute($image)
     {

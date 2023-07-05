@@ -22,8 +22,10 @@ class ChartController extends Controller
         $endDate = Carbon::now()->endOfYear();
 
         foreach ($welderSkills as $welderSkill) {
-            $welderMember = $welderSkill->welderMember()->whereYear('created_at', '>=', $startDate->year)
-                ->whereYear('created_at', '<=', $endDate->year)
+            // $welderMember = $welderSkill->skillHasMember()->whereYear('created_at', '>=', $startDate->year)
+            //     ->whereYear('created_at', '<=', $endDate->year)
+            //     ->get();
+            $welderMember = $welderSkill->skillHasMember()
                 ->get();
 
             $data["info"] = $endDate->year - $startDate->year . " tahun terakhir";

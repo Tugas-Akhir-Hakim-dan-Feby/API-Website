@@ -16,11 +16,27 @@ class WelderSkillSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 5; $i++) {
+        $skills = [
+            "FILLET WELDER",
+            "PLATE WELDER",
+            "PIPE WELDER",
+            "GROUP LEADER",
+            "WELDING INSPECTOR BASIC",
+            "WELDING INSPECTOR FOREMAN",
+            "WELDING INSPECTOR STANDARD",
+            "WELDING INSPECTOR PRACTITIONER",
+            "WELDING INSTRUCTOR",
+            "WELDING SPECIALIST/SUPERVISOR",
+            "WELDING INSPECTOR COMPREHENSIVE",
+            "WELDING TECHNOLOGIST/SUPERINTENDENT",
+            "WELDING ENGINEER"
+        ];
+
+        foreach ($skills as $skill) {
             WelderSkill::create([
                 'uuid' => Str::uuid(),
-                'skill_name' => 'skill name ' . $i,
-                'skill_description' => 'skill description ' . $i,
+                'skill_name' => $skill,
+                'skill_description' => $skill,
             ]);
         }
     }

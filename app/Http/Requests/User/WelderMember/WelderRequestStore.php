@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User\WelderMember;
 
+use App\Models\WelderSkill;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
@@ -27,25 +28,25 @@ class WelderRequestStore extends FormRequest
     public function rules()
     {
         return [
-            'welder_skill_id' => 'required|exists:welder_skills,uuid',
+            'welder_skill_ids' => 'array',
+            'welder_skill_ids.*' => 'required|exists:welder_skills,uuid',
             'resident_id_card' => 'required|numeric',
             'date_birth' => 'required|date',
             'birth_place' => 'required',
             'working_status' => 'required|in:1,0',
-            'document_pas_photo' => 'required',
-            'document_certificate_competency' => 'required',
+            'document_pas_photo' => 'required|mimes:png,jpg,jpeg',
+            'document_certificate_competency' => 'required|mimes:pdf',
         ];
     }
 
     public function attributes()
     {
         return [
-            'welder_skill_id' => 'keahlian welder',
+            'welder_skill_ids' => 'keahlian welder',
             'resident_id_card' => 'nik',
             'date_birth' => 'tanggal lahir',
             'birth_place' => 'tempat lahir',
             'working_status' => 'status bekerja',
-            'document_certificate_school' => 'ijazah pendidikan formal',
             'document_pas_photo' => 'pas foto formal berwarna',
             'document_certificate_competency' => 'dokumen sertifikat',
         ];
@@ -53,6 +54,20 @@ class WelderRequestStore extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
+        if (!request('welder_skill_ids')) {
+            $validator->errors()->add("welder_skill_ids", "keahlian welder wajib diisi.");
+        }
+
+        if (request('welder_skill_ids')) {
+            $welderSkillUuids = WelderSkill::get()->pluck('uuid')->toArray();
+
+            foreach (request('welder_skill_ids') as $welderSkillUuid) {
+                if (!in_array($welderSkillUuid, $welderSkillUuids)) {
+                    $validator->errors()->add("welder_skill_ids", "keahlian welder tidak terdaftar.");
+                }
+            }
+        }
+
         $response = new JsonResponse([
             'status' => 'WARNING',
             'messages' => $validator->errors(),

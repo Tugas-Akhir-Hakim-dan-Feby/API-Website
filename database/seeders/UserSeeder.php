@@ -117,19 +117,18 @@ class UserSeeder extends Seeder
 
     public function createWelderMember()
     {
-        $welderSkill = WelderSkill::create([
-            "uuid" => Str::uuid(),
-            "skill_name" => "Keahlian Satu",
-            "skill_description" => "Keahlian Satu",
-        ]);
+        $welderSkill = WelderSkill::where('skill_name', 'FILLET WELDER')->first();
 
         $welderMember = User::factory()->create([
             'email' => 'welder.company@mailinator.com',
             'role_id' => Role::MEMBER_WELDER,
         ]);
 
+        $welderMember->welderHasSkills()->create([
+            "welder_skill_id" => $welderSkill->id
+        ]);
+
         $welderMember->welderMember()->create([
-            "welder_skill_id" => $welderSkill->id,
             "resident_id_card" => "1234567890",
             "date_birth" => "2023-10-10",
             "birth_place" => "Indramayu",
@@ -149,19 +148,18 @@ class UserSeeder extends Seeder
 
     public function createExpert()
     {
-        $welderSkill = WelderSkill::create([
-            "uuid" => Str::uuid(),
-            "skill_name" => "Keahlian Dua",
-            "skill_description" => "Keahlian Dua",
-        ]);
+        $welderSkill = WelderSkill::where("skill_name", "PLATE WELDER")->first();
 
         $expert = User::factory()->create([
             'email' => 'pakar@mailinator.com',
             'role_id' => Role::PAKAR,
         ]);
 
+        $expert->welderHasSkills()->create([
+            "welder_skill_id" => $welderSkill->id
+        ]);
+
         $expert->welderMember()->create([
-            "welder_skill_id" => $welderSkill->id,
             "resident_id_card" => "1234567890",
             "date_birth" => "2023-10-10",
             "birth_place" => "Indramayu",

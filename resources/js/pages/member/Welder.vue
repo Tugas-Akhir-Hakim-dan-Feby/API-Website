@@ -1,12 +1,15 @@
 <script>
 import PageTitle from "../../components/PageTitle.vue";
 import Success from "../../components/notifications/Success.vue";
+import Util from "../../store/utils/util";
+import jsCookie from "js-cookie";
+
 export default {
     components: { PageTitle, Success },
     data() {
         return {
             form: {
-                welderSkillId: "",
+                welderSkillIds: [],
                 residentIdCard: "",
                 dateBirth: "",
                 birthPlace: "",
@@ -21,19 +24,34 @@ export default {
         };
     },
     mounted() {
-        this.getWelderSkills();
+        this.selectUtil();
 
         let isPayment = JSON.parse(localStorage.getItem("isPayment"));
         if (isPayment) {
-            window.location.href =
-                "/invoice/" + isPayment.externalId + "/welderMember";
+            this.$router.push({
+                name: "Show Invoice",
+                params: {
+                    externalId: isPayment.externalId,
+                    costId: "welderMember",
+                },
+            });
         }
     },
     computed: {
         formData() {
             let formData = new FormData();
 
-            formData.append("welder_skill_id", this.form.welderSkillId);
+            for (
+                let index = 0;
+                index < this.form.welderSkillIds.length;
+                index++
+            ) {
+                formData.append(
+                    `welder_skill_ids[${index}]`,
+                    this.form.welderSkillIds[index]
+                );
+            }
+
             formData.append("resident_id_card", this.form.residentIdCard);
             formData.append("date_birth", this.form.dateBirth);
             formData.append("birth_place", this.form.birthPlace);
@@ -55,16 +73,10 @@ export default {
         onBack() {
             this.$router.push({ name: "Member" });
         },
-        getWelderSkills() {
-            this.$store
-                .dispatch("getData", ["skill/welder", {}])
-                .then((response) => {
-                    this.welderSkills = response.data;
-                })
-                .catch((error) => {});
-        },
         handleSubmit() {
             this.isLoading = true;
+            this.errors = {};
+
             this.$store
                 .dispatch("postDataUpload", [
                     "user/welder-member",
@@ -98,6 +110,38 @@ export default {
                         this.msg = error.response.data.message;
                     }
                 });
+        },
+        selectUtil() {
+            $(this.$refs.welderSkill).select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 20,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((skill) => ({
+                                id: skill.uuid,
+                                text: skill.skill_name,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+            });
+
+            $(this.$refs.welderSkill).on("change", () => {
+                this.form.welderSkillIds = $(this.$refs.welderSkill).val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
         },
         uploadCertificateSchool(e) {
             this.form.documentCertificateSchool = e.target.files[0];
@@ -133,7 +177,7 @@ export default {
                         v-for="(error, index) in errors.residentIdCard"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -151,7 +195,7 @@ export default {
                         v-for="(error, index) in errors.birthPlace"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -169,7 +213,7 @@ export default {
                         v-for="(error, index) in errors.dateBirth"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -193,39 +237,32 @@ export default {
                             :class="{ 'is-invalid': errors.workingStatus }"
                             :disabled="isLoading"
                         /><label class="form-check-label"> Tidak </label>
-                    </div>
-                    <div
-                        class="invalid-feedback"
-                        v-if="errors.workingStatus"
-                        v-for="(error, index) in errors.workingStatus"
-                        :key="index"
-                    >
-                        {{ error }}.
+                        <div
+                            class="invalid-feedback"
+                            v-if="errors.workingStatus"
+                            v-for="(error, index) in errors.workingStatus"
+                            :key="index"
+                        >
+                            {{ error }}
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label>Jenis Kompetensi</label
                     ><select
-                        class="form-select"
-                        v-model="form.welderSkillId"
-                        :class="{ 'is-invalid': errors.welderSkillId }"
+                        class="select2-hidden-accessible"
+                        ref="welderSkill"
+                        :class="{ 'is-invalid': errors.welderSkillIds }"
                         :disabled="isLoading"
-                    >
-                        <option disabled selected></option>
-                        <option
-                            v-for="(welderSkill, index) in welderSkills"
-                            :key="index"
-                            :value="welderSkill.uuid"
-                            v-html="welderSkill.skillName"
-                        ></option>
-                    </select>
+                        multiple
+                    ></select>
                     <div
                         class="invalid-feedback"
-                        v-if="errors.welderSkillId"
-                        v-for="(error, index) in errors.welderSkillId"
+                        v-if="errors.welderSkillIds"
+                        v-for="(error, index) in errors.welderSkillIds"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -243,31 +280,9 @@ export default {
                         v-for="(error, index) in errors.documentPasPhoto"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
-                <!-- <div class="mb-3">
-                    <label>Ijazah Pendidikan Formal</label
-                    ><input
-                        type="file"
-                        class="form-control"
-                        :class="{
-                            'is-invalid': errors.documentCertificateSchool,
-                        }"
-                        :disabled="isLoading"
-                        @change="uploadCertificateSchool"
-                    />
-                    <div
-                        class="invalid-feedback"
-                        v-if="errors.documentCertificateSchool"
-                        v-for="(
-                            error, index
-                        ) in errors.documentCertificateSchool"
-                        :key="index"
-                    >
-                        {{ error }}.
-                    </div>
-                </div> -->
                 <div class="mb-3">
                     <label
                         >Sertifikat Pelatihan/Kompetensi Keahlian Pengelasan </label
@@ -288,7 +303,7 @@ export default {
                         ) in errors.documentCertificateCompetency"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
             </div>

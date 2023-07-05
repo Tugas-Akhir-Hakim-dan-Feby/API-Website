@@ -27,8 +27,8 @@ class WelderSkill extends Model
         return $this->attributes['uuid'] = Str::uuid();
     }
 
-    public function welderMember(): HasMany
+    public function skillHasMember(): HasMany
     {
-        return $this->hasMany(WelderMember::class, 'welder_skill_id', 'id');
+        return $this->hasMany(WelderHasSkill::class, 'welder_skill_id', 'id');
     }
 }
