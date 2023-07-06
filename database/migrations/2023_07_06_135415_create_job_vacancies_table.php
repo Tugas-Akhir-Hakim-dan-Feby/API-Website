@@ -20,6 +20,7 @@ return new class extends Migration
             $table->uuid();
             $table->foreignIdFor(CompanyMember::class);
             $table->foreignIdFor(WelderSkill::class);
+            $table->string('slug');
             $table->text('description');
             $table->string('placement');
             $table->string('pamphlet');
