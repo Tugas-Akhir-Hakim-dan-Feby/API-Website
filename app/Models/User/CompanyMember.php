@@ -2,10 +2,13 @@
 
 namespace App\Models\User;
 
+use App\Models\JobVacancy;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CompanyMember extends Model
 {
@@ -54,5 +57,10 @@ class CompanyMember extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id', 'user_id');
+    }
+
+    public function jobVacancies(): HasMany
+    {
+        return $this->hasMany(JobVacancy::class, 'company_member_id', 'id');
     }
 }

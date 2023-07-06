@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(CompanyMember::class);
             $table->foreignIdFor(WelderSkill::class);
             $table->string('slug');
+            $table->string('work_type');
             $table->text('description');
             $table->string('placement');
             $table->string('pamphlet');

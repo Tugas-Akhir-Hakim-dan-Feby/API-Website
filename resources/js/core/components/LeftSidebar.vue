@@ -182,6 +182,16 @@ export default {
                     </div>
                 </li>
 
+                <li class="side-nav-item">
+                    <router-link
+                        :to="{ name: 'Job Vacancy' }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-family-tree"></i>
+                        <span> Lowongan Pekerjaan </span>
+                    </router-link>
+                </li>
+
                 <li class="side-nav-item" v-if="$can('index', 'Exampacket')">
                     <router-link
                         :to="{ name: 'Exam Packet' }"
