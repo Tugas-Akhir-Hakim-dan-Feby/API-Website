@@ -87,6 +87,14 @@ class JobVacancyController extends Controller
         return new JobVacancyDetail($jobVacancy);
     }
 
+    public function showBySlug(string $slug)
+    {
+        $jobVacancy = $this->jobVacancyRepository->findByCriteria(["slug" => $slug]);
+        $jobVacancy->load(["welderSkill", "companyMember"]);
+
+        return new JobVacancyDetail($jobVacancy);
+    }
+
     public function update(JobVacancyRequestUpdate $request, string $id)
     {
         DB::beginTransaction();

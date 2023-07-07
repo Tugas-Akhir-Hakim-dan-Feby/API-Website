@@ -27,12 +27,23 @@ class JobVacancyRepositoryImplement extends Eloquent implements JobVacancyReposi
 
     public function findOrFail($id)
     {
-        $examPacket = $this->model->where("uuid", $id)->first();
+        $jobVacancy = $this->model->where("uuid", $id)->first();
 
-        if (!$examPacket) {
+        if (!$jobVacancy) {
             abort(404);
         }
 
-        return $examPacket;
+        return $jobVacancy;
+    }
+
+    public function findByCriteria(array $data)
+    {
+        $jobVacancy = $this->model->where($data)->first();
+
+        if (!$jobVacancy) {
+            abort(404);
+        }
+
+        return $jobVacancy;
     }
 }
