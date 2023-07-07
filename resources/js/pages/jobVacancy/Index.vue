@@ -21,14 +21,24 @@ export default {
                 .catch((error) => {});
         },
         checkRoleAccess(roles) {
+            let access = false;
             if (roles) {
                 roles.forEach((role) => {
-                    if (this.roles && this.roles.includes(role)) {
-                        return true;
+                    console.log(
+                        this.roles &&
+                            this.roles.includes(role) &&
+                            this.$can("index-welder", "Jobvacancy")
+                    );
+                    if (
+                        this.roles &&
+                        this.roles.includes(role) &&
+                        this.$can("index-welder", "Jobvacancy")
+                    ) {
+                        access = true;
                     }
-                    return false;
                 });
             }
+            return access;
         },
     },
     components: { Admin, Welder },
@@ -38,9 +48,6 @@ export default {
 <template>
     <Admin v-if="$can('index-admin', 'Jobvacancy')" />
     <Welder
-        v-if="
-            $can('index-welder', 'Jobvacancy') &&
-            checkRoleAccess([$store.state.MEMBER_WELDER, $store.state.GUEST])
-        "
+        v-if="checkRoleAccess([$store.state.MEMBER_WELDER, $store.state.GUEST])"
     />
 </template>

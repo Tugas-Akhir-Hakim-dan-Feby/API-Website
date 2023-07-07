@@ -2,6 +2,8 @@
 import PageTitle from "../../components/PageTitle.vue";
 import Success from "../../components/notifications/Success.vue";
 
+import jsCookie from "js-cookie";
+
 export default {
     data() {
         return {
@@ -13,46 +15,62 @@ export default {
                 workType: "",
                 placement: "",
                 salary: "",
+                contact: "",
                 deadline: "",
                 description: "",
-                documentPamphlet: "",
+                companyMemberId: "",
             },
+            roles: [],
             errors: {},
             minDate: new Date().toISOString().split("T")[0],
         };
     },
-    computed: {
-        formData() {
-            let formData = new FormData();
-
-            formData.append("welder_skill_id", this.form.welderSkillId);
-            formData.append("work_type", this.form.workType);
-            formData.append("placement", this.form.placement);
-            formData.append("salary", this.form.salary);
-            formData.append("deadline", this.form.deadline);
-            formData.append("description", this.form.description);
-            formData.append("document_pamphlet", this.form.documentPamphlet);
-
-            return formData;
-        },
-    },
     mounted() {
+        this.getUser();
         this.getWelderSkills();
-
-        if (this.$can("info-company", "Jobvacancy")) {
-            this.getCompanyMembers();
-        }
+        this.getCompanyMembers();
     },
     methods: {
-        getCompanyMembers() {
-            let params = [].join("&");
-
+        getUser() {
             this.$store
-                .dispatch("getData", ["user/company-member", params])
+                .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    this.companyMembers = response.data;
+                    this.roles = response.roles;
                 })
                 .catch((error) => {});
+        },
+        getCompanyMembers() {
+            $(this.$refs.companyMember).select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/user/company-member`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 20,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((companyMember) => ({
+                                id: companyMember.company_member?.uuid,
+                                text: companyMember.company_member
+                                    ?.company_name,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+            });
+
+            $(this.$refs.companyMember).on("change", () => {
+                this.form.companyMemberId = $(this.$refs.companyMember).val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
         },
         getWelderSkills() {
             this.$store
@@ -67,7 +85,7 @@ export default {
             this.isLoading = true;
 
             this.$store
-                .dispatch("postDataUpload", ["job-vacancy", this.formData])
+                .dispatch("postData", ["job-vacancy", this.form])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
@@ -82,6 +100,19 @@ export default {
         },
         uploadDocumentPamphlet(e) {
             this.form.documentPamphlet = e.target.files[0];
+        },
+        checkRoleAccess(roles) {
+            let access = false;
+            if (roles) {
+                roles.forEach((role) => {
+                    if (this.roles.includes(role)) {
+                        access = true;
+                        this.getCompanyMembers();
+                    }
+                });
+            }
+
+            return access;
         },
     },
     components: { PageTitle, Success },
@@ -106,31 +137,26 @@ export default {
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">
             <div class="card-body">
-                <!-- <div class="mb-2" v-if="$can('info-company', 'Jobvacancy')">
+                <div
+                    class="mb-2"
+                    v-if="checkRoleAccess([$store.state.ADMIN_APP])"
+                >
                     <label>Pilih Perusahaan</label>
                     <select
-                        class="form-select"
-                        v-model="form.welderSkillId"
-                        :class="{ 'is-invalid': errors.welderSkillId }"
+                        class="form-select select2-hidden-accessible"
+                        ref="companyMember"
+                        :class="{ 'is-invalid': errors.companyMemberId }"
                         :disabled="isLoading"
-                    >
-                        <option disabled selected></option>
-                        <option
-                            :value="companyMember.companyMember?.uuid"
-                            v-for="(companyMember, index) in companyMembers"
-                            :key="index"
-                            v-html="companyMember.companyMember?.companyName"
-                        ></option>
-                    </select>
+                    ></select>
                     <div
                         class="invalid-feedback"
-                        v-if="errors.welderSkillId"
-                        v-for="(error, index) in errors.welderSkillId"
+                        v-if="errors.companyMemberId"
+                        v-for="(error, index) in errors.companyMemberId"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
-                </div> -->
+                </div>
                 <div class="mb-2">
                     <label>Jenis Lowongan</label>
                     <select
@@ -153,7 +179,7 @@ export default {
                         v-for="(error, index) in errors.welderSkillId"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -176,7 +202,25 @@ export default {
                         v-for="(error, index) in errors.workType"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label>Kontak Yang Dihubungi</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        v-model="form.contact"
+                        :class="{ 'is-invalid': errors.contact }"
+                        :disabled="isLoading"
+                    />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.contact"
+                        v-for="(error, index) in errors.contact"
+                        :key="index"
+                    >
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -194,7 +238,7 @@ export default {
                         v-for="(error, index) in errors.placement"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -212,7 +256,7 @@ export default {
                         v-for="(error, index) in errors.salary"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -231,7 +275,7 @@ export default {
                         v-for="(error, index) in errors.deadline"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -257,25 +301,7 @@ export default {
                         v-for="(error, index) in errors.description"
                         :key="index"
                     >
-                        {{ error }}.
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label>Brosur Lowongan</label>
-                    <input
-                        type="file"
-                        class="form-control"
-                        @change="uploadDocumentPamphlet"
-                        :class="{ 'is-invalid': errors.documentPamphlet }"
-                        :disabled="isLoading"
-                    />
-                    <div
-                        class="invalid-feedback"
-                        v-if="errors.documentPamphlet"
-                        v-for="(error, index) in errors.documentPamphlet"
-                        :key="index"
-                    >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
             </div>

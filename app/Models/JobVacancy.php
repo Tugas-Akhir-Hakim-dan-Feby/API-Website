@@ -19,7 +19,7 @@ class JobVacancy extends Model
         "description",
         "placement",
         "work_type",
-        "pamphlet",
+        "contact",
         "deadline",
         "salary",
         "status",
@@ -31,15 +31,6 @@ class JobVacancy extends Model
         "company_member_id",
         "welder_skill_id",
     ];
-
-    public function getPamphletAttribute($image)
-    {
-        if ($image) {
-            return asset('storage/' . $image);
-        }
-
-        return asset('assets/images/image-not-found.png');
-    }
 
     public function welderSkill(): HasOne
     {

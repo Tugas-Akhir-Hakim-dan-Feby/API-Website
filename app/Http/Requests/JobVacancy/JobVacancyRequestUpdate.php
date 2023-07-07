@@ -33,7 +33,7 @@ class JobVacancyRequestUpdate extends FormRequest
             "salary" => "required|numeric",
             "deadline" => "required",
             "description" => "required",
-            "document_pamphlet" => "image|mimes:png,jpg,jpeg",
+            "contact" => "required|numeric",
         ];
     }
 
@@ -47,6 +47,7 @@ class JobVacancyRequestUpdate extends FormRequest
             "deadline" => "waktu penutupan",
             "description" => "deskripsi",
             "document_pamphlet" => "brosur",
+            "contact" => "kontak yang dihubungi",
         ];
     }
 

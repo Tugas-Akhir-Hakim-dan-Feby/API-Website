@@ -24,10 +24,10 @@ return new class extends Migration
             $table->string('work_type');
             $table->text('description');
             $table->string('placement');
-            $table->string('pamphlet');
+            $table->string('contact');
             $table->string('salary');
             $table->dateTime('deadline');
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

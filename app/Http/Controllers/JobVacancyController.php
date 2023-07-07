@@ -9,6 +9,7 @@ use App\Http\Resources\JobVacancy\JobVacancyCollection;
 use App\Http\Resources\JobVacancy\JobVacancyDetail;
 use App\Http\Traits\MessageFixer;
 use App\Models\JobVacancy;
+use App\Repositories\CompanyMember\CompanyMemberRepository;
 use App\Repositories\JobVacancy\JobVacancyRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\WelderSkill\WelderSkillRepository;
@@ -22,16 +23,18 @@ class JobVacancyController extends Controller
 {
     use MessageFixer;
 
-    protected $jobVacancyRepository, $userRepository, $welderSkillRepository;
+    protected $jobVacancyRepository, $userRepository, $welderSkillRepository, $companyMemberRepository;
 
     public function __construct(
         JobVacancyRepository $jobVacancyRepository,
         UserRepository $userRepository,
-        WelderSkillRepository $welderSkillRepository
+        WelderSkillRepository $welderSkillRepository,
+        CompanyMemberRepository $companyMemberRepository
     ) {
         $this->jobVacancyRepository = $jobVacancyRepository;
         $this->userRepository = $userRepository;
         $this->welderSkillRepository = $welderSkillRepository;
+        $this->companyMemberRepository = $companyMemberRepository;
     }
 
     public function index(Request $request)
@@ -57,22 +60,26 @@ class JobVacancyController extends Controller
 
         $request->merge([
             "welder_skill_id" => $welderSkill->id,
-            "status"  => JobVacancy::ACTIVE,
-            "slug"  => Str::slug($welderSkill->skill_name) . "-" . mt_rand(000000, 999999) . $user->companyMember->id,
             "uuid" => Str::uuid(),
         ]);
 
         try {
-            if ($request->hasFile('document_pamphlet')) {
+            DB::commit();
+
+            if ($request->has('company_member_id')) {
+                $companyMember = $this->companyMemberRepository->findOrFail($request->company_member_id);
                 $request->merge([
-                    "pamphlet" => $request->file('document_pamphlet')->store('document_pamphlet')
+                    "slug"  => Str::slug($welderSkill->skill_name) . "-" . mt_rand(000000, 999999) . $companyMember->id,
                 ]);
+                $jobVacancy = $companyMember->jobVacancies()->create($request->all());
+            } else {
+                $request->merge([
+                    "slug"  => Str::slug($welderSkill->skill_name) . "-" . mt_rand(000000, 999999) . $user->companyMember->id,
+                ]);
+                $jobVacancy = $user->companyMember->jobVacancies()->create($request->all());
             }
 
-            $user->companyMember->jobVacancies()->create($request->all());
-
-            DB::commit();
-            return $this->successMessage("data berhasil ditambahkan.", $user->companyMember->jobVacancies);
+            return $this->successMessage("data berhasil ditambahkan.", $jobVacancy);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

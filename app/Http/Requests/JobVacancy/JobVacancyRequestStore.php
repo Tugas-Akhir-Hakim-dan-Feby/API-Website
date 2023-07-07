@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\JobVacancy;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
@@ -26,15 +27,24 @@ class JobVacancyRequestStore extends FormRequest
      */
     public function rules()
     {
-        return [
+        $request = [
             "welder_skill_id" => "required|exists:welder_skills,uuid",
             "work_type" => "required",
             "placement" => "required",
             "salary" => "required|numeric",
             "deadline" => "required",
             "description" => "required",
-            "document_pamphlet" => "required|mimes:png,jpg,jpeg",
+            "contact" => "required|numeric",
         ];
+
+        $user = User::where('id', auth()->user()->id)->whereHas('roles', function ($query) {
+            $query->whereIn("id", [User::ADMIN_APP, User::ADMIN_PUSAT]);
+        });
+        if ($user) {
+            $request["company_member_id"] = "required|exists:user_company_members,uuid";
+        }
+
+        return $request;
     }
 
     public function attributes()
@@ -46,7 +56,8 @@ class JobVacancyRequestStore extends FormRequest
             "salary" => "perkiraan gaji",
             "deadline" => "waktu penutupan",
             "description" => "deskripsi",
-            "document_pamphlet" => "brosur",
+            "contact" => "kontak yang dihubungi",
+            "company_member_id" => "perusahaan member",
         ];
     }
 

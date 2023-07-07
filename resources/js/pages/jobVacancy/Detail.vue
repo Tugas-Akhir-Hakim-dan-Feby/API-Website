@@ -90,17 +90,21 @@ export default {
             <div>
                 <h5 class="mt-3">Informasi Tambahan</h5>
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Perkiraan Gaji</label>
                         <p v-html="getRupiah(jobVacancy.salary)"></p>
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Jenis Pekerjaan</label>
                         <p v-html="jobVacancy.workType"></p>
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Waktu Penutupan</label>
                         <p v-html="getDeadline(jobVacancy.deadline)"></p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <label class="fw-bold">Kontak Yang Dihubungi</label>
+                        <p v-html="jobVacancy.contact"></p>
                     </div>
                 </div>
             </div>
