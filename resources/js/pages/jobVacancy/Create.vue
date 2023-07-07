@@ -7,6 +7,7 @@ export default {
         return {
             isLoading: false,
             welderSkills: [],
+            companyMembers: [],
             form: {
                 welderSkillId: "",
                 workType: "",
@@ -37,8 +38,22 @@ export default {
     },
     mounted() {
         this.getWelderSkills();
+
+        if (this.$can("info-company", "Jobvacancy")) {
+            this.getCompanyMembers();
+        }
     },
     methods: {
+        getCompanyMembers() {
+            let params = [].join("&");
+
+            this.$store
+                .dispatch("getData", ["user/company-member", params])
+                .then((response) => {
+                    this.companyMembers = response.data;
+                })
+                .catch((error) => {});
+        },
         getWelderSkills() {
             this.$store
                 .dispatch("getData", ["skill/welder", ""])
@@ -91,6 +106,31 @@ export default {
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">
             <div class="card-body">
+                <!-- <div class="mb-2" v-if="$can('info-company', 'Jobvacancy')">
+                    <label>Pilih Perusahaan</label>
+                    <select
+                        class="form-select"
+                        v-model="form.welderSkillId"
+                        :class="{ 'is-invalid': errors.welderSkillId }"
+                        :disabled="isLoading"
+                    >
+                        <option disabled selected></option>
+                        <option
+                            :value="companyMember.companyMember?.uuid"
+                            v-for="(companyMember, index) in companyMembers"
+                            :key="index"
+                            v-html="companyMember.companyMember?.companyName"
+                        ></option>
+                    </select>
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.welderSkillId"
+                        v-for="(error, index) in errors.welderSkillId"
+                        :key="index"
+                    >
+                        {{ error }}.
+                    </div>
+                </div> -->
                 <div class="mb-2">
                     <label>Jenis Lowongan</label>
                     <select
