@@ -222,7 +222,7 @@
   },
   "resources/js/pages/auth/ForgotPassword.css": {
     "file": "assets/Login-b63137ef.css",
-    "src": "resources/js/pages/auth/Register.css"
+    "src": "resources/js/pages/auth/ForgotPassword.css"
   },
   "resources/js/pages/auth/ForgotPassword.vue": {
     "css": [
@@ -240,7 +240,7 @@
   },
   "resources/js/pages/auth/Login.css": {
     "file": "assets/Login-b63137ef.css",
-    "src": "resources/js/pages/auth/Register.css"
+    "src": "resources/js/pages/auth/ForgotPassword.css"
   },
   "resources/js/pages/auth/Login.vue": {
     "css": [
@@ -267,7 +267,7 @@
   },
   "resources/js/pages/auth/Register.css": {
     "file": "assets/Login-b63137ef.css",
-    "src": "resources/js/pages/auth/Register.css"
+    "src": "resources/js/pages/auth/ForgotPassword.css"
   },
   "resources/js/pages/auth/Register.vue": {
     "css": [
