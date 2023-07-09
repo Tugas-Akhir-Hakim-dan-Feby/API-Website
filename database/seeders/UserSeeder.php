@@ -165,7 +165,7 @@ class UserSeeder extends Seeder
             "birth_place" => "Indramayu",
             "working_status" => 1,
             "status" => 1,
-            "certificate_school" => fake()->image(storage_path("app/public/certificate_school")),
+            // "certificate_school" => fake()->image(storage_path("app/public/certificate_school")),
             "pas_photo" => fake()->image(storage_path("app/public/pas_photo")),
             "uuid" => Str::uuid(),
         ]);
