@@ -175,7 +175,7 @@ class ExpertController extends Controller
             $user->expert()->update([
                 'status' => $user->expert->status == Expert::NOT_APPROVED ? Expert::APPROVED : Expert::NOT_APPROVED
             ]);
-            $user->assignRole($role);
+            $user->syncRoles($role);
 
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $user);
