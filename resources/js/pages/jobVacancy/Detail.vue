@@ -8,10 +8,11 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/id";
 
 export default {
-    props: ["uuid"],
+    props: ["slug"],
     data() {
         return {
             isLoading: false,
+            isRegistered: false,
             jobVacancy: {},
         };
     },
@@ -23,13 +24,11 @@ export default {
             this.isLoading = true;
 
             this.$store
-                .dispatch("showData", [
-                    "job-vacancy/show-by-slug",
-                    this.$route.params.slug,
-                ])
+                .dispatch("showData", ["job-vacancy/show-by-slug", this.slug])
                 .then((response) => {
                     this.isLoading = false;
                     this.jobVacancy = response.data;
+                    this.checkJobRegister(response.data.uuid);
                 })
                 .catch((err) => {
                     this.isLoading = false;
@@ -47,6 +46,15 @@ export default {
             date = dayjs(date).locale("id").toNow();
             return date + " lagi";
         },
+        checkJobRegister(jobVacancyId) {
+            this.$store
+                .dispatch("showData", ["register-job/check", jobVacancyId])
+                .then((response) => {
+                    this.isRegistered = response;
+                });
+
+            return this.isRegistered;
+        },
         onBack() {
             this.$router.push({ name: "Job Vacancy" });
         },
@@ -58,7 +66,8 @@ export default {
 <template>
     <PageTitle title="Detail Lowongan" :isBack="true" @onBack="onBack" />
 
-    <div class="card">
+    <div class="card position-relative">
+        <Loader v-if="isLoading" />
         <img
             :src="jobVacancy.companyMember?.companyLogo"
             class="card-img-top"
@@ -77,9 +86,22 @@ export default {
                     </p>
                 </div>
                 <div>
-                    <router-link to="/" class="btn btn-sm btn-success"
+                    <router-link
+                        :to="{
+                            name: 'Job Vacancy Apply',
+                            params: { slug: slug },
+                        }"
+                        class="btn btn-sm btn-success"
+                        v-if="!isRegistered"
                         >Lamar Sekarang</router-link
                     >
+                    <p
+                        class="btn btn-sm btn-primary"
+                        v-else-if="isRegistered"
+                        style="cursor: default"
+                    >
+                        SUDAH TERDAFTAR
+                    </p>
                 </div>
             </div>
             <hr />

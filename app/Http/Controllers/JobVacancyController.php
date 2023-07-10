@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\JobVacancy\LoggedIn;
+use App\Http\Filters\JobVacancy\Search;
+use App\Http\Filters\JobVacancy\SearchRegion;
+use App\Http\Filters\JobVacancy\SearchSpecificSkill;
 use App\Http\Requests\JobVacancy\JobVacancyRequestStore;
 use App\Http\Requests\JobVacancy\JobVacancyRequestUpdate;
 use App\Http\Resources\JobVacancy\JobVacancyCollection;
@@ -42,10 +45,13 @@ class JobVacancyController extends Controller
         $jobVacancies = app(Pipeline::class)
             ->send($this->jobVacancyRepository->query())
             ->through([
-                LoggedIn::class
+                Search::class,
+                LoggedIn::class,
+                SearchRegion::class,
+                SearchSpecificSkill::class
             ])
             ->thenReturn()
-            ->with(["welderSkill", "companyMember"])
+            ->with(["welderSkill", "companyMember", "registerJobs"])
             ->paginate($request->per_page);
 
         return new JobVacancyCollection($jobVacancies);
@@ -142,9 +148,8 @@ class JobVacancyController extends Controller
         $jobVacancy = $this->jobVacancyRepository->findOrFail($id);
 
         try {
-            if ($jobVacancy->pamphlet) {
-                $path = str_replace(url('storage') . '/', '', $jobVacancy->pamphlet);
-                Storage::delete($path);
+            if ($jobVacancy->registerJobs) {
+                $jobVacancy->registerJobs()->delete();
             }
 
             $jobVacancy->delete();

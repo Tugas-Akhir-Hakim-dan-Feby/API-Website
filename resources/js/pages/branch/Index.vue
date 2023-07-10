@@ -54,7 +54,6 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    console.log(error);
                 });
         },
         handleDelete(uuid) {

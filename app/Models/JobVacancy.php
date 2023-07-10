@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User\CompanyMember;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobVacancy extends Model
@@ -40,5 +41,10 @@ class JobVacancy extends Model
     public function companyMember(): HasOne
     {
         return $this->hasOne(CompanyMember::class, 'id', 'company_member_id');
+    }
+
+    public function registerJobs(): HasMany
+    {
+        return $this->hasMany(RegisterJob::class, 'job_vacancy_id', 'id');
     }
 }

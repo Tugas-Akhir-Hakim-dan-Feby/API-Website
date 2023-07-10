@@ -64,7 +64,6 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    console.log(error);
                 });
         },
         getSchedule(date) {
@@ -129,9 +128,7 @@ export default {
                     this.msg = "data berhasil dihapus.";
                     this.getExamPackets();
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                .catch((error) => {});
         },
         checkRole(role) {
             if (this.roles.includes(role)) {

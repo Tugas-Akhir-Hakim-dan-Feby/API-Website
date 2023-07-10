@@ -89,6 +89,11 @@ export default {
                     this.isLoading = false;
                 });
         },
+        onSearch() {
+            setTimeout(() => {
+                this.getJobVacancies();
+            }, 1000);
+        },
         handleDelete(uuid) {
             this.uuid = uuid;
             this.msg = "apakah anda yakin data ini akan dihapus?";
@@ -155,7 +160,9 @@ export default {
                         <input
                             type="search"
                             class="form-control"
-                            placeholder="pencarian"
+                            placeholder="Pencarian"
+                            v-model="filters.search"
+                            @input="onSearch()"
                         />
                     </div>
 
@@ -184,7 +191,16 @@ export default {
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="jobVacancies && jobVacancies.length < 1">
+                            <td
+                                class="text-center"
+                                :colspan="$can('info', 'Jobvacancy') ? 8 : 9"
+                            >
+                                Data lowongan pekerjaan tidak ada.
+                            </td>
+                        </tr>
                         <tr
+                            v-else
                             v-for="(jobVancacy, index) in jobVacancies"
                             :key="index"
                         >
@@ -199,8 +215,16 @@ export default {
                             <td v-html="getRupiah(jobVancacy.salary)"></td>
                             <td v-html="getDeadline(jobVancacy.deadline)"></td>
                             <td>
-                                <span class="badge btn-success"
-                                    >1 Pendaftar</span
+                                <router-link
+                                    :to="{
+                                        name: 'Job Vacancy Participant',
+                                        params: { uuid: jobVancacy.uuid },
+                                    }"
+                                    class="badge btn-info"
+                                    >{{
+                                        jobVancacy.registerJobs?.length
+                                    }}
+                                    Pendaftar</router-link
                                 >
                             </td>
                             <td>

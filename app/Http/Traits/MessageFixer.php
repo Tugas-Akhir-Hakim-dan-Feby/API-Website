@@ -61,6 +61,15 @@ trait MessageFixer
         ], Response::HTTP_BAD_REQUEST);
     }
 
+    public function customMessage($status, $message, $statusCode)
+    {
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'status_code' => $statusCode,
+        ], $statusCode);
+    }
+
     public function errorMessage($message)
     {
         return response()->json([

@@ -23,9 +23,7 @@ export default {
                 .then((response) => {
                     this.examPacket = response.data;
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                .catch((error) => {});
         },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");

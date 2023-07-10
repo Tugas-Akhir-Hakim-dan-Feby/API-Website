@@ -20,5 +20,8 @@ class UserWelderMemberRepositoryImplement extends Eloquent implements UserWelder
         $this->model = $model;
     }
 
-    // Write something awesome :)
+    public function getFillable()
+    {
+        return $this->model->getFillable();
+    }
 }

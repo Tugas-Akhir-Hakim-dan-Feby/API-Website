@@ -66,7 +66,6 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    console.log(error);
                 });
         },
         getSchedule(date) {
@@ -131,9 +130,7 @@ export default {
                     this.msg = "data berhasil dihapus.";
                     this.getwelderHasExamPackets();
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                .catch((error) => {});
         },
         checkRoleWelderMember(role) {
             if (this.roles.includes(role)) {

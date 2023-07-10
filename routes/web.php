@@ -22,3 +22,7 @@ Route::get('/auth/{any}', [PageController::class, 'auth'])->where('any', '^(?!ac
 Route::get('/print/invoice/{externalId}', PrintController::class)->name('web.print.invoice');
 
 Route::get('/auth/activation-account', ActivationAccountController::class);
+
+Route::get('/email', function () {
+    return view('email.work.reject');
+});

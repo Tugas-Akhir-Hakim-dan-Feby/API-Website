@@ -33,7 +33,7 @@ class CompanyMemberController extends Controller
 
     protected $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository = null)
     {
         $this->userRepository = $userRepository;
     }

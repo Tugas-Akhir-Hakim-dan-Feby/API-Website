@@ -16,6 +16,24 @@ export default [
         },
     },
     {
+        path: "/job-vacancy/:slug/apply",
+        component: () => import("../../pages/jobVacancy/Apply.vue"),
+        name: "Job Vacancy Apply",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
+        path: "/job-vacancy/:uuid/participant",
+        component: () => import("../../pages/jobVacancy/Participant.vue"),
+        name: "Job Vacancy Participant",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+    },
+    {
         path: "/job-vacancy/:slug",
         component: () => import("../../pages/jobVacancy/Detail.vue"),
         name: "Job Vacancy Detail",
