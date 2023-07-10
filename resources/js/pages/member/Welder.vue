@@ -101,14 +101,32 @@ export default {
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    this.getDataPersonal(response.user);
+                    this.getPersonalData(response.user);
+                    this.getRegisterJob(response.user);
                 });
         },
-        getDataPersonal(user) {
+        getRegisterJob(user) {
             this.$store
                 .dispatch("showData", ["register-job", user.uuid])
                 .then((response) => {
-                    this.registerJob = response.data;
+                    if (response.data) {
+                        this.isNullDataPersonal = false;
+                        this.registerJob = response.data;
+                    }
+                })
+                .catch((error) => {
+                    if (
+                        error.response.data.statusCode == 404 &&
+                        error.response.data.status == "WARNING"
+                    ) {
+                        this.isNullDataPersonal = true;
+                    }
+                });
+        },
+        getPersonalData(user) {
+            this.$store
+                .dispatch("showData", ["user/personal-data", user.uuid])
+                .then((response) => {
                     if (response.data) {
                         this.isNullDataPersonal = false;
                     }
