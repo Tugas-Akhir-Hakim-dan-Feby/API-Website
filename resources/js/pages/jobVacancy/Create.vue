@@ -20,6 +20,7 @@ export default {
                 description: "",
                 companyMemberId: "",
             },
+            user: {},
             roles: [],
             errors: {},
             minDate: new Date().toISOString().split("T")[0],
@@ -35,6 +36,7 @@ export default {
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
+                    this.user = response.user;
                     this.roles = response.roles;
                 })
                 .catch((error) => {});
@@ -83,6 +85,10 @@ export default {
         handleSubmit() {
             this.errors = {};
             this.isLoading = true;
+
+            if (this.checkRoleAccess([this.$store.state.MEMBER_COMPANY])) {
+                this.form.companyMemberId = this.user.companyMember.uuid;
+            }
 
             this.$store
                 .dispatch("postData", ["job-vacancy", this.form])
