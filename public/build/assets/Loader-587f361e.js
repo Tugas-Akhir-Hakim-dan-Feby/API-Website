@@ -1,0 +1,1 @@
+import{_ as e,o,c,a as s}from"./app-913bfa44.js";const a={},n={class:"loading-section"},t=s("div",{class:"custom-loading-circle"},[s("div",{class:"spinner-border",role:"status"},[s("span",{class:"visually-hidden"},"Loading...")])],-1),_=[t];function r(d,i){return o(),c("div",n,_)}const p=e(a,[["render",r]]);export{p as L};
