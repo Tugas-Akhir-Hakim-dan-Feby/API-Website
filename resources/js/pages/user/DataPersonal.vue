@@ -200,7 +200,7 @@ export default {
                         <div class="mb-3">
                             <label>NIK</label>
                             <input
-                                type="text"
+                                type="number"
                                 class="form-control"
                                 v-model="form.residentIdCard"
                                 :class="{ 'is-invalid': errors.residentIdCard }"
