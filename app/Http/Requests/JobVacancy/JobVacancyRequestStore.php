@@ -35,14 +35,10 @@ class JobVacancyRequestStore extends FormRequest
             "deadline" => "required",
             "description" => "required",
             "contact" => "required|numeric",
+            "company_member_id" => "required|exists:user_company_members,uuid"
         ];
 
-        $user = User::where('id', auth()->user()->id)->whereHas('roles', function ($query) {
-            $query->whereIn("id", [User::ADMIN_APP, User::ADMIN_PUSAT]);
-        });
-        if ($user) {
-            $request["company_member_id"] = "required|exists:user_company_members,uuid";
-        }
+
 
         return $request;
     }
