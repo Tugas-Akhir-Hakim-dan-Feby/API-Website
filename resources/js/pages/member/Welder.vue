@@ -109,19 +109,9 @@ export default {
             this.$store
                 .dispatch("showData", ["register-job", user.uuid])
                 .then((response) => {
-                    if (response.data) {
-                        this.isNullDataPersonal = false;
-                        this.registerJob = response.data;
-                    }
+                    this.registerJob = response.data;
                 })
-                .catch((error) => {
-                    if (
-                        error.response.data.statusCode == 404 &&
-                        error.response.data.status == "WARNING"
-                    ) {
-                        this.isNullDataPersonal = true;
-                    }
-                });
+                .catch((error) => {});
         },
         getPersonalData(user) {
             this.$store
@@ -717,7 +707,7 @@ export default {
     <DetailPersonal
         :registerJob="registerJob"
         @onRegister="handleSubmit()"
-        v-else
+        v-if="!isNullDataPersonal"
     />
 
     <Success
