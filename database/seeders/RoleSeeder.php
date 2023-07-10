@@ -34,6 +34,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_APP]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_APP]['Profile'] = ['index', 'update-password', 'update-admin-app'];
         $access[User::ADMIN_APP]['Payment'] = ['cost', 'invoice'];
+        $access[User::ADMIN_APP]['JobVacancy'] = ['index', 'index-admin', 'info-company', 'create', 'show', 'update', 'delete'];
 
         $access[User::ADMIN_PUSAT]['Dashboard'] = ['index'];
         $access[User::ADMIN_PUSAT]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
@@ -48,6 +49,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_PUSAT]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_PUSAT]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
         $access[User::ADMIN_PUSAT]['Payment'] = ['cost', 'invoice'];
+        $access[User::ADMIN_PUSAT]['JobVacancy'] = ['index', 'index-admin', 'info-company', 'create', 'show', 'update', 'delete'];
 
         $access[User::ADMIN_CABANG]['Dashboard'] = ['index'];
         $access[User::ADMIN_CABANG]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
@@ -63,6 +65,7 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::MEMBER_COMPANY]['Profile'] = ['index', 'update-password', 'update-company-member'];
         $access[User::MEMBER_COMPANY]['Payment'] = ['history'];
+        $access[User::MEMBER_COMPANY]['JobVacancy'] = ['index', 'index-admin', 'info', 'create', 'show', 'update', 'delete'];
 
         $access[User::MEMBER_WELDER]['Dashboard'] = ['index'];
         $access[User::MEMBER_WELDER]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
@@ -71,11 +74,13 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_WELDER]['Exam'] = ['index', 'show', 'pagination'];
         $access[User::MEMBER_WELDER]['Payment'] = ['history'];
         $access[User::MEMBER_WELDER]['Member'] = ['expert'];
+        $access[User::MEMBER_WELDER]['JobVacancy'] = ['index', 'index-welder'];
 
         $access[User::GUEST]['Dashboard'] = ['index'];
         $access[User::GUEST]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::GUEST]['Profile'] = ['index', 'update-password', 'update-guest'];
         $access[User::GUEST]['Member'] = ['index', 'company-member', 'welder-member'];
+        $access[User::GUEST]['JobVacancy'] = ['index', 'index-welder'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');
@@ -95,6 +100,7 @@ class RoleSeeder extends Seeder
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
         $permission['Payment'] = ['cost', 'invoice', 'history'];
         $permission['Member'] = ['index', 'company-member', 'welder-member', 'expert'];
+        $permission['JobVacancy'] = ['index', 'index-welder', 'index-admin', 'info', 'info-company', 'create', 'show', 'update', 'delete'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {

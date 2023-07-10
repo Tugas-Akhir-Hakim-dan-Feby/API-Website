@@ -35,6 +35,13 @@ export default {
 
         return formatter.format(amount ?? 0);
     },
+    getCitizenship(citizenship) {
+        if (citizenship == "WNA") {
+            return "Warga Negara Asing";
+        }
+
+        return "Warga Negara Indonesia";
+    },
     getAnswerQuestionData(type) {
         if (type == AnswerQuestion.MULTIPLE_CHOICE) {
             return "Pilihan Ganda";
@@ -63,7 +70,11 @@ export default {
             }
         });
     },
-
+    convertToCapitalize(text) {
+        return text.toLowerCase().replace(/(?:^|\s)\S/g, function (char) {
+            return char.toUpperCase();
+        });
+    },
     randomString(length) {
         let result = "";
         const characters =

@@ -103,7 +103,7 @@ export default {
                         <label>Konten Berita</label>
                         <QuillEditor
                             theme="snow"
-                            toolbar="full"
+                            toolbar="essential"
                             style="height: 300px"
                             :style="{
                                 borderColor: errors.articleContent

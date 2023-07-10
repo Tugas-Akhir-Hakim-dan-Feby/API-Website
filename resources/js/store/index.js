@@ -19,6 +19,7 @@ const store = createStore({
         PAID: "PAID",
         PENDING: "PENDING",
         BASE_URL: window.origin,
+        BASE_URL_REGION: "https://www.emsifa.com/api-wilayah-indonesia/api/",
         COST: {
             MEMBER_WELDER: 1,
             MEMBER_COMPANY: 2,

@@ -41,10 +41,10 @@ class WelderMemberController extends Controller
     protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository;
 
     public function __construct(
-        UserWelderMemberRepository $welderMemberRepository,
-        UserRepository $userRepository,
-        WelderSkillRepository $welderSkillRepository,
-        PaymentRepository $paymentRepository
+        UserWelderMemberRepository $welderMemberRepository = null,
+        UserRepository $userRepository = null,
+        WelderSkillRepository $welderSkillRepository = null,
+        PaymentRepository $paymentRepository = null
     ) {
         $this->welderMemberRepository = $welderMemberRepository;
         $this->userRepository = $userRepository;
@@ -84,12 +84,6 @@ class WelderMemberController extends Controller
         ]);
 
         try {
-            if ($request->hasFile("document_certificate_school")) {
-                $request->merge([
-                    "certificate_school" => $this->storageFile($request->file("document_certificate_school"), "certificate_school")
-                ]);
-            }
-
             if ($request->hasFile("document_pas_photo")) {
                 $request->merge([
                     "pas_photo" => $this->storageFile($request->file("document_pas_photo"), "pas_photo")
@@ -146,7 +140,7 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
-        $welderMember->load(["welderMember.welderSkill", "welderDocuments"]);
+        $welderMember->load(["welderHasSkills.welderSkill", "welderDocuments", "welderMember"]);
 
         return new WelderMemberDetail($welderMember);
     }

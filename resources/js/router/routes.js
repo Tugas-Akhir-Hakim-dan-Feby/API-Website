@@ -13,6 +13,7 @@ import member from "./services/member";
 import invoice from "./services/invoice";
 import expert from "./services/expert";
 import payment from "./services/payment";
+import jobVacancy from "./services/jobVacancy";
 
 const routes = [
     ...auth,
@@ -30,6 +31,7 @@ const routes = [
     ...invoice,
     ...expert,
     ...payment,
+    ...jobVacancy,
     {
         path: "/",
         name: "Dashboard",

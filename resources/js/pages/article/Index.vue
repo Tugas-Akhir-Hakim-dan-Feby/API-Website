@@ -19,9 +19,7 @@ export default {
                 .then((response) => {
                     this.roles = response.roles;
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
+                .catch((error) => {});
         },
         checkRoles(data) {
             if (data == this.roles) {

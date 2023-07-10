@@ -82,7 +82,6 @@ export default {
                         error.response.data.status == "WARNING" &&
                         error.response.data.statusCode == 400
                     ) {
-                        console.log("OK");
                         this.isWarning = true;
                     } else {
                         this.errors = error.response.data.messages;
