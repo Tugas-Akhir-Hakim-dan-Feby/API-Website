@@ -33,8 +33,9 @@ export default {
 <template>
     <ProfileAdminApp
         v-if="
-            $can('update-admin-app', 'Profile') ||
-            $can('update-guest', 'Profile')
+            ($can('update-admin-app', 'Profile') ||
+                $can('update-guest', 'Profile')) &&
+            ($store.state.USER.roleId == 7 || $store.state.USER.roleId == 1)
         "
     />
     <ProfileAdminHub v-if="$can('update-admin-hub', 'Profile')" />

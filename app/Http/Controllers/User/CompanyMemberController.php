@@ -8,6 +8,7 @@ use App\Http\Filters\User\CompanyMember\Search;
 use App\Http\Requests\User\CompanyMember\CompanyRequestStore;
 use App\Http\Requests\User\CompanyMember\CompanyRequestUpdate;
 use App\Http\Requests\User\CompanyMember\UpdateDocumentRequest;
+use App\Http\Requests\User\CompanyMember\UpdateLogoRequest;
 use App\Http\Requests\User\CompanyMember\UploadFileRequest;
 use App\Http\Resources\User\CompanyMemberCollection;
 use App\Http\Resources\User\CompanyMemberDetail;
@@ -169,6 +170,33 @@ class CompanyMemberController extends Controller
 
                 $user->companyMember()->update([
                     "company_legality" => $request->file('document')->store('company_legality')
+                ]);
+            }
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateLogo(UpdateLogoRequest $request, $id)
+    {
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($id);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->companyMember->company_logo) {
+                $path = str_replace(url('storage') . '/', '', $user->companyMember->company_logo);
+                Storage::delete($path);
+
+                $user->companyMember()->update([
+                    "company_logo" => $request->file('logo')->store('company_logo')
                 ]);
             }
 

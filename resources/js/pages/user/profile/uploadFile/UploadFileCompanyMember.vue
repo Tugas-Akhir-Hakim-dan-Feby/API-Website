@@ -4,6 +4,7 @@ export default {
     data() {
         return {
             dataDocument: null,
+            dataLogo: null,
             isDisabled: false,
             errorMessage: {},
         };
@@ -13,6 +14,14 @@ export default {
             let formData = new FormData();
 
             formData.append("document", this.dataDocument);
+            formData.append("_method", "PUT");
+
+            return formData;
+        },
+        formDataLogo() {
+            let formData = new FormData();
+
+            formData.append("logo", this.dataLogo);
             formData.append("_method", "PUT");
 
             return formData;
@@ -29,6 +38,9 @@ export default {
         uploadDocument(e) {
             this.dataDocument = e.target.files[0];
         },
+        uploadLogo(e) {
+            this.dataLogo = e.target.files[0];
+        },
         handleUploadDocument() {
             this.isDisabled = true;
             this.errorMessage = {};
@@ -44,6 +56,27 @@ export default {
                     $("#uploadDocument").modal("hide");
 
                     document.getElementById("dataDocument").value = "";
+                })
+                .catch((error) => {
+                    this.isDisabled = false;
+                    this.errorMessage = error.response.data.messages;
+                });
+        },
+        handleUploadLogo() {
+            this.isDisabled = true;
+            this.errorMessage = {};
+            this.$store
+                .dispatch("postDataUpload", [
+                    "user/company-member/update-logo/" + this.document.id,
+                    this.formDataLogo,
+                ])
+                .then((response) => {
+                    this.isDisabled = false;
+                    this.$emit("onSuccess", true);
+                    this.dataLogo = null;
+                    $("#uploadLogo").modal("hide");
+
+                    document.getElementById("dataLogo").value = "";
                 })
                 .catch((error) => {
                     this.isDisabled = false;
@@ -71,6 +104,42 @@ export default {
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    <td>Logo Perusahaan</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a
+                                                href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#uploadLogo"
+                                                ><i class="mdi mdi-upload"></i>
+                                                Unggah</a
+                                            >
+                                            <p
+                                                v-if="
+                                                    checkFile(
+                                                        document.companyLogo
+                                                    )
+                                                "
+                                            >
+                                                |
+                                            </p>
+                                            <a
+                                                target="_blank"
+                                                :href="document.companyLogo"
+                                                v-if="
+                                                    checkFile(
+                                                        document.companyLogo
+                                                    )
+                                                "
+                                                ><i
+                                                    class="mdi mdi-download"
+                                                ></i>
+                                                Unduh</a
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>Legalitas Perusahaan</td>
                                     <td>
@@ -151,6 +220,78 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errorMessage.document"
                                 v-for="(error, index) in errorMessage.document"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-secondary me-2"
+                                data-bs-dismiss="modal"
+                                :disabled="isDisabled"
+                            >
+                                Batal
+                            </button>
+                            <button class="btn btn-primary" v-if="!isDisabled">
+                                Kirim
+                            </button>
+                            <button
+                                class="btn btn-primary"
+                                type="button"
+                                disabled
+                                v-if="isDisabled"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
+        id="uploadLogo"
+        tabindex="-1"
+        aria-labelledby="uploadLogoLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadLogoLabel">
+                        Unggah Logo
+                    </h5>
+                </div>
+                <form @submit.prevent="handleUploadLogo" method="post">
+                    <div class="modal-body">
+                        <div class="mb-0">
+                            <label>Masukan Logo</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="dataLogo"
+                                @change="uploadLogo"
+                                :class="{
+                                    'is-invalid': errorMessage.logo,
+                                }"
+                                :disabled="isDisabled"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errorMessage.logo"
+                                v-for="(error, index) in errorMessage.logo"
                                 :key="index"
                             >
                                 {{ error }}
