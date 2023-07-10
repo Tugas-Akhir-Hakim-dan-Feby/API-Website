@@ -13,6 +13,7 @@ Route::prefix('user')->group(function () {
         Route::prefix('welder-member')->group(function () {
             Route::get('/', [WelderMemberController::class, 'index'])->name('api.user.welder.member.index');
             Route::post('/', [WelderMemberController::class, 'store'])->name('api.user.welder.member.store');
+            Route::post('/store-member', [WelderMemberController::class, 'storeMember'])->name('api.user.welder.member.store.member');
             Route::post('/upload-excel', [WelderMemberController::class, 'uploadExcel'])->name('api.user.welder.member.upload.excel');
             Route::get('/{id}', [WelderMemberController::class, 'show'])->name('api.user.welder.member.show');
             Route::put('/update-document/{id}', [WelderMemberController::class, 'updateDocument'])->name('api.user.welder.member.update.document');

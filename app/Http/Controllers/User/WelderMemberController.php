@@ -132,6 +132,33 @@ class WelderMemberController extends Controller
         }
     }
 
+    public function storeMember()
+    {
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => Auth::user()->uuid]);
+        if (!$user) {
+            abort(404);
+        }
+
+        $role = PermissionModelsRole::findById(User::MEMBER_WELDER, 'api');
+
+        try {
+            $this->pay(Cost::WELDER_MEMBER);
+
+            $user->update([
+                "role_id" => $role->id,
+                'membership_card' => "MC-" . date('Ymd') . $user->id
+            ]);
+
+            DB::commit();
+            return $this->createMessage("data berhasil ditambahkan", $user->payment);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
     public function uploadExcel(UploadFileRequest $request)
     {
         DB::beginTransaction();

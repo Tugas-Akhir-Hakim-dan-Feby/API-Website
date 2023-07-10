@@ -280,7 +280,7 @@ export default {
                     >Batal</router-link
                 >
                 <button class="btn btn-sm btn-primary" v-if="!isLoading">
-                    Simpan
+                    Daftar
                 </button>
                 <button
                     class="btn btn-sm btn-primary"

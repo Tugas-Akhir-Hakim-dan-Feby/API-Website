@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Filters\RegisterJob\SearchJobVacancy;
 use App\Http\Requests\RegisterJob\RegisterJobRequestStore;
 use App\Http\Resources\RegisterJob\RegisterJobCollection;
+use App\Http\Resources\RegisterJob\RegisterJobDetail;
 use App\Http\Traits\MessageFixer;
 use App\Mail\SendAcceptWork;
 use App\Mail\SendRejectWork;
@@ -82,7 +83,10 @@ class RegisterJobController extends Controller
 
     public function show($id)
     {
-        //
+        $user = $this->userRepository->findOrFail($id);
+        $user->load(["welderHasSkills.welderSkill", "personalData", "detailWorker", "welderDocuments"]);
+
+        return new RegisterJobDetail($user);
     }
 
     public function accept(Request $request)

@@ -1,6 +1,8 @@
 <script>
+import Loader from "../../components/Loader.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Success from "../../components/notifications/Success.vue";
+import DetailPersonal from "../user/DetailPersonal.vue";
 import Util from "../../store/utils/util";
 import jsCookie from "js-cookie";
 
@@ -27,10 +29,12 @@ export default {
             },
             welderSkills: [],
             errors: {},
+            registerJob: {},
             isLoading: false,
             isRegency: true,
             isDistrict: true,
             isVillage: true,
+            isNullDataPersonal: false,
             provinces: [],
             regencies: [],
             districts: [],
@@ -38,6 +42,7 @@ export default {
         };
     },
     mounted() {
+        this.getUser();
         this.selectUtil();
         this.getProvince();
 
@@ -92,6 +97,31 @@ export default {
         },
     },
     methods: {
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.getDataPersonal(response.user);
+                });
+        },
+        getDataPersonal(user) {
+            this.$store
+                .dispatch("showData", ["register-job", user.uuid])
+                .then((response) => {
+                    this.registerJob = response.data;
+                    if (response.data) {
+                        this.isNullDataPersonal = false;
+                    }
+                })
+                .catch((error) => {
+                    if (
+                        error.response.data.statusCode == 404 &&
+                        error.response.data.status == "WARNING"
+                    ) {
+                        this.isNullDataPersonal = true;
+                    }
+                });
+        },
         getProvince() {
             fetch(this.$store.state.BASE_URL_REGION + "provinces.json")
                 .then((response) => response.json())
@@ -133,6 +163,48 @@ export default {
             this.$router.push({ name: "Member" });
         },
         handleSubmit() {
+            if (this.isNullDataPersonal) {
+                return this.handleSubmitWithFrom();
+            }
+
+            return this.handleSubmitWithoutFrom();
+        },
+        handleSubmitWithoutFrom() {
+            this.isLoading = true;
+            this.errors = {};
+
+            this.$store
+                .dispatch("postData", ["user/welder-member/store-member", {}])
+                .then((response) => {
+                    this.isLoading = false;
+                    localStorage.setItem(
+                        "isPayment",
+                        JSON.stringify({
+                            paymentType: "welderMember",
+                            externalId: response.data.externalId,
+                        })
+                    );
+
+                    window.location.href =
+                        "/invoice/" +
+                        response.data.externalId +
+                        "/welderMember";
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+
+                    this.errors = error.response.data.messages;
+
+                    if (
+                        error.response.data.status == "ERROR" &&
+                        error.response.data.statusCode == 500
+                    ) {
+                        this.isError = true;
+                        this.msg = error.response.data.message;
+                    }
+                });
+        },
+        handleSubmitWithFrom() {
             this.isLoading = true;
             this.errors = {};
 
@@ -212,13 +284,18 @@ export default {
             this.form.documentCertificateCompetency = e.target.files[0];
         },
     },
+    components: { DetailPersonal, PageTitle, Loader, Success },
 };
 </script>
 
 <template>
     <PageTitle title="Daftar Member Welder" :isBack="true" @onBack="onBack" />
 
-    <form @submit.prevent="handleSubmit" method="post">
+    <form
+        @submit.prevent="handleSubmit"
+        method="post"
+        v-if="isNullDataPersonal"
+    >
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -618,6 +695,12 @@ export default {
             </div>
         </div>
     </form>
+
+    <DetailPersonal
+        :registerJob="registerJob"
+        @onRegister="handleSubmit()"
+        v-else
+    />
 
     <Success
         :url="{ name: 'Dashboard' }"
