@@ -11,6 +11,7 @@ use App\Http\Requests\User\WelderMember\UploadFileRequest;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
 use App\Http\Resources\User\WelderMemberCollection;
 use App\Http\Resources\User\WelderMemberDetail;
+use App\Http\Traits\FillableFixer;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
@@ -19,6 +20,7 @@ use App\Models\Cost;
 use App\Models\User;
 use App\Models\User\WelderMember;
 use App\Repositories\Payment\PaymentRepository;
+use App\Repositories\PersonalData\PersonalDataRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\UserWelderMember\UserWelderMemberRepository;
 use App\Repositories\WelderSkill\WelderSkillRepository;
@@ -36,20 +38,22 @@ use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class WelderMemberController extends Controller
 {
-    use MessageFixer, UploadDocument, PaymentFixer;
+    use MessageFixer, UploadDocument, PaymentFixer, FillableFixer;
 
-    protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository;
+    protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository, $personalDataRepository;
 
     public function __construct(
         UserWelderMemberRepository $welderMemberRepository = null,
         UserRepository $userRepository = null,
         WelderSkillRepository $welderSkillRepository = null,
-        PaymentRepository $paymentRepository = null
+        PaymentRepository $paymentRepository = null,
+        PersonalDataRepository $personalDataRepository
     ) {
         $this->welderMemberRepository = $welderMemberRepository;
         $this->userRepository = $userRepository;
         $this->welderSkillRepository = $welderSkillRepository;
         $this->paymentRepository = $paymentRepository;
+        $this->personalDataRepository = $personalDataRepository;
     }
 
     public function index(Request $request)
@@ -84,6 +88,12 @@ class WelderMemberController extends Controller
         ]);
 
         try {
+            if ($request->hasFile("document_curriculum_vitae")) {
+                $request->merge([
+                    "curriculum_vitae" => $this->storageFile($request->file("document_curriculum_vitae"), "curriculum_vitae")
+                ]);
+            }
+
             if ($request->hasFile("document_pas_photo")) {
                 $request->merge([
                     "pas_photo" => $this->storageFile($request->file("document_pas_photo"), "pas_photo")
@@ -101,14 +111,18 @@ class WelderMemberController extends Controller
                 ]);
             }
 
+            $welderMember = $this->onlyFillables($request->all(), $this->welderMemberRepository->getFillable());
+            $user->welderMember()->create($welderMember);
+
+            $personalData = $this->onlyFillables($request->all(), $this->personalDataRepository->getFillable());
+            $user->personalData()->create($personalData);
+
             $this->pay(Cost::WELDER_MEMBER);
 
             $user->update([
                 "role_id" => $role->id,
                 'membership_card' => "MC-" . date('Ymd') . $user->id
             ]);
-
-            $user->welderMember()->create($request->all());
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $user->payment);

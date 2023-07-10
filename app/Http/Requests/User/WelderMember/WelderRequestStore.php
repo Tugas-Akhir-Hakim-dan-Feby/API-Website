@@ -33,9 +33,17 @@ class WelderRequestStore extends FormRequest
             'resident_id_card' => 'required|numeric',
             'date_birth' => 'required|date',
             'birth_place' => 'required',
+            'citizenship' => 'required',
+            'village' => 'required',
+            'district' => 'required',
+            'regency' => 'required',
+            'province' => 'required',
+            'zip_code' => 'required',
+            'phone' => 'required',
             'working_status' => 'required|in:1,0',
             'document_pas_photo' => 'required|mimes:png,jpg,jpeg',
             'document_certificate_competency' => 'required|mimes:pdf',
+            'document_curriculum_vitae' => 'required|mimes:pdf',
         ];
     }
 
@@ -46,9 +54,17 @@ class WelderRequestStore extends FormRequest
             'resident_id_card' => 'nik',
             'date_birth' => 'tanggal lahir',
             'birth_place' => 'tempat lahir',
+            'citizenship' => 'kewarganegaraan',
+            'village' => 'desa/kelurahan',
+            'district' => 'kecamatan',
+            'regency' => 'kota/kabupaten',
+            'province' => 'provinsi',
+            'zip_code' => 'kode pos',
+            'phone' => 'telepon',
             'working_status' => 'status bekerja',
             'document_pas_photo' => 'pas foto formal berwarna',
             'document_certificate_competency' => 'dokumen sertifikat',
+            'document_curriculum_vitae' => 'daftar riwayat hidup',
         ];
     }
 
