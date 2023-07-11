@@ -3,12 +3,16 @@
 namespace Database\Seeders\Tests;
 
 use App\Models\WelderSkill;
+use Database\Seeders\Traits\DisableForeignKey;
+use Database\Seeders\Traits\TruncateTable;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class WelderSkillSeeder extends Seeder
 {
+    use DisableForeignKey, TruncateTable;
+
     /**
      * Run the database seeds.
      *
@@ -17,20 +21,23 @@ class WelderSkillSeeder extends Seeder
     public function run()
     {
         $skills = [
-            "FILLET WELDER",
-            "PLATE WELDER",
-            "PIPE WELDER",
-            "GROUP LEADER",
-            "WELDING INSPECTOR BASIC",
-            "WELDING INSPECTOR FOREMAN",
-            "WELDING INSPECTOR STANDARD",
-            "WELDING INSPECTOR PRACTITIONER",
-            "WELDING INSTRUCTOR",
-            "WELDING SPECIALIST/SUPERVISOR",
-            "WELDING INSPECTOR COMPREHENSIVE",
-            "WELDING TECHNOLOGIST/SUPERINTENDENT",
-            "WELDING ENGINEER"
+            "Fillet Welder",
+            "Plate Welder",
+            "Pipe Welder",
+            "Group Welder",
+            "Welding Inspector Basic",
+            "Welding Inspector Foreman",
+            "Welding Inspector Standard",
+            "Welding Inspector Practitioner",
+            "Welding Instructor",
+            "Welding Specialist/Supervisor",
+            "Welding Inspector Comprehensive",
+            "Welding Technologist/Superintendent",
+            "Welding Engineer",
         ];
+
+        $this->truncate('welder_skills');
+        $this->disableForeignKeys();
 
         foreach ($skills as $skill) {
             WelderSkill::create([
@@ -39,5 +46,7 @@ class WelderSkillSeeder extends Seeder
                 'skill_description' => $skill,
             ]);
         }
+
+        $this->enableForeignKeys();
     }
 }
