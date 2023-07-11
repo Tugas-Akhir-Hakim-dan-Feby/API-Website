@@ -120,9 +120,9 @@ export default {
                                         <tr>
                                             <td>1</td>
                                             <td>
-                                                <b>Laptop</b> <br />
-                                                Brand Model VGN-TXN27N/B 11.1"
-                                                Notebook PC
+                                                <b class="text-capitalize">{{
+                                                    payment.description
+                                                }}</b>
                                             </td>
                                             <td class="text-end">
                                                 {{

@@ -37,6 +37,15 @@ export default {
         };
     },
     computed: {
+        maxDateBirth() {
+            let date = new Date();
+            date.setFullYear(date.getFullYear() - 15);
+            date.setMonth(date.getMonth());
+            date.setDate(date.getDate());
+
+            let formattedDate = date.toISOString().split("T")[0];
+            return formattedDate;
+        },
         formData() {
             let formData = new FormData();
 
@@ -268,6 +277,7 @@ export default {
                                 v-model="form.dateBirth"
                                 :class="{ 'is-invalid': errors.dateBirth }"
                                 :disabled="isLoading"
+                                :max="maxDateBirth"
                             />
                             <div
                                 class="invalid-feedback"

@@ -58,6 +58,15 @@ export default {
         }
     },
     computed: {
+        maxDateBirth() {
+            let date = new Date();
+            date.setFullYear(date.getFullYear() - 15);
+            date.setMonth(date.getMonth());
+            date.setDate(date.getDate());
+
+            let formattedDate = date.toISOString().split("T")[0];
+            return formattedDate;
+        },
         formData() {
             let formData = new FormData();
 
@@ -136,49 +145,41 @@ export default {
                 });
         },
         getProvince() {
-            if (this.isDetail) {
-                fetch(this.$store.state.BASE_URL_REGION + "provinces.json")
-                    .then((response) => response.json())
-                    .then((provinces) => {
-                        this.provinces = provinces;
-                    });
-            }
+            fetch(this.$store.state.BASE_URL_REGION + "provinces.json")
+                .then((response) => response.json())
+                .then((provinces) => {
+                    this.provinces = provinces;
+                });
         },
         getRegency(e) {
-            if (this.isDetail) {
-                fetch(
-                    `${this.$store.state.BASE_URL_REGION}regencies/${e.target.value}.json`
-                )
-                    .then((response) => response.json())
-                    .then((regencies) => {
-                        this.regencies = regencies;
-                        this.$refs.regency.value = "";
-                    });
-            }
+            fetch(
+                `${this.$store.state.BASE_URL_REGION}regencies/${e.target.value}.json`
+            )
+                .then((response) => response.json())
+                .then((regencies) => {
+                    this.regencies = regencies;
+                    this.$refs.regency.value = "";
+                });
         },
         getDistrict(e) {
-            if (this.isDetail) {
-                fetch(
-                    `${this.$store.state.BASE_URL_REGION}districts/${e.target.value}.json`
-                )
-                    .then((response) => response.json())
-                    .then((districts) => {
-                        this.districts = districts;
-                        this.$refs.district.value = "";
-                    });
-            }
+            fetch(
+                `${this.$store.state.BASE_URL_REGION}districts/${e.target.value}.json`
+            )
+                .then((response) => response.json())
+                .then((districts) => {
+                    this.districts = districts;
+                    this.$refs.district.value = "";
+                });
         },
         getVillage(e) {
-            if (this.isDetail) {
-                fetch(
-                    `${this.$store.state.BASE_URL_REGION}villages/${e.target.value}.json`
-                )
-                    .then((response) => response.json())
-                    .then((villages) => {
-                        this.villages = villages;
-                        this.$refs.village.value = "";
-                    });
-            }
+            fetch(
+                `${this.$store.state.BASE_URL_REGION}villages/${e.target.value}.json`
+            )
+                .then((response) => response.json())
+                .then((villages) => {
+                    this.villages = villages;
+                    this.$refs.village.value = "";
+                });
         },
         onBack() {
             this.$router.push({ name: "Member" });
@@ -264,7 +265,6 @@ export default {
                 });
         },
         getWelderSkills() {
-            console.log(this.$refs.welderSkill);
             $(this.$refs.welderSkill).select2({
                 ajax: {
                     url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
@@ -393,6 +393,7 @@ export default {
                                 v-model="form.dateBirth"
                                 :class="{ 'is-invalid': errors.dateBirth }"
                                 :disabled="isLoading"
+                                :max="maxDateBirth"
                             />
                             <div
                                 class="invalid-feedback"
