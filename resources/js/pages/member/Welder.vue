@@ -30,6 +30,7 @@ export default {
             welderSkills: [],
             errors: {},
             registerJob: {},
+            isDetail: false,
             isLoading: false,
             isRegency: true,
             isDistrict: true,
@@ -43,7 +44,6 @@ export default {
     },
     mounted() {
         this.getUser();
-        this.selectUtil();
         this.getProvince();
 
         let isPayment = JSON.parse(localStorage.getItem("isPayment"));
@@ -118,6 +118,7 @@ export default {
                 .dispatch("showData", ["user/personal-data", user.uuid])
                 .then((response) => {
                     if (response.data) {
+                        this.isDetail = true;
                         this.isNullDataPersonal = false;
                     }
                 })
@@ -128,44 +129,56 @@ export default {
                     ) {
                         this.isNullDataPersonal = true;
                     }
+
+                    setTimeout(() => {
+                        this.getWelderSkills();
+                    }, 1000);
                 });
         },
         getProvince() {
-            fetch(this.$store.state.BASE_URL_REGION + "provinces.json")
-                .then((response) => response.json())
-                .then((provinces) => {
-                    this.provinces = provinces;
-                });
+            if (this.isDetail) {
+                fetch(this.$store.state.BASE_URL_REGION + "provinces.json")
+                    .then((response) => response.json())
+                    .then((provinces) => {
+                        this.provinces = provinces;
+                    });
+            }
         },
         getRegency(e) {
-            fetch(
-                `${this.$store.state.BASE_URL_REGION}regencies/${e.target.value}.json`
-            )
-                .then((response) => response.json())
-                .then((regencies) => {
-                    this.regencies = regencies;
-                    this.$refs.regency.value = "";
-                });
+            if (this.isDetail) {
+                fetch(
+                    `${this.$store.state.BASE_URL_REGION}regencies/${e.target.value}.json`
+                )
+                    .then((response) => response.json())
+                    .then((regencies) => {
+                        this.regencies = regencies;
+                        this.$refs.regency.value = "";
+                    });
+            }
         },
         getDistrict(e) {
-            fetch(
-                `${this.$store.state.BASE_URL_REGION}districts/${e.target.value}.json`
-            )
-                .then((response) => response.json())
-                .then((districts) => {
-                    this.districts = districts;
-                    this.$refs.district.value = "";
-                });
+            if (this.isDetail) {
+                fetch(
+                    `${this.$store.state.BASE_URL_REGION}districts/${e.target.value}.json`
+                )
+                    .then((response) => response.json())
+                    .then((districts) => {
+                        this.districts = districts;
+                        this.$refs.district.value = "";
+                    });
+            }
         },
         getVillage(e) {
-            fetch(
-                `${this.$store.state.BASE_URL_REGION}villages/${e.target.value}.json`
-            )
-                .then((response) => response.json())
-                .then((villages) => {
-                    this.villages = villages;
-                    this.$refs.village.value = "";
-                });
+            if (this.isDetail) {
+                fetch(
+                    `${this.$store.state.BASE_URL_REGION}villages/${e.target.value}.json`
+                )
+                    .then((response) => response.json())
+                    .then((villages) => {
+                        this.villages = villages;
+                        this.$refs.village.value = "";
+                    });
+            }
         },
         onBack() {
             this.$router.push({ name: "Member" });
@@ -250,7 +263,8 @@ export default {
                     }
                 });
         },
-        selectUtil() {
+        getWelderSkills() {
+            console.log(this.$refs.welderSkill);
             $(this.$refs.welderSkill).select2({
                 ajax: {
                     url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
@@ -394,6 +408,7 @@ export default {
                         <div class="mb-3">
                             <label>Jenis Kompetensi</label
                             ><select
+                                v-if="!isDetail"
                                 class="select2-hidden-accessible form-select"
                                 ref="welderSkill"
                                 :class="{ 'is-invalid': errors.welderSkillIds }"
@@ -707,7 +722,7 @@ export default {
     <DetailPersonal
         :registerJob="registerJob"
         @onRegister="handleSubmit()"
-        v-if="!isNullDataPersonal"
+        v-if="!isNullDataPersonal && isDetail"
     />
 
     <Success
