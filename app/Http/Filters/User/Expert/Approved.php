@@ -11,7 +11,7 @@ class Approved
 {
     public function handle(Builder $query, Closure $next)
     {
-        if (!request()->has('approved')) {
+        if (!request('approved')) {
             return $next($query);
         }
 
