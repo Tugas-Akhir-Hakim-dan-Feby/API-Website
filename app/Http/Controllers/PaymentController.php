@@ -88,6 +88,6 @@ class PaymentController extends Controller
     protected function assignRoles($payment, $role, $request)
     {
         $payment->update(['status' => $request->status]);
-        return $payment->user->assignRole($role);
+        return $payment->user->syncRoles($role);
     }
 }

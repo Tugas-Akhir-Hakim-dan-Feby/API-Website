@@ -13,4 +13,5 @@ Route::middleware(['auth:sanctum'])->prefix('user/company-member')->group(functi
     Route::delete('/{id}', [CompanyMemberController::class, 'destroy'])->name('api.user.company.member.destroy');
     Route::put('/update-status/{id}', [CompanyMemberController::class, 'updateStatus'])->name('api.user.company.member.update.status');
     Route::put('/update-document/{id}', [CompanyMemberController::class, 'updateDocument'])->name('api.user.company.member.update.document');
+    Route::put('/update-logo/{id}', [CompanyMemberController::class, 'updateLogo'])->name('api.user.company.member.update.logo');
 });

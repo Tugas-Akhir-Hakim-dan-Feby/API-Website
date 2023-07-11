@@ -30,6 +30,7 @@ export default {
             welderSkills: [],
             errors: {},
             registerJob: {},
+            isDetail: false,
             isLoading: false,
             isRegency: true,
             isDistrict: true,
@@ -43,7 +44,6 @@ export default {
     },
     mounted() {
         this.getUser();
-        this.selectUtil();
         this.getProvince();
 
         let isPayment = JSON.parse(localStorage.getItem("isPayment"));
@@ -58,6 +58,15 @@ export default {
         }
     },
     computed: {
+        maxDateBirth() {
+            let date = new Date();
+            date.setFullYear(date.getFullYear() - 15);
+            date.setMonth(date.getMonth());
+            date.setDate(date.getDate());
+
+            let formattedDate = date.toISOString().split("T")[0];
+            return formattedDate;
+        },
         formData() {
             let formData = new FormData();
 
@@ -101,15 +110,24 @@ export default {
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    this.getDataPersonal(response.user);
+                    this.getPersonalData(response.user);
+                    this.getRegisterJob(response.user);
                 });
         },
-        getDataPersonal(user) {
+        getRegisterJob(user) {
             this.$store
                 .dispatch("showData", ["register-job", user.uuid])
                 .then((response) => {
                     this.registerJob = response.data;
+                })
+                .catch((error) => {});
+        },
+        getPersonalData(user) {
+            this.$store
+                .dispatch("showData", ["user/personal-data", user.uuid])
+                .then((response) => {
                     if (response.data) {
+                        this.isDetail = true;
                         this.isNullDataPersonal = false;
                     }
                 })
@@ -120,6 +138,10 @@ export default {
                     ) {
                         this.isNullDataPersonal = true;
                     }
+
+                    setTimeout(() => {
+                        this.getWelderSkills();
+                    }, 1000);
                 });
         },
         getProvince() {
@@ -242,7 +264,7 @@ export default {
                     }
                 });
         },
-        selectUtil() {
+        getWelderSkills() {
             $(this.$refs.welderSkill).select2({
                 ajax: {
                     url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
@@ -371,6 +393,7 @@ export default {
                                 v-model="form.dateBirth"
                                 :class="{ 'is-invalid': errors.dateBirth }"
                                 :disabled="isLoading"
+                                :max="maxDateBirth"
                             />
                             <div
                                 class="invalid-feedback"
@@ -386,6 +409,7 @@ export default {
                         <div class="mb-3">
                             <label>Jenis Kompetensi</label
                             ><select
+                                v-if="!isDetail"
                                 class="select2-hidden-accessible form-select"
                                 ref="welderSkill"
                                 :class="{ 'is-invalid': errors.welderSkillIds }"
@@ -699,7 +723,7 @@ export default {
     <DetailPersonal
         :registerJob="registerJob"
         @onRegister="handleSubmit()"
-        v-else
+        v-if="!isNullDataPersonal && isDetail"
     />
 
     <Success

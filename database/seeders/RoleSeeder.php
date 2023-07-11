@@ -150,18 +150,14 @@ class RoleSeeder extends Seeder
 
             if ($user->role_id == ModelsRole::PAKAR) {
                 $user->assignRole(Role::where('id', ModelsRole::PAKAR)->first());
-                $user->assignRole(Role::where('id', ModelsRole::MEMBER_WELDER)->first());
-                $user->assignRole(Role::where('id', ModelsRole::GUEST)->first());
             }
 
             if ($user->role_id == ModelsRole::MEMBER_COMPANY) {
                 $user->assignRole(Role::where('id', ModelsRole::MEMBER_COMPANY)->first());
-                $user->assignRole(Role::where('id', ModelsRole::GUEST)->first());
             }
 
             if ($user->role_id == ModelsRole::MEMBER_WELDER) {
                 $user->assignRole(Role::where('id', ModelsRole::MEMBER_WELDER)->first());
-                $user->assignRole(Role::where('id', ModelsRole::GUEST)->first());
             }
 
             if ($user->role_id == ModelsRole::GUEST) {

@@ -20,6 +20,7 @@ export default {
         handleLogout() {
             this.$store.dispatch("postData", ["auth/logout", {}]).then(() => {
                 Cookie.remove("token");
+                localStorage.clear();
                 window.location.replace("/auth/login");
             });
         },

@@ -35,13 +35,13 @@ export default {
             this.document = {
                 id: user.uuid,
                 documentLegality: user.companyMember?.companyLegality,
+                companyLogo: user.companyMember?.companyLogo,
             };
         },
         getUser() {
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    console.log(response);
                     this.setForm(response.user);
                 })
                 .catch((err) => {});
