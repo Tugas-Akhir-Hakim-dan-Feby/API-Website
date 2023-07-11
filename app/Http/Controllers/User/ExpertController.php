@@ -149,7 +149,7 @@ class ExpertController extends Controller
             abort(404);
         }
 
-        $user->load(['expert', 'welderMember.welderSkill', 'welderDocuments']);
+        $user->load(['expert', 'welderHasSkills.welderSkill', 'welderDocuments', 'welderMember']);
 
         return new ExpertDetail($user);
     }
@@ -243,7 +243,7 @@ class ExpertController extends Controller
                 $user->expert()->delete();
             }
 
-            $user->removeRole(Role::findById(User::PAKAR, 'api'));
+            $user->syncRoles(Role::findById(User::MEMBER_WELDER, 'api'));
             $user->update(["role_id" => User::MEMBER_WELDER]);
 
             DB::commit();

@@ -57,12 +57,6 @@ export default {
         @onBack="onBack"
     >
         <div class="d-flex">
-            <button
-                class="btn btn-sm btn-primary mb-1 me-2"
-                v-if="user.expert?.status == 'NOT-APPROVED'"
-            >
-                Konfirmasi
-            </button>
             <ol class="breadcrumb m-0">
                 <li class="breadcrumb-item">
                     <router-link :to="{ name: 'Dashboard' }"
@@ -244,27 +238,6 @@ export default {
                                                 checkFile(
                                                     user.expert
                                                         ?.certificateProfession
-                                                )
-                                            "
-                                            ><i class="mdi mdi-download"></i>
-                                            Unduh</a
-                                        >
-                                        <p v-else>belum tersedia</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Ijazah Pendidikan Formal</td>
-                                    <td>
-                                        <a
-                                            :href="
-                                                user.welderMember
-                                                    ?.certificateSchool
-                                            "
-                                            target="_blank"
-                                            v-if="
-                                                checkFile(
-                                                    user.expert
-                                                        ?.certificateSchool
                                                 )
                                             "
                                             ><i class="mdi mdi-download"></i>

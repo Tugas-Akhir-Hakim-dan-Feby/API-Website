@@ -126,7 +126,19 @@ export default {
                 <tr v-for="(user, index) in users" :key="index">
                     <th v-html="index + 1"></th>
                     <td v-html="user.name"></td>
-                    <td v-html="user.welderMember?.welderSkill?.skillName"></td>
+                    <td>
+                        <ul v-if="user.welderHasSkills.length > 0">
+                            <li
+                                v-for="(
+                                    welderSkill, index
+                                ) in user.welderHasSkills"
+                                :key="index"
+                            >
+                                {{ welderSkill.welderSkill.skillName }}
+                            </li>
+                        </ul>
+                        <p v-else>-</p>
+                    </td>
                     <td v-html="user.expert?.instance"></td>
                     <td>
                         <router-link
