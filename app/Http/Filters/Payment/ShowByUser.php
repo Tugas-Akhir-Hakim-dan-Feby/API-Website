@@ -12,7 +12,7 @@ class ShowByUser
     {
         $user = User::find(auth()->user()->id);
 
-        if ($user->onlyRoles([User::MEMBER_WELDER, User::MEMBER_COMPANY, User::GUEST])) {
+        if ($user->onlyRoles([User::MEMBER_WELDER, User::MEMBER_COMPANY, User::GUEST, User::PAKAR])) {
             $query->where('user_id', $user->id);
         }
 

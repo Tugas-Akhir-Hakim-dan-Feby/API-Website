@@ -21,6 +21,7 @@ export default [
         beforeEnter: checkRoles([
             store.state.MEMBER_WELDER,
             store.state.MEMBER_COMPANY,
+            store.state.EXPERT,
         ]),
     },
     {
@@ -34,6 +35,7 @@ export default [
         beforeEnter: checkRoles([
             store.state.MEMBER_WELDER,
             store.state.MEMBER_COMPANY,
+            store.state.EXPERT,
         ]),
     },
     {

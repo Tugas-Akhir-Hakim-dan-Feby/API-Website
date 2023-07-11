@@ -60,6 +60,7 @@ class RoleSeeder extends Seeder
         $access[User::PAKAR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::PAKAR]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::PAKAR]['Profile'] = ['index', 'update-password', 'update-expert'];
+        $access[User::PAKAR]['Payment'] = ['history'];
 
         $access[User::MEMBER_COMPANY]['Dashboard'] = ['index'];
         $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
