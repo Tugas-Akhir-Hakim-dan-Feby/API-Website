@@ -29,17 +29,17 @@ class User extends Authenticatable
 
     const ADMIN_APP = 1;
 
-    const ADMIN_PUSAT = 2;
+    const ADMIN_HUB = 2;
 
-    const ADMIN_CABANG = 3;
+    const ADMIN_BRANCH = 3;
 
-    const PAKAR = 4;
+    const EXPERT = 4;
 
     const MEMBER_COMPANY = 5;
 
-    const MEMBER_WELDER = 6;
+    const MEMBER_INDIVIDUAL = 6;
 
-    const GUEST = 7;
+    const MEMBER_APPLICATION = 7;
 
     /**
      * The attributes that are mass assignable.

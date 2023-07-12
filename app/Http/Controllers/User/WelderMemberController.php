@@ -80,7 +80,7 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
-        $role = PermissionModelsRole::findById(User::MEMBER_WELDER, 'api');
+        $role = PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api');
 
         $request->merge([
             'uuid' => Str::uuid(),
@@ -141,7 +141,7 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
-        $role = PermissionModelsRole::findById(User::MEMBER_WELDER, 'api');
+        $role = PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api');
 
         try {
             $this->pay(Cost::WELDER_MEMBER);
@@ -281,9 +281,9 @@ class WelderMemberController extends Controller
                 $user->welderMember()->delete();
             }
 
-            $user->removeRole(PermissionModelsRole::findById(User::PAKAR, 'api'));
-            $user->removeRole(PermissionModelsRole::findById(User::MEMBER_WELDER, 'api'));
-            $user->update(["role_id" => User::GUEST]);
+            $user->removeRole(PermissionModelsRole::findById(User::EXPERT, 'api'));
+            $user->removeRole(PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api'));
+            $user->update(["role_id" => User::MEMBER_APPLICATION]);
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);

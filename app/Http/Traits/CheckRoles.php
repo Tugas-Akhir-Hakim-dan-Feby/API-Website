@@ -3,12 +3,13 @@
 namespace App\Http\Traits;
 
 use App\Models\Role;
+use App\Models\User;
 
 trait CheckRoles
 {
     public function isAdminApp()
     {
-        if ($this->role_id == Role::ADMIN_APP) {
+        if ($this->role_id == User::ADMIN_APP) {
             return true;
         }
 
@@ -17,7 +18,7 @@ trait CheckRoles
 
     public function isAdminHub()
     {
-        if ($this->role_id == Role::ADMIN_PUSAT) {
+        if ($this->role_id == User::ADMIN_HUB) {
             return true;
         }
 
@@ -26,7 +27,7 @@ trait CheckRoles
 
     public function isAdminBranch()
     {
-        if ($this->role_id == Role::ADMIN_CABANG) {
+        if ($this->role_id == User::ADMIN_BRANCH) {
             return true;
         }
 
@@ -35,7 +36,7 @@ trait CheckRoles
 
     public function isExpert()
     {
-        if ($this->role_id == Role::PAKAR) {
+        if ($this->role_id == User::EXPERT) {
             return true;
         }
 
@@ -44,7 +45,7 @@ trait CheckRoles
 
     public function isMemberCompany()
     {
-        if ($this->role_id == Role::MEMBER_COMPANY) {
+        if ($this->role_id == User::MEMBER_COMPANY) {
             return true;
         }
 
@@ -53,7 +54,7 @@ trait CheckRoles
 
     public function isMemberWelder()
     {
-        if ($this->role_id == Role::MEMBER_WELDER) {
+        if ($this->role_id == User::MEMBER_INDIVIDUAL) {
             return true;
         }
 

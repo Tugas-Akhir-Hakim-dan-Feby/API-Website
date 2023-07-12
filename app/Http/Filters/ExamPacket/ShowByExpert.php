@@ -12,7 +12,7 @@ class ShowByExpert
     public function handle(Builder $query, Closure $next)
     {
         $experUser = User::where('id', auth()->user()->id)->whereHas("roles", function ($query) {
-            $query->where("id", User::PAKAR);
+            $query->where("id", User::EXPERT);
         })->first();
 
         if ($experUser) {

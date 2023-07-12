@@ -13,6 +13,7 @@ use App\Http\Resources\User\HubDetail;
 use App\Http\Traits\FillableFixer;
 use App\Http\Traits\MessageFixer;
 use App\Models\Role as ModelsRole;
+use App\Models\User;
 use App\Models\User\Hub;
 use App\Repositories\User\UserRepository;
 use App\Repositories\UserHub\UserHubRepository;
@@ -54,13 +55,13 @@ class HubController extends Controller
     {
         DB::beginTransaction();
 
-        $role = PermissionModelsRole::find(ModelsRole::ADMIN_PUSAT);
+        $role = PermissionModelsRole::find(User::ADMIN_HUB);
 
         try {
             $request->merge([
                 'uuid' => Str::uuid(),
                 'password' => bcrypt('password'),
-                'role_id' => ModelsRole::ADMIN_PUSAT,
+                'role_id' => User::ADMIN_HUB,
                 'remember_token' => Str::random(20),
                 'email_verified_at' => now()
             ]);
@@ -86,7 +87,7 @@ class HubController extends Controller
 
     public function show($id)
     {
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_HUB]);
 
         if (!$user) {
             abort(404);
@@ -101,7 +102,7 @@ class HubController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_HUB]);
 
         if (!$user) {
             abort(404);
@@ -125,7 +126,7 @@ class HubController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_HUB]);
 
         if (!$user) {
             abort(404);
@@ -148,7 +149,7 @@ class HubController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => ModelsRole::ADMIN_PUSAT]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_HUB]);
 
         if (!$user) {
             abort(404);

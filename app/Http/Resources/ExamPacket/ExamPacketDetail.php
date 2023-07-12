@@ -30,7 +30,7 @@ class ExamPacketDetail extends JsonResource
             "uuid" => $this->uuid,
         ];
 
-        if (auth()->user()->onlyRoles([User::ADMIN_APP, User::PAKAR])) {
+        if (auth()->user()->onlyRoles([User::ADMIN_APP, User::EXPERT])) {
             $data["exams"] = $this->exams;
         }
 

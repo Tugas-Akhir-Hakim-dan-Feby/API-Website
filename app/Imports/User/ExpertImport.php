@@ -63,7 +63,7 @@ class ExpertImport implements ToCollection, WithHeadingRow, WithValidation
                 "instance" => $collect["instance"]
             ]);
 
-            $roles = Role::whereIn('id', [User::PAKAR, User::MEMBER_WELDER, User::GUEST])->get();
+            $roles = Role::whereIn('id', [User::EXPERT, User::MEMBER_INDIVIDUAL, User::MEMBER_APPLICATION])->get();
 
             $user->syncRoles($roles);
         }

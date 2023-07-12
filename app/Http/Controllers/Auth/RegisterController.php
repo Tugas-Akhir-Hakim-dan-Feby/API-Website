@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\SendEmail;
 use App\Models\Role as ModelsRole;
+use App\Models\User;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,7 @@ class RegisterController extends Controller
         ]);
 
         try {
-            $role = $this->roleRepository->findById(ModelsRole::GUEST, 'api');
+            $role = $this->roleRepository->findById(User::MEMBER_APPLICATION, 'api');
             $user = $this->userRepository->create($request->all());
 
             $user->assignRole($role);

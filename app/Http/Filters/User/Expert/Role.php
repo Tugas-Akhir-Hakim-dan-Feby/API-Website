@@ -12,7 +12,7 @@ class Role
     {
         $query->with(['expert', 'welderHasSkills.welderSkill']);
 
-        $query->where('role_id', User::PAKAR);
+        $query->where('role_id', User::EXPERT);
 
         return $next($query);
     }
