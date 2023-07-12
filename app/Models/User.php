@@ -41,6 +41,8 @@ class User extends Authenticatable
 
     const MEMBER_APPLICATION = 7;
 
+    const OPERATOR = 8;
+
     /**
      * The attributes that are mass assignable.
      *

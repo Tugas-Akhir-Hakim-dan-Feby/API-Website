@@ -19,7 +19,7 @@ class RoleSeeder extends Seeder
 
     public function run()
     {
-        $roles = ['Admin App', 'Admin Pusat', 'Admin Cabang', 'Pakar', 'Member Company', 'Member Individu', 'Member Aplikasi'];
+        $roles = ['Admin App', 'Admin Pusat', 'Admin Cabang', 'Pakar', 'Member Company', 'Member Individu', 'Member Aplikasi', 'Operator'];
 
         $access[User::ADMIN_APP]['Dashboard'] = ['index'];
         $access[User::ADMIN_APP]['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
@@ -82,6 +82,12 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_APPLICATION]['Profile'] = ['index', 'update-password', 'update-guest'];
         $access[User::MEMBER_APPLICATION]['Member'] = ['index', 'company-member', 'welder-member'];
         $access[User::MEMBER_APPLICATION]['JobVacancy'] = ['index', 'index-welder'];
+
+        $access[User::OPERATOR]['Dashboard'] = ['index'];
+        $access[User::OPERATOR]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
+        $access[User::OPERATOR]['Profile'] = ['index', 'update-password', 'update-guest'];
+        $access[User::OPERATOR]['Member'] = ['index', 'company-member', 'welder-member'];
+        $access[User::OPERATOR]['JobVacancy'] = ['index', 'index-welder'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');
