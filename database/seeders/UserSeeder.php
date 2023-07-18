@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'email' => 'guest@mailinator.com',
-            'role_id' => Role::GUEST,
+            'role_id' => User::MEMBER_APPLICATION,
         ]);
     }
 
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
     {
         $adminHub = User::factory()->create([
             'email' => 'admin.pusat@mailinator.com',
-            'role_id' => Role::ADMIN_PUSAT,
+            'role_id' => User::ADMIN_HUB,
         ]);
 
         $adminHub->adminHub()->create([
@@ -71,7 +71,7 @@ class UserSeeder extends Seeder
 
         $userBranch = User::factory()->create([
             'email' => 'admin.cabang@mailinator.com',
-            'role_id' => Role::ADMIN_CABANG,
+            'role_id' => User::ADMIN_BRANCH,
         ]);
 
         $userBranch->adminBranch()->create([
@@ -121,7 +121,7 @@ class UserSeeder extends Seeder
 
         $welderMember = User::factory()->create([
             'email' => 'welder.company@mailinator.com',
-            'role_id' => Role::MEMBER_WELDER,
+            'role_id' => User::MEMBER_INDIVIDUAL,
         ]);
 
         $welderMember->welderHasSkills()->create([
@@ -152,7 +152,7 @@ class UserSeeder extends Seeder
 
         $expert = User::factory()->create([
             'email' => 'pakar@mailinator.com',
-            'role_id' => Role::PAKAR,
+            'role_id' => User::EXPERT,
         ]);
 
         $expert->welderHasSkills()->create([

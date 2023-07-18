@@ -11,7 +11,7 @@ class ByWelderId
     public function handle(Builder $query, Closure $next)
     {
         $user = User::where('id', auth()->user()->id)->whereHas("roles", function ($query) {
-            $query->whereIn("id", [User::MEMBER_WELDER, User::GUEST]);
+            $query->whereIn("id", [User::MEMBER_INDIVIDUAL, User::MEMBER_APPLICATION]);
         })->first();
 
         if ($user) {

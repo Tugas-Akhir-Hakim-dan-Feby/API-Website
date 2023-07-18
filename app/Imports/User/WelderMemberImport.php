@@ -55,7 +55,7 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
                 "status" => $collect["status"],
             ]);
 
-            $roles = Role::whereIn('id', [User::MEMBER_WELDER, User::GUEST])->get();
+            $roles = Role::whereIn('id', [User::MEMBER_INDIVIDUAL, User::MEMBER_APPLICATION])->get();
 
             $user->syncRoles($roles);
         }

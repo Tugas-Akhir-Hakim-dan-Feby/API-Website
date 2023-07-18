@@ -51,7 +51,7 @@ class CompanyMemberImport implements ToCollection, WithHeadingRow, WithValidatio
                 'facsmile' => $collect["facsmile"],
             ]);
 
-            $roles = Role::whereIn('id', [User::MEMBER_COMPANY, User::GUEST])->get();
+            $roles = Role::whereIn('id', [User::MEMBER_COMPANY, User::MEMBER_APPLICATION])->get();
 
             $user->syncRoles($roles);
         }

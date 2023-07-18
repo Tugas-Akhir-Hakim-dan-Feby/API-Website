@@ -1,3 +1,5 @@
+import { checkPermission } from "../../store/utils/middleware";
+
 export default [
     {
         path: "/article",
@@ -6,6 +8,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("article", "index"),
     },
     {
         path: "/article/create",
@@ -14,6 +17,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("article", "create"),
     },
     {
         path: "/article/:slug",
@@ -23,6 +27,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("article", "show"),
     },
     {
         path: "/article/:id/edit",
@@ -32,5 +37,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("article", "update"),
     },
 ];

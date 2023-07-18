@@ -1,3 +1,5 @@
+import { checkPermission } from "../../../store/utils/middleware";
+
 export default [
     {
         path: "/exam-packet",
@@ -6,6 +8,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("exampacket", "index"),
     },
     {
         path: "/exam-packet/create",
@@ -14,6 +17,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("exampacket", "create"),
     },
     {
         path: "/exam-packet/register",
@@ -22,6 +26,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("exampacket", "show"),
     },
     {
         path: "/exam-packet/:examPacketId/success",
@@ -31,6 +36,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exampacket", "show"),
     },
     {
         path: "/exam-packet/:id/detail/participant",
@@ -40,6 +46,17 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exampacket", "show"),
+    },
+    {
+        path: "/exam-packet/:id/edit",
+        component: () => import("../../../pages/examPacket/Edit.vue"),
+        name: "Exam Packet Edit",
+        meta: {
+            requiresAuth: true,
+        },
+        props: true,
+        beforeEnter: checkPermission("exampacket", "update"),
     },
     {
         path: "/exam-packet/:id/detail",
@@ -49,5 +66,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exampacket", "show"),
     },
 ];

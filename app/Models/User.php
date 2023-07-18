@@ -9,6 +9,7 @@ use App\Models\User\Branch;
 use App\Models\User\CompanyMember;
 use App\Models\User\Expert;
 use App\Models\User\Hub;
+use App\Models\User\Operator;
 use App\Models\User\WelderMember;
 use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
@@ -29,17 +30,19 @@ class User extends Authenticatable
 
     const ADMIN_APP = 1;
 
-    const ADMIN_PUSAT = 2;
+    const ADMIN_HUB = 2;
 
-    const ADMIN_CABANG = 3;
+    const ADMIN_BRANCH = 3;
 
-    const PAKAR = 4;
+    const EXPERT = 4;
 
     const MEMBER_COMPANY = 5;
 
-    const MEMBER_WELDER = 6;
+    const MEMBER_INDIVIDUAL = 6;
 
-    const GUEST = 7;
+    const MEMBER_APPLICATION = 7;
+
+    const OPERATOR = 8;
 
     /**
      * The attributes that are mass assignable.
@@ -110,6 +113,11 @@ class User extends Authenticatable
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class, 'user_id', 'id');
+    }
+
+    public function operator(): HasOne
+    {
+        return $this->hasOne(Operator::class, 'user_id', 'id');
     }
 
     public function adminHub(): HasOne

@@ -1,3 +1,5 @@
+import { checkPermission } from "../../store/utils/middleware";
+
 export default [
     {
         path: "/job-vacancy",
@@ -6,6 +8,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("jobvacancy", "index"),
     },
     {
         path: "/job-vacancy/create",
@@ -14,6 +17,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("jobvacancy", "create"),
     },
     {
         path: "/job-vacancy/:slug/apply",
@@ -23,6 +27,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("jobvacancy", "show"),
     },
     {
         path: "/job-vacancy/:uuid/participant",
@@ -32,6 +37,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("jobvacancy", "show"),
     },
     {
         path: "/job-vacancy/:slug",
@@ -41,6 +47,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("jobvacancy", "show"),
     },
     {
         path: "/job-vacancy/:id/edit",
@@ -50,5 +57,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("jobvacancy", "update"),
     },
 ];

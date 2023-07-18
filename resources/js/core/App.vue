@@ -36,6 +36,10 @@ export default {
                         this.$ability.update(rules);
 
                         this.$store.commit("setUser", response.user);
+                        this.$store.commit(
+                            "setPermission",
+                            response.permission
+                        );
                     })
                     .catch((error) => {
                         this.error = error.response.data;

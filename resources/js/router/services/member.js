@@ -23,4 +23,12 @@ export default [
             requiresAuth: true,
         },
     },
+    {
+        path: "/member/tuk",
+        name: "Member Operator",
+        component: () => import("../../pages/member/Operator.vue"),
+        meta: {
+            requiresAuth: true,
+        },
+    },
 ];

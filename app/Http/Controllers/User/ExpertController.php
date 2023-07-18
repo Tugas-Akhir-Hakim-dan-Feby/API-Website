@@ -81,7 +81,7 @@ class ExpertController extends Controller
             return $this->warningMessage("data sudah terdaftar, harap tunggu konfirmasi dari admin.");
         }
 
-        $role = Role::findById(User::PAKAR, 'api');
+        $role = Role::findById(User::EXPERT, 'api');
 
         $request->merge([
             'uuid' => Str::uuid(),
@@ -243,8 +243,8 @@ class ExpertController extends Controller
                 $user->expert()->delete();
             }
 
-            $user->syncRoles(Role::findById(User::MEMBER_WELDER, 'api'));
-            $user->update(["role_id" => User::MEMBER_WELDER]);
+            $user->syncRoles(Role::findById(User::MEMBER_INDIVIDUAL, 'api'));
+            $user->update(["role_id" => User::MEMBER_INDIVIDUAL]);
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);

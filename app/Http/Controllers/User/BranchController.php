@@ -60,12 +60,12 @@ class BranchController extends Controller
         $branch = $this->branchRepository->findOrFail($request->branch_id);
 
         try {
-            $role = ModelsRole::find(User::ADMIN_CABANG);
+            $role = ModelsRole::find(User::ADMIN_BRANCH);
 
             $request->merge([
                 'uuid' => Str::uuid(),
                 'password' => bcrypt('password'),
-                'role_id' => User::ADMIN_CABANG,
+                'role_id' => User::ADMIN_BRANCH,
                 'remember_token' => Str::random(20),
                 'email_verified_at' => now()
             ]);
@@ -94,7 +94,7 @@ class BranchController extends Controller
 
     public function show($id)
     {
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_BRANCH]);
 
         if (!$user) {
             abort(404);
@@ -110,7 +110,7 @@ class BranchController extends Controller
         DB::beginTransaction();
 
         $branch = $this->branchRepository->findOrFail($request->branch_id);
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_BRANCH]);
 
         if (!$user) {
             abort(404);
@@ -139,7 +139,7 @@ class BranchController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_BRANCH]);
 
         if (!$user) {
             abort(404);
@@ -162,7 +162,7 @@ class BranchController extends Controller
     {
         DB::beginTransaction();
 
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_CABANG]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_BRANCH]);
 
         if (!$user) {
             abort(404);

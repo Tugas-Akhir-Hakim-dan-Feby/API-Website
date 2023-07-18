@@ -14,6 +14,7 @@ import invoice from "./services/invoice";
 import expert from "./services/expert";
 import payment from "./services/payment";
 import jobVacancy from "./services/jobVacancy";
+import { checkPermission } from "../store/utils/middleware";
 
 const routes = [
     ...auth,
@@ -39,6 +40,7 @@ const routes = [
         meta: {
             requiresAuth: true,
         },
+        beforeEnter: checkPermission("dashboard", "index"),
     },
     {
         path: "/my-profile",

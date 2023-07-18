@@ -4,7 +4,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
-import Edit from "./Edit.vue";
+import Show from "./Show.vue";
 import util from "../../store/utils/util";
 
 export default {
@@ -142,7 +142,7 @@ export default {
             this.$router.push({ name: "Exam Packet" });
         },
     },
-    components: { PageTitle, Success, Edit, Confirm, Loader, Pagination },
+    components: { PageTitle, Success, Show, Confirm, Loader, Pagination },
 };
 </script>
 
@@ -176,7 +176,7 @@ export default {
         </ol>
     </PageTitle>
 
-    <Edit
+    <Show
         v-if="examPacket"
         :examPacket="examPacket"
         @onSuccessEdit="onSuccessEdit"

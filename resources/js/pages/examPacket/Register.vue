@@ -151,9 +151,20 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Uji Kompetensi</th>
-                            <th>Jadwal Ujian</th>
+                            <th>
+                                Skema <br />
+                                Uji Kompetensi
+                            </th>
+                            <th>
+                                Tempat <br />
+                                Uji Kompetensi
+                            </th>
                             <th>Alamat Tempat Ujian</th>
+                            <th>Jadwal Ujian</th>
+                            <th>
+                                Jadwal Penutupan <br />
+                                Pendaftaran
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -169,9 +180,17 @@ export default {
                             :key="index"
                         >
                             <th v-html="iteration(index)"></th>
-                            <td v-html="examPacket.name"></td>
-                            <td v-html="getSchedule(examPacket.schedule)"></td>
-                            <td v-html="examPacket.practiceExamAddress"></td>
+                            <td
+                                v-html="examPacket.competenceSchema?.skillName"
+                            ></td>
+                            <td v-html="examPacket.operator?.tukName"></td>
+                            <td v-html="examPacket.operator?.address"></td>
+                            <td
+                                v-html="getSchedule(examPacket.examSchedule)"
+                            ></td>
+                            <td
+                                v-html="getSchedule(examPacket.closeSchedule)"
+                            ></td>
                             <td>
                                 <button
                                     class="badge border-0 btn-success ms-2"

@@ -54,6 +54,10 @@ class UserController extends Controller
             $user->load("companyMember");
         }
 
+        if ($user->isOperator()) {
+            $user->load("operator");
+        }
+
         if ($user->document) {
             $data["document"] = $user->document;
         }

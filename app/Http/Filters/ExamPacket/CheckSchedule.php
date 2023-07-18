@@ -13,7 +13,7 @@ class CheckSchedule
         $dateNow = Carbon::today()->toDateString();
 
         if (auth()->user()->isMemberWelder()) {
-            $query->where("schedule", ">=", $dateNow);
+            $query->where("close_schedule", ">=", $dateNow);
         }
 
         return $next($query);

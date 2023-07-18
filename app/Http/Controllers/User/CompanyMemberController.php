@@ -247,7 +247,7 @@ class CompanyMemberController extends Controller
             }
 
             $user->removeRole(Role::findById(User::MEMBER_COMPANY, 'api'));
-            $user->update(["role_id", User::GUEST]);
+            $user->update(["role_id", User::MEMBER_APPLICATION]);
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);

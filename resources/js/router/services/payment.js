@@ -1,4 +1,4 @@
-import { checkRoles } from "../../store/utils/middleware";
+import { checkPermission, checkRoles } from "../../store/utils/middleware";
 import store from "../../store";
 
 export default [
@@ -9,7 +9,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("payment", "cost"),
     },
     {
         path: "/payment/history",
@@ -18,11 +18,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkRoles([
-            store.state.MEMBER_WELDER,
-            store.state.MEMBER_COMPANY,
-            store.state.EXPERT,
-        ]),
+        beforeEnter: checkPermission("payment", "cost"),
     },
     {
         path: "/payment/history/:externalId",
@@ -32,11 +28,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkRoles([
-            store.state.MEMBER_WELDER,
-            store.state.MEMBER_COMPANY,
-            store.state.EXPERT,
-        ]),
+        beforeEnter: checkPermission("payment", "cost"),
     },
     {
         path: "/payment/recapitulation-invoice",
@@ -45,7 +37,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("payment", "cost"),
     },
     {
         path: "/payment/recapitulation-invoice/:externalId",
@@ -56,6 +48,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("payment", "cost"),
     },
 ];

@@ -3,7 +3,7 @@ import Loader from "../../components/Loader.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
-import Edit from "./Edit.vue";
+import Show from "./Show.vue";
 
 export default {
     props: ["id"],
@@ -33,6 +33,9 @@ export default {
                     this.examPacket = response.data;
                     Object.assign(this.examPacket, {
                         date: response.data.schedule.slice(0, 10),
+                        examSchedule: this.formatDate(
+                            response.data.examSchedule
+                        ),
                     });
                 })
                 .catch((error) => {
@@ -66,14 +69,17 @@ export default {
         onBack(e) {
             this.$router.push({ name: "Exam Packet" });
         },
+        formatDate(date) {
+            return dayjs(date).locale("id").format("YYYY-MM-DD");
+        },
     },
-    components: { PageTitle, Success, Edit, Confirm, Loader },
+    components: { PageTitle, Success, Show, Confirm, Loader },
 };
 </script>
 
 <template>
     <PageTitle
-        :title="`Detail Paket ${examPacket.name}`"
+        :title="`Detail Paket ${examPacket.competenceSchema?.skillName}`"
         :isBack="true"
         @onBack="onBack($event)"
     >
@@ -90,7 +96,7 @@ export default {
         </ol>
     </PageTitle>
 
-    <Edit
+    <Show
         v-if="examPacket"
         :examPacket="examPacket"
         @onSuccessEdit="onSuccessEdit"

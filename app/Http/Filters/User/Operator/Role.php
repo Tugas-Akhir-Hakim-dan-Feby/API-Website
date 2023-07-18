@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Filters\User\Branch;
+namespace App\Http\Filters\User\Operator;
 
-use App\Models\Role as ModelsRole;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,8 +10,8 @@ class Role
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with(['adminBranch.branch', 'document']);
-        $query->where('role_id', User::ADMIN_BRANCH);
+        $query->with(['operator.logo']);
+        $query->where('role_id', User::OPERATOR);
 
         return $next($query);
     }
