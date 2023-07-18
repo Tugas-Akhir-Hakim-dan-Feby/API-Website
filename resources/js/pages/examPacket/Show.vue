@@ -177,10 +177,7 @@ export default {
                                         params: { id: examPacket.uuid },
                                     }"
                                     class="btn btn-sm btn-light"
-                                    v-if="
-                                        $can('update', 'Exampacket')
-                                        edit
-                                    "
+                                    v-if="$can('update', 'Exampacket') && edit"
                                 >
                                     Edit Paket
                                 </router-link>
