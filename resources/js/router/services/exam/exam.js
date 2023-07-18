@@ -1,3 +1,5 @@
+import { checkPermission } from "../../../store/utils/middleware";
+
 export default [
     {
         path: "/exam/:id/create",
@@ -7,6 +9,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exam", "create"),
     },
     {
         path: "/attempt/:examPacketId/execution/:examId",
@@ -16,6 +19,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exam", "show"),
     },
     {
         path: "/exam/:id/edit/:examId",
@@ -25,5 +29,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
+        beforeEnter: checkPermission("exam", "update"),
     },
 ];

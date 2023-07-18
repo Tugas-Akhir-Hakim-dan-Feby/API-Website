@@ -9,7 +9,7 @@ class Sort
 {
     public function handle(Builder $query, Closure $next)
     {
-        if (!request()->has('sort_direction')) {
+        if (!request('sort_direction')) {
             return $next($query);
         }
 

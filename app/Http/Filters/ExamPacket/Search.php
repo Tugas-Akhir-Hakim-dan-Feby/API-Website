@@ -9,11 +9,12 @@ class Search
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with("user");
+        $query->with("user.operator");
 
-        if (!request()->has('search')) {
+        if (!request('search')) {
             return $next($query);
         }
+
         $query->where('name', 'LIKE', '%' . request('search') . '%');
 
         return $next($query);

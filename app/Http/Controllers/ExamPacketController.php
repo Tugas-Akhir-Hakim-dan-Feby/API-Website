@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Filters\ExamPacket\CheckSchedule;
 use App\Http\Filters\ExamPacket\Search;
 use App\Http\Filters\ExamPacket\ShowByExpert;
+use App\Http\Filters\ExamPacket\ShowByOperator;
 use App\Http\Filters\ExamPacket\Sort;
-use App\Http\Filters\ExamPacket\SortByUser;
 use App\Http\Requests\ExamPacket\ExamPacketRequestStore;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
 use App\Http\Resources\ExamPacket\ExamPacketDetail;
@@ -14,6 +14,8 @@ use App\Http\Traits\MessageFixer;
 use App\Models\ExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\User\UserRepository;
+use App\Repositories\UserOperator\UserOperatorRepository;
+use App\Repositories\WelderSkill\WelderSkillRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
@@ -23,12 +25,14 @@ class ExamPacketController extends Controller
 {
     use MessageFixer;
 
-    protected $examPacketRepository, $userRepository;
+    protected $examPacketRepository, $userRepository, $operatorRepository, $welderSkillRepository;
 
-    public function __construct(ExamPacketRepository $examPacketRepository, UserRepository $userRepository)
+    public function __construct(ExamPacketRepository $examPacketRepository, UserRepository $userRepository, UserOperatorRepository $operatorRepository, WelderSkillRepository $welderSkillRepository)
     {
         $this->examPacketRepository = $examPacketRepository;
         $this->userRepository = $userRepository;
+        $this->operatorRepository = $operatorRepository;
+        $this->welderSkillRepository = $welderSkillRepository;
     }
 
     public function index(Request $request)
@@ -39,10 +43,10 @@ class ExamPacketController extends Controller
                 Search::class,
                 Sort::class,
                 CheckSchedule::class,
-                ShowByExpert::class
+                ShowByOperator::class
             ])
             ->thenReturn()
-            ->with(["exam", "examPacketHasWelders"])
+            ->with(["exam", "competenceSchema", "examPacketHasWelders", "operator.logo"])
             ->paginate($request->per_page);
 
         return new ExamPacketCollection($examPackets);
@@ -52,27 +56,19 @@ class ExamPacketController extends Controller
     {
         DB::beginTransaction();
 
+        $operator = $this->operatorRepository->findOrFail($request->operator_id);
+        $welderSkill = $this->welderSkillRepository->findOrFail($request->welder_skill_id);
+
         try {
             $request->merge([
+                'operator_id' => $operator->id,
                 'uuid' => Str::uuid(),
                 'year' => date("Y"),
-                'user_id' => auth()->user()->id
+                'user_id' => $operator->user_id,
+                'welder_skill_id' => $welderSkill->id
             ]);
 
             $examPacket = $this->examPacketRepository->create($request->all());
-
-            $examPacket->examPacketHasExperts()->create([
-                'uuid' => Str::uuid(),
-                "user_id" => auth()->user()->id
-            ]);
-
-            foreach ($request->person_responsible as $userId) {
-                $user = $this->userRepository->findOrFail($userId);
-                $examPacket->examPacketHasExperts()->create([
-                    'uuid' => Str::uuid(),
-                    "user_id" => $user->id
-                ]);
-            }
 
             DB::commit();
 
@@ -86,7 +82,7 @@ class ExamPacketController extends Controller
     public function show($id)
     {
         $examPacket = $this->examPacketRepository->findOrFail($id);
-        $examPacket->load(["exams", "examPacketHasWelder"]);
+        $examPacket->load(["exams", "examPacketHasWelder", "competenceSchema", "operator.logo"]);
 
         return new ExamPacketDetail($examPacket);
     }
@@ -96,6 +92,14 @@ class ExamPacketController extends Controller
         DB::beginTransaction();
 
         $examPacket = $this->examPacketRepository->findOrFail($id);
+        $operator = $this->operatorRepository->findOrFail($request->operator_id);
+        $welderSkill = $this->welderSkillRepository->findOrFail($request->welder_skill_id);
+
+        $request->merge([
+            'operator_id' => $operator->id,
+            'user_id' => $operator->user_id,
+            'welder_skill_id' => $welderSkill->id
+        ]);
 
         try {
             $examPacket->update($request->all());

@@ -19,15 +19,17 @@ class ExamPacketDetail extends JsonResource
     public function toArray($request)
     {
         $data = [
-            "name" => $this->name,
+            "competence_schema" => $this->competenceSchema,
             "year" => $this->year,
             "status" => $this->status,
-            "schedule"  => $this->schedule,
+            "exam_schedule"  => $this->exam_schedule,
             "start_time" => $this->start_time,
             "end_time" => $this->end_time,
             "period" => $this->period,
-            "practice_exam_address" => $this->practice_exam_address,
             "uuid" => $this->uuid,
+            "close_schedule" => $this->close_schedule,
+            "operator" => $this->operator,
+            "price" => $this->price,
         ];
 
         if (auth()->user()->onlyRoles([User::ADMIN_APP, User::EXPERT])) {

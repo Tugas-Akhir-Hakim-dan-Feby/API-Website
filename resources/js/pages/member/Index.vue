@@ -8,9 +8,11 @@ export default {
             isLoading: false,
             costWelderMember: {},
             costCompanyMember: {},
+            costTuk: {},
         };
     },
     mounted() {
+        this.getCostTuk();
         this.getCostWelderMember();
         this.getCostCompanyMember();
 
@@ -54,6 +56,21 @@ export default {
                     this.isLoading = false;
                 });
         },
+        getCostTuk() {
+            this.isLoading = true;
+            this.$store
+                .dispatch("showData", [
+                    "cost",
+                    this.$store.state.COST.EXAM_INSTITUTE,
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.costTuk = response.data;
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                });
+        },
         getRupiah(amount) {
             return util.getRupiah(amount);
         },
@@ -71,11 +88,11 @@ export default {
     </div>
 
     <div class="row mb-3">
-        <div class="col-md-5 offset-lg-1">
+        <div class="col-md-4">
             <div class="card card-pricing">
                 <div class="card-body text-center">
                     <p class="card-pricing-plan-name fw-bold text-uppercase">
-                        Welder Member
+                        Member Individu
                     </p>
                     <h2 class="card-pricing-price">
                         {{ getRupiah(costWelderMember.nominalPrice) }}
@@ -100,11 +117,11 @@ export default {
             </div>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="card card-pricing">
                 <div class="card-body text-center">
                     <p class="card-pricing-plan-name fw-bold text-uppercase">
-                        Perusahaan Member
+                        Member Perusahaan
                     </p>
                     <h2 class="card-pricing-price">
                         {{ getRupiah(costCompanyMember.nominalPrice) }}
@@ -121,6 +138,35 @@ export default {
                     </ul>
                     <router-link
                         :to="{ name: 'Member Company' }"
+                        class="btn btn-primary mt-4 mb-2 rounded-pill"
+                    >
+                        Pilih Member
+                    </router-link>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-pricing">
+                <div class="card-body text-center">
+                    <p class="card-pricing-plan-name fw-bold text-uppercase">
+                        Member TUK
+                    </p>
+                    <h2 class="card-pricing-price">
+                        {{ getRupiah(costTuk.nominalPrice) }}
+                        <span>/ Tahun</span>
+                    </h2>
+                    <ul class="card-pricing-features">
+                        <li class="h5 my-0 py-0 fw-bold text-uppercase">
+                            Keuntungan
+                        </li>
+                        <hr />
+                        <!-- <li>Mendapatkan Informasi Terbaru Pengelasan</li>
+                        <li>Mendapatkan Konsultasi bersama Pakar IWS</li>
+                        <li>Menyajikan Berita terkait Perusahaan</li> -->
+                    </ul>
+                    <router-link
+                        :to="{ name: 'Member Operator' }"
                         class="btn btn-primary mt-4 mb-2 rounded-pill"
                     >
                         Pilih Member

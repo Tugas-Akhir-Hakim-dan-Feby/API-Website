@@ -27,14 +27,16 @@ class ExamPacketRequestStore extends FormRequest
     public function rules()
     {
         $request = [
-            "name" => "required",
             "year" => "numeric",
-            "schedule" => "required",
+            "exam_schedule" => "required",
+            "close_schedule" => "required",
+            "price" => "required",
+            "operator_id" => "required|exists:user_operators,uuid",
+            "welder_skill_id" => "required|exists:welder_skills,uuid"
         ];
 
         if (request("method") != "put") {
-            $request["person_responsible"] = "required";
-            $request["practice_exam_address"] = "required";
+            // $request["person_responsible"] = "required";
         }
 
         if (request('is_period') == "true") {
@@ -50,14 +52,15 @@ class ExamPacketRequestStore extends FormRequest
     public function attributes()
     {
         return [
-            "name" => "nama",
             "year" => "tahun",
-            "schedule" => "jadwal",
+            "exam_schedule" => "jadwal ujian",
             "start_time" => "waktu mulai",
             "end_time" => "waktu selesai",
             "period" => "periode",
-            "practice_exam_address" => "alamat tempat ujian",
-            "person_responsible" => "penanggung jawab"
+            "close_schedule" => "jadwal penutupan pendaftaran",
+            "person_responsible" => "penanggung jawab",
+            "price" => "harga ujian",
+            "welder_skill_id" => "skema uji kompetensi"
         ];
     }
 

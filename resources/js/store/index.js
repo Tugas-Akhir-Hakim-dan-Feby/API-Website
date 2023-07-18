@@ -9,6 +9,7 @@ const store = createStore({
     },
     state: {
         USER: null,
+        PERMISSION: null,
         ADMIN_APP: "Admin App",
         ADMIN_HUB: "Admin Pusat",
         ADMIN_BRANCH: "Admin Cabang",
@@ -16,6 +17,7 @@ const store = createStore({
         MEMBER_COMPANY: "Member Company",
         MEMBER_WELDER: "Member Individu",
         GUEST: "Member Aplikasi",
+        OPERATOR: "Operator",
         PAID: "PAID",
         PENDING: "PENDING",
         BASE_URL: window.origin,
@@ -30,6 +32,9 @@ const store = createStore({
     mutations: {
         setUser(state, user) {
             state.USER = user;
+        },
+        setPermission(state, permission) {
+            state.PERMISSION = permission;
         },
     },
 });

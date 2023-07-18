@@ -61,6 +61,15 @@ trait CheckRoles
         return false;
     }
 
+    public function isOperator()
+    {
+        if ($this->role_id == User::OPERATOR) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function onlyRoles($roles)
     {
         if (is_array($roles)) {

@@ -9,6 +9,7 @@ use App\Models\User\Branch;
 use App\Models\User\CompanyMember;
 use App\Models\User\Expert;
 use App\Models\User\Hub;
+use App\Models\User\Operator;
 use App\Models\User\WelderMember;
 use App\Notifications\SendEmailVerification;
 use App\Notifications\SendResetPassword;
@@ -112,6 +113,11 @@ class User extends Authenticatable
     public function articles(): HasMany
     {
         return $this->hasMany(Article::class, 'user_id', 'id');
+    }
+
+    public function operator(): HasOne
+    {
+        return $this->hasOne(Operator::class, 'user_id', 'id');
     }
 
     public function adminHub(): HasOne

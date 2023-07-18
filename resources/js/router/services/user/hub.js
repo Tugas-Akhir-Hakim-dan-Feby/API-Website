@@ -1,4 +1,4 @@
-import { checkRoles } from "../../../store/utils/middleware";
+import { checkPermission, checkRoles } from "../../../store/utils/middleware";
 import store from "../../../store";
 
 export default [
@@ -9,7 +9,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("adminhub", "index"),
     },
     {
         path: "/user/hub/create",
@@ -18,7 +18,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("adminhub", "create"),
     },
     {
         path: "/user/hub/:id",
@@ -28,7 +28,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("adminhub", "show"),
     },
     {
         path: "/user/hub/:id/edit",
@@ -38,6 +38,6 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkRoles([store.state.ADMIN_APP, store.state.ADMIN_HUB]),
+        beforeEnter: checkPermission("adminhub", "update"),
     },
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User\Operator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,25 +18,33 @@ class ExamPacket extends Model
     const INACTIVE = 0;
 
     protected $fillable = [
-        "name",
+        "operator_id",
+        "welder_skill_id",
         "year",
         "status",
-        "schedule",
+        "exam_schedule",
+        "close_schedule",
+        "price",
         "start_time",
         "end_time",
         "period",
-        "period",
-        "practice_exam_address",
         "uuid",
     ];
 
     protected $hidden = [
-        "id"
+        "id",
+        "operator_id",
+        "welder_skill_id",
     ];
 
     public function user(): HasOne
     {
         return $this->hasOne(User::class, "id", "user_id");
+    }
+
+    public function operator(): HasOne
+    {
+        return $this->hasOne(Operator::class, "id", "operator_id");
     }
 
     public function exam(): HasOne
@@ -48,9 +57,9 @@ class ExamPacket extends Model
         return $this->hasMany(Exam::class, "exam_packet_id", "id");
     }
 
-    public function examPacketHasExperts(): HasMany
+    public function competenceSchema(): HasOne
     {
-        return $this->hasMany(ExpertHasExamPacket::class, 'exam_packet_id', 'id');
+        return $this->hasOne(WelderSkill::class, 'id', 'welder_skill_id');
     }
 
     public function examPacketHasWelders(): HasMany

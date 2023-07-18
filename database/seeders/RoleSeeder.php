@@ -30,7 +30,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_APP]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $access[User::ADMIN_APP]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::ADMIN_APP]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
+        $access[User::ADMIN_APP]['ExamPacket'] = ['index', 'show', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::ADMIN_APP]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_APP]['Profile'] = ['index', 'update-password', 'update-admin-app'];
         $access[User::ADMIN_APP]['Payment'] = ['cost', 'invoice'];
@@ -45,7 +45,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_HUB]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $access[User::ADMIN_HUB]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::ADMIN_HUB]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::ADMIN_HUB]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_HUB]['ExamPacket'] = ['index', 'show', 'delete', 'search', 'pagination', 'update-status'];
         $access[User::ADMIN_HUB]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::ADMIN_HUB]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
         $access[User::ADMIN_HUB]['Payment'] = ['cost', 'invoice'];
@@ -82,12 +82,16 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_APPLICATION]['Profile'] = ['index', 'update-password', 'update-guest'];
         $access[User::MEMBER_APPLICATION]['Member'] = ['index', 'company-member', 'welder-member'];
         $access[User::MEMBER_APPLICATION]['JobVacancy'] = ['index', 'index-welder'];
+        $access[User::MEMBER_APPLICATION]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];
+        $access[User::MEMBER_APPLICATION]['Exam'] = ['index', 'show', 'pagination'];
 
         $access[User::OPERATOR]['Dashboard'] = ['index'];
         $access[User::OPERATOR]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::OPERATOR]['Profile'] = ['index', 'update-password', 'update-guest'];
         $access[User::OPERATOR]['Member'] = ['index', 'company-member', 'welder-member'];
-        $access[User::OPERATOR]['JobVacancy'] = ['index', 'index-welder'];
+        $access[User::OPERATOR]['Payment'] = ['history'];
+        $access[User::OPERATOR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
+        $access[User::OPERATOR]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
 
         $this->disableForeignKeys();
         $this->truncate('roles');

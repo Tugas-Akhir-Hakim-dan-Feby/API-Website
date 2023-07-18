@@ -66,7 +66,7 @@ trait PaymentFixer
         }
 
         if ($costId == Cost::TEST_INSTITUTION) {
-            $description = "pembayaran lembaga sertfikasi";
+            $description = "pembayaran tempat uji kompetensi";
         }
 
         return $description;

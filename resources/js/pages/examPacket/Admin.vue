@@ -67,7 +67,7 @@ export default {
                 });
         },
         getSchedule(date) {
-            return dayjs(date).locale("id").format("DD MMMM YYYY");
+            return dayjs(date).locale("id").format("dddd, DD MMMM YYYY");
         },
         getMinute(startTime, endTime) {
             const [startHours, startMinutes] = startTime.split(":");
@@ -201,8 +201,20 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Nama Paket</th>
+                            <th
+                                v-if="
+                                    checkRole($store.state.ADMIN_APP) ||
+                                    checkRole($store.state.ADMIN_HUB)
+                                "
+                            >
+                                Penyelenggara
+                            </th>
+                            <th>Skema Kompetensi</th>
                             <th>Jadwal Ujian</th>
+                            <th>
+                                Jadwal Penutupan <br />
+                                Pendaftaran
+                            </th>
                             <th>Tenggat Ujian</th>
                             <th>Jumlah Peserta</th>
                             <th>Aksi</th>
@@ -210,7 +222,15 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-if="examPackets.length < 1">
-                            <td colspan="6" class="text-center">
+                            <td
+                                :colspan="
+                                    checkRole($store.state.ADMIN_APP) ||
+                                    checkRole($store.state.ADMIN_HUB)
+                                        ? 8
+                                        : 7
+                                "
+                                class="text-center"
+                            >
                                 data paket uji kompetensi tidak ada
                             </td>
                         </tr>
@@ -220,8 +240,22 @@ export default {
                             :key="index"
                         >
                             <th v-html="iteration(index)"></th>
-                            <td v-html="examPacket.name"></td>
-                            <td v-html="getSchedule(examPacket.schedule)"></td>
+                            <td
+                                v-if="
+                                    checkRole($store.state.ADMIN_APP) ||
+                                    checkRole($store.state.ADMIN_HUB)
+                                "
+                                v-html="examPacket.operator?.tukName"
+                            ></td>
+                            <td
+                                v-html="examPacket.competenceSchema?.skillName"
+                            ></td>
+                            <td
+                                v-html="getSchedule(examPacket.examSchedule)"
+                            ></td>
+                            <td
+                                v-html="getSchedule(examPacket.closeSchedule)"
+                            ></td>
                             <td
                                 v-html="
                                     `${examPacket.startTime} - ${

@@ -1,351 +1,343 @@
 <script>
 import dayjs from "dayjs";
-import "dayjs/locale/id";
+import PageTitle from "../../components/PageTitle.vue";
+import Success from "../../components/notifications/Success.vue";
+import Util from "../../store/utils/util";
+import jsCookie from "js-cookie";
+import "select2";
 
 export default {
-    props: {
-        examPacket: {
-            default: {},
-            type: Object,
-        },
-        edit: {
-            default: false,
-            type: Boolean,
-        },
-        isShowParticipant: {
-            default: false,
-            type: Boolean,
-        },
-    },
+    props: ["id"],
     data() {
         return {
-            roles: [],
+            form: {
+                name: "",
+                examSchedule: "",
+                closeSchedule: "",
+                startTime: "",
+                endTime: "",
+            },
+            welderSkills: [],
+            minDate: new Date().toISOString().split("T")[0],
             errors: {},
+            user: {},
             isLoading: false,
-            isEdit: false,
-            schedule: null,
         };
     },
     mounted() {
-        this.schedule = this.date;
+        this.util();
         this.getUser();
+        this.getExamPacket();
+        this.getWelderSkills();
+        Util.removeInvalidClass();
+    },
+    watch: {
+        id(newId) {
+            this.id = newId;
+        },
     },
     methods: {
+        getExamPacket() {
+            this.$store
+                .dispatch("showData", ["exam-packet", this.id])
+                .then((response) => {
+                    this.form = {
+                        welderSkillId: response.data.competenceSchema?.uuid,
+                        operatorId: response.data.operator?.uuid,
+                        examSchedule: this.formatDate(
+                            response.data.examSchedule
+                        ),
+                        closeSchedule: this.formatDate(
+                            response.data.closeSchedule
+                        ),
+                        startTime: response.data.startTime,
+                        endTime: response.data.endTime,
+                        price: response.data.price,
+                    };
+                });
+        },
+        getExpertUsers() {
+            this.$store
+                .dispatch("getData", ["user/expert", {}])
+                .then((response) => {
+                    this.experUsers = response.data.map((user) => ({
+                        id: user.uuid,
+                        text: user.name,
+                    }));
+                })
+                .catch((err) => {});
+        },
         getUser() {
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    this.roles = response.roles;
-                })
-                .catch((err) => {});
+                    this.user = response.user;
+                });
         },
-        getSchedule(date) {
-            return dayjs(date).locale("id").format("DD MMMM YYYY");
-        },
-        getMinute(startTime, endTime) {
-            if (startTime) {
-                const [startHours, startMinutes] = startTime.split(":");
-                const [endHours, endMinutes] = endTime.split(":");
-
-                const startDate = new Date();
-                startDate.setHours(startHours);
-                startDate.setMinutes(startMinutes);
-
-                const endDate = new Date();
-                endDate.setHours(endHours);
-                endDate.setMinutes(endMinutes);
-
-                let diff =
-                    (endDate.getTime() - startDate.getTime()) / 1000 / 60;
-                if (diff < 0) {
-                    diff += 1440;
-                }
-
-                return diff;
-            }
-            return;
-        },
-        handleEdit() {
-            this.isLoading = true;
-            let form = {
-                name: this.examPacket.name,
-                schedule: this.examPacket.date,
-                startTime: this.examPacket.startTime,
-                endTime: this.examPacket.endTime,
-                _method: "put",
-            };
+        getWelderSkills() {
             this.$store
-                .dispatch("updateData", [
-                    "exam-packet",
-                    this.examPacket.uuid,
-                    form,
-                ])
+                .dispatch("getData", ["skill/welder", ""])
+                .then((response) => {
+                    this.welderSkills = response.data;
+                });
+        },
+        handleSubmit() {
+            this.isLoading = true;
+
+            if (this.user.roleId == 8) {
+                this.form.operatorId = this.user.operator.uuid;
+            }
+
+            this.$store
+                .dispatch("updateData", ["exam-packet", this.id, this.form])
                 .then((response) => {
                     this.isLoading = false;
-                    this.isEdit = false;
-                    this.$emit("onSuccessEdit", true);
+                    $("#successModal").modal("show");
                 })
                 .catch((error) => {
                     this.isLoading = false;
+                    this.errors = error.response.data.messages;
                 });
         },
-        checkRole(role) {
-            if (this.roles.includes(role)) {
-                return true;
-            }
-            return false;
+        util() {
+            $(this.$refs.tuk).select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/user/operator`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 10,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((user) => ({
+                                id: user.operator?.uuid,
+                                text: `${user.operator?.tuk_type} / ${user.operator?.tuk_name} / ${user.operator?.tuk_code}`,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+            });
+            $(this.$refs.tuk).on("change", () => {
+                this.form.operatorId = $(this.$refs.tuk).val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
+        },
+        formatDate(date) {
+            return dayjs(date).locale("id").format("YYYY-MM-DD");
+        },
+        onCancel() {
+            this.$router.back(-1);
         },
     },
+    components: { PageTitle, Success },
 };
 </script>
-<template>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card bg-primary">
-                <div class="card-body profile-user-box">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <div>
-                                        <h4
-                                            class="mt-1 mb-1 text-white"
-                                            v-if="!isEdit"
-                                        >
-                                            {{ examPacket.name }}
-                                        </h4>
-                                        <input
-                                            v-else
-                                            type="text"
-                                            class="form-control mt-2"
-                                            v-model="examPacket.name"
-                                            :disabled="isLoading"
-                                            :class="{
-                                                'is-invalid': errors.name,
-                                            }"
-                                        />
-                                        <div
-                                            class="invalid-feedback"
-                                            v-if="errors.name"
-                                            v-for="(
-                                                error, index
-                                            ) in errors.name"
-                                            :key="index"
-                                        >
-                                            {{ error }}.
-                                        </div>
-                                        <p class="font-13 text-white-50">
-                                            Nama Paket
-                                        </p>
 
-                                        <ul class="mb-0 list-inline text-light">
-                                            <li class="list-inline-item me-3">
-                                                <h5
-                                                    class="mb-1 text-white"
-                                                    v-if="!isEdit"
-                                                >
-                                                    {{
-                                                        getSchedule(
-                                                            examPacket.schedule
-                                                        )
-                                                    }}
-                                                </h5>
-                                                <input
-                                                    v-else
-                                                    type="date"
-                                                    class="form-control mt-2"
-                                                    v-model="examPacket.date"
-                                                    :disabled="isLoading"
-                                                    :class="{
-                                                        'is-invalid':
-                                                            errors.schedule,
-                                                    }"
-                                                />
-                                                <div
-                                                    class="invalid-feedback"
-                                                    v-if="errors.schedule"
-                                                    v-for="(
-                                                        error, index
-                                                    ) in errors.schedule"
-                                                    :key="index"
-                                                >
-                                                    {{ error }}.
-                                                </div>
-                                                <p
-                                                    class="mb-0 font-13 text-white-50"
-                                                >
-                                                    Jadwal Ujian
-                                                </p>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <h5
-                                                    class="mb-1 text-white"
-                                                    v-if="!isEdit"
-                                                >
-                                                    {{
-                                                        `${
-                                                            examPacket.startTime
-                                                        } - ${
-                                                            examPacket.endTime
-                                                        } WIB (${getMinute(
-                                                            examPacket.startTime,
-                                                            examPacket.endTime
-                                                        )} Menit)`
-                                                    }}
-                                                </h5>
-                                                <div class="row" v-else>
-                                                    <div class="col-lg-6 mt-2">
-                                                        <p
-                                                            class="mb-0 font-13 text-white-50"
-                                                        >
-                                                            Jam Mulai
-                                                        </p>
-                                                        <input
-                                                            type="time"
-                                                            class="form-control"
-                                                            v-model="
-                                                                examPacket.startTime
-                                                            "
-                                                            :disabled="
-                                                                isLoading
-                                                            "
-                                                            :class="{
-                                                                'is-invalid':
-                                                                    errors.startTime,
-                                                            }"
-                                                        />
-                                                        <div
-                                                            class="invalid-feedback"
-                                                            v-if="
-                                                                errors.startTime
-                                                            "
-                                                            v-for="(
-                                                                error, index
-                                                            ) in errors.startTime"
-                                                            :key="index"
-                                                        >
-                                                            {{ error }}.
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6 mt-2">
-                                                        <p
-                                                            class="mb-0 font-13 text-white-50"
-                                                        >
-                                                            Jam Selesai
-                                                        </p>
-                                                        <input
-                                                            type="time"
-                                                            class="form-control"
-                                                            v-model="
-                                                                examPacket.endTime
-                                                            "
-                                                            :disabled="
-                                                                isLoading
-                                                            "
-                                                            :class="{
-                                                                'is-invalid':
-                                                                    errors.endTime,
-                                                            }"
-                                                        />
-                                                        <div
-                                                            class="invalid-feedback"
-                                                            v-if="
-                                                                errors.endTime
-                                                            "
-                                                            v-for="(
-                                                                error, index
-                                                            ) in errors.endTime"
-                                                            :key="index"
-                                                        >
-                                                            {{ error }}.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <p
-                                                    class="mb-0 font-13 text-white-50"
-                                                >
-                                                    Tenggat Pengerjaan
-                                                </p>
-                                            </li>
-                                        </ul>
+<template>
+    <PageTitle title="Edit Paket" isBack="true" @onBack="$router.back(-1)">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }">
+                    <span> Uji Kompetensi </span>
+                </router-link>
+            </li>
+            <li class="breadcrumb-item active">Edit Paket</li>
+        </ol>
+    </PageTitle>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <form @submit.prevent="handleSubmit" method="post">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <label for="name">Skema Kompetensi</label>
+                            <select
+                                class="form-select form-validation"
+                                :class="{ 'is-invalid': errors.welderSkillId }"
+                                v-model="form.welderSkillId"
+                                :disabled="isLoading"
+                            >
+                                <option disabled selected></option>
+                                <option
+                                    v-for="(welderSkill, index) in welderSkills"
+                                    :key="index"
+                                    :value="welderSkill.uuid"
+                                    v-html="welderSkill.skillName"
+                                ></option>
+                            </select>
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.welderSkillId"
+                                v-for="(error, index) in errors.welderSkillId"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="schedule">Jadwal Ujian</label>
+                            <input
+                                type="date"
+                                class="form-control form-validation"
+                                id="schedule"
+                                :class="{ 'is-invalid': errors.examSchedule }"
+                                v-model="form.examSchedule"
+                                :disabled="isLoading"
+                                :min="minDate"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.examSchedule"
+                                v-for="(error, index) in errors.examSchedule"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="schedule"
+                                >Jadwal Penutupan Pendaftaran</label
+                            >
+                            <input
+                                type="date"
+                                class="form-control form-validation"
+                                id="schedule"
+                                :class="{ 'is-invalid': errors.closeSchedule }"
+                                v-model="form.closeSchedule"
+                                :disabled="isLoading"
+                                :min="minDate"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.closeSchedule"
+                                v-for="(error, index) in errors.closeSchedule"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div>
+                            <label>Tenggat Pengerjaan</label>
+                            <div class="row">
+                                <div class="col-lg-6 mb-2">
+                                    <input
+                                        type="time"
+                                        class="form-control form-validation"
+                                        id="startTime"
+                                        :class="{
+                                            'is-invalid': errors.startTime,
+                                        }"
+                                        v-model="form.startTime"
+                                        :disabled="isLoading"
+                                    />
+                                    <small>* masukan waktu mulai</small>
+                                    <div
+                                        class="invalid-feedback"
+                                        v-if="errors.startTime"
+                                        v-for="(
+                                            error, index
+                                        ) in errors.startTime"
+                                        :key="index"
+                                    >
+                                        {{ error }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-2">
+                                    <input
+                                        type="time"
+                                        class="form-control form-validation"
+                                        id="endTime"
+                                        :class="{
+                                            'is-invalid': errors.endTime,
+                                        }"
+                                        v-model="form.endTime"
+                                        :disabled="isLoading"
+                                    />
+                                    <small>* masukan waktu selesai</small>
+                                    <div
+                                        class="invalid-feedback"
+                                        v-if="errors.endTime"
+                                        v-for="(error, index) in errors.endTime"
+                                        :key="index"
+                                    >
+                                        {{ error }}
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-sm-4">
-                            <div class="text-center mt-sm-0 mt-3 text-sm-end">
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-success me-2"
-                                    @click="handleEdit"
-                                    v-if="isEdit && !isLoading"
-                                >
-                                    Simpan
-                                </button>
-                                <button
-                                    class="btn btn-sm btn-success me-2"
-                                    type="button"
-                                    disabled
-                                    v-if="isEdit && isLoading"
-                                >
-                                    <span
-                                        class="spinner-border spinner-border-sm me-1"
-                                        role="status"
-                                        aria-hidden="true"
-                                    ></span>
-                                    Harap Tunggu...
-                                </button>
-                                <router-link
-                                    class="btn btn-sm btn-light me-2"
-                                    :to="{
-                                        name: 'Exam Packet Participant',
-                                        params: { id: examPacket.uuid },
-                                    }"
-                                    v-if="
-                                        !isEdit &&
-                                        (examPacket.user?.name ==
-                                            $store.state.USER.uuid ||
-                                            checkRole($store.state.ADMIN_APP) ||
-                                            checkRole(
-                                                $store.state.ADMIN_HUB
-                                            )) &&
-                                        isShowParticipant
-                                    "
-                                >
-                                    Lihat Peserta
-                                </router-link>
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-light"
-                                    @click="isEdit = true"
-                                    v-if="
-                                        !isEdit &&
-                                        (examPacket.user?.name ==
-                                            $store.state.USER.uuid ||
-                                            checkRole($store.state.ADMIN_APP) ||
-                                            checkRole(
-                                                $store.state.ADMIN_HUB
-                                            )) &&
-                                        edit
-                                    "
-                                >
-                                    Edit Paket
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-light"
-                                    @click="isEdit = false"
-                                    v-if="isEdit"
-                                >
-                                    Batal
-                                </button>
+                        <div class="mb-2">
+                            <label for="schedule">Harga Uji Kompetensi</label>
+                            <input
+                                type="number"
+                                class="form-control form-validation"
+                                id="schedule"
+                                :class="{ 'is-invalid': errors.price }"
+                                v-model="form.price"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.price"
+                                v-for="(error, index) in errors.price"
+                                :key="index"
+                            >
+                                {{ error }}
                             </div>
                         </div>
                     </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <router-link
+                            :to="{
+                                name: 'Exam Packet Detail',
+                                params: { id: id },
+                            }"
+                            class="btn btn-sm btn-secondary"
+                            :disabled="isLoading"
+                        >
+                            Batal
+                        </router-link>
+                        <button
+                            class="btn btn-sm btn-success"
+                            v-if="!isLoading"
+                        >
+                            Simpan
+                        </button>
+                        <button
+                            class="btn btn-sm btn-success"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+
+    <Success
+        :url="{
+            name: 'Exam Packet Detail',
+            params: { id: id },
+        }"
+        :msg="'data berhasil diperbaharui.'"
+    />
 </template>

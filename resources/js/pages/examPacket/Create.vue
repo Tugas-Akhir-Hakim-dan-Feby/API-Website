@@ -10,21 +10,24 @@ export default {
         return {
             form: {
                 name: "",
-                schedule: "",
+                examSchedule: "",
+                closeSchedule: "",
                 startTime: "",
                 endTime: "",
-                practiceExamAddress: "",
-                personResponsible: [],
+                welderSkillId: "",
+                operatorId: "",
             },
-            experUsers: [],
+            welderSkills: [],
             minDate: new Date().toISOString().split("T")[0],
             errors: {},
+            user: {},
             isLoading: false,
         };
     },
     mounted() {
-        this.util();
-        // this.getExpertUsers ();
+        this.getTuk();
+        this.getUser();
+        this.getWelderSkills();
         Util.removeInvalidClass();
     },
     methods: {
@@ -39,8 +42,27 @@ export default {
                 })
                 .catch((err) => {});
         },
+        getUser() {
+            this.$store
+                .dispatch("showData", ["user", "me"])
+                .then((response) => {
+                    this.user = response.user;
+                });
+        },
+        getWelderSkills() {
+            this.$store
+                .dispatch("getData", ["skill/welder", ""])
+                .then((response) => {
+                    this.welderSkills = response.data;
+                });
+        },
         handleSubmit() {
             this.isLoading = true;
+
+            if (this.user.roleId == 8) {
+                this.form.operatorId = this.user.operator.uuid;
+            }
+
             this.$store
                 .dispatch("postData", ["exam-packet", this.form])
                 .then((response) => {
@@ -52,10 +74,10 @@ export default {
                     this.errors = error.response.data.messages;
                 });
         },
-        util() {
-            $(this.$refs.personResponsible).select2({
+        getTuk() {
+            $(this.$refs.tuk).select2({
                 ajax: {
-                    url: `${this.$store.state.BASE_URL}/api/v1/user/expert`,
+                    url: `${this.$store.state.BASE_URL}/api/v1/user/operator`,
                     dataType: "json",
                     headers: {
                         Authorization: "Bearer " + jsCookie.get("token"),
@@ -64,25 +86,22 @@ export default {
                     data: function (params) {
                         return {
                             search: params.term,
-                            per_page: 5,
+                            per_page: 10,
                         };
                     },
                     processResults: function (response) {
                         return {
                             results: response.data.map((user) => ({
-                                id: user.uuid,
-                                text: user.name,
+                                id: user.operator?.uuid,
+                                text: `${user.operator?.tuk_type} / ${user.operator?.tuk_name} / ${user.operator?.tuk_code}`,
                             })),
                         };
                     },
                     cache: true,
                 },
-                minimumInputLength: 1,
             });
-            $(this.$refs.personResponsible).on("change", () => {
-                this.form.personResponsible = $(
-                    this.$refs.personResponsible
-                ).val();
+            $(this.$refs.tuk).on("change", () => {
+                this.form.operatorId = $(this.$refs.tuk).val();
                 $(".select2-hidden-accessible").removeClass("is-invalid");
             });
         },
@@ -108,25 +127,49 @@ export default {
             <li class="breadcrumb-item active">Tambah Paket</li>
         </ol>
     </PageTitle>
+
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <form @submit.prevent="handleSubmit" method="post">
                 <div class="card">
                     <div class="card-body">
-                        <div class="mb-2">
-                            <label for="name">Nama Paket</label>
-                            <input
-                                type="text"
-                                class="form-control form-validation"
-                                id="name"
-                                :class="{ 'is-invalid': errors.name }"
-                                v-model="form.name"
+                        <div class="mb-2" v-if="user.roleId != 8">
+                            <label for="name">TUK</label>
+                            <select
+                                class="form-select form-validation select2-hidden-accessible"
+                                ref="tuk"
+                                :class="{ 'is-invalid': errors.operatorId }"
                                 :disabled="isLoading"
-                            />
+                            ></select>
                             <div
                                 class="invalid-feedback"
-                                v-if="errors.name"
-                                v-for="(error, index) in errors.name"
+                                v-if="errors.operatorId"
+                                v-for="(error, index) in errors.operatorId"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="name">Skema Kompetensi</label>
+                            <select
+                                class="form-select form-validation"
+                                :class="{ 'is-invalid': errors.welderSkillId }"
+                                v-model="form.welderSkillId"
+                                :disabled="isLoading"
+                            >
+                                <option disabled selected></option>
+                                <option
+                                    v-for="(welderSkill, index) in welderSkills"
+                                    :key="index"
+                                    :value="welderSkill.uuid"
+                                    v-html="welderSkill.skillName"
+                                ></option>
+                            </select>
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.welderSkillId"
+                                v-for="(error, index) in errors.welderSkillId"
                                 :key="index"
                             >
                                 {{ error }}
@@ -138,21 +181,43 @@ export default {
                                 type="date"
                                 class="form-control form-validation"
                                 id="schedule"
-                                :class="{ 'is-invalid': errors.schedule }"
-                                v-model="form.schedule"
+                                :class="{ 'is-invalid': errors.examSchedule }"
+                                v-model="form.examSchedule"
                                 :disabled="isLoading"
                                 :min="minDate"
                             />
                             <div
                                 class="invalid-feedback"
-                                v-if="errors.schedule"
-                                v-for="(error, index) in errors.schedule"
+                                v-if="errors.examSchedule"
+                                v-for="(error, index) in errors.examSchedule"
                                 :key="index"
                             >
                                 {{ error }}
                             </div>
                         </div>
                         <div class="mb-2">
+                            <label for="schedule"
+                                >Jadwal Penutupan Pendaftaran</label
+                            >
+                            <input
+                                type="date"
+                                class="form-control form-validation"
+                                id="schedule"
+                                :class="{ 'is-invalid': errors.closeSchedule }"
+                                v-model="form.closeSchedule"
+                                :disabled="isLoading"
+                                :min="minDate"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.closeSchedule"
+                                v-for="(error, index) in errors.closeSchedule"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div>
                             <label>Tenggat Pengerjaan</label>
                             <div class="row">
                                 <div class="col-lg-6 mb-2">
@@ -200,57 +265,24 @@ export default {
                                     </div>
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="practice_exam_address"
-                                    >Alamat Tempat Ujian</label
-                                >
-                                <textarea
-                                    class="form-control form-validation"
-                                    id="practice_exam_address"
-                                    :class="{
-                                        'is-invalid':
-                                            errors.practiceExamAddress,
-                                    }"
-                                    v-model="form.practiceExamAddress"
-                                    :disabled="isLoading"
-                                ></textarea>
-                                <div
-                                    class="invalid-feedback"
-                                    v-if="errors.practiceExamAddress"
-                                    v-for="(
-                                        error, index
-                                    ) in errors.practiceExamAddress"
-                                    :key="index"
-                                >
-                                    {{ error }}
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <label
-                                    >Penanggung Jawab
-                                    <span class="text-muted small"
-                                        >*diisi oleh pakar</span
-                                    ></label
-                                >
-                                <select
-                                    multiple
-                                    ref="personResponsible"
-                                    class="select2-hidden-accessible"
-                                    :class="{
-                                        'is-invalid': errors.personResponsible,
-                                    }"
-                                    :disabled="isLoading"
-                                ></select>
-                                <div
-                                    class="invalid-feedback"
-                                    v-if="errors.personResponsible"
-                                    v-for="(
-                                        error, index
-                                    ) in errors.personResponsible"
-                                    :key="index"
-                                >
-                                    {{ error }}
-                                </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="schedule">Harga Uji Kompetensi</label>
+                            <input
+                                type="number"
+                                class="form-control form-validation"
+                                id="schedule"
+                                :class="{ 'is-invalid': errors.price }"
+                                v-model="form.price"
+                                :disabled="isLoading"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.price"
+                                v-for="(error, index) in errors.price"
+                                :key="index"
+                            >
+                                {{ error }}
                             </div>
                         </div>
                     </div>
