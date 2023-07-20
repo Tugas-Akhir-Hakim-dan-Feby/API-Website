@@ -12,6 +12,17 @@ export default {
             isLoading: false,
         };
     },
+    computed: {
+        maxDateBirth() {
+            let date = new Date();
+            date.setFullYear(date.getFullYear() - 17);
+            date.setMonth(date.getMonth());
+            date.setDate(date.getDate());
+
+            let formattedDate = date.toISOString().split("T")[0];
+            return formattedDate;
+        },
+    },
     mounted() {
         this.getUser();
     },
@@ -248,6 +259,7 @@ export default {
                                     :class="{
                                         'is-invalid': errors.dateBirth,
                                     }"
+                                    :max="maxDateBirth"
                                 />
                                 <div
                                     class="invalid-feedback"
