@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class WelderDocument extends Model
 {
@@ -20,7 +21,7 @@ class WelderDocument extends Model
 
     public function getDocumentPathAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Storage;
 
 class WelderMember extends Model
 {
@@ -37,7 +38,7 @@ class WelderMember extends Model
 
     public function getCertificateSchoolAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 
@@ -46,7 +47,7 @@ class WelderMember extends Model
 
     public function getPasPhotoAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 

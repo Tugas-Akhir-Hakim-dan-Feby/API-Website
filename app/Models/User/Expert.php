@@ -5,6 +5,7 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Expert extends Model
 {
@@ -38,7 +39,7 @@ class Expert extends Model
 
     public function getCertificateCompetencyAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 
@@ -47,7 +48,7 @@ class Expert extends Model
 
     public function getCertificateProfessionAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 
@@ -56,7 +57,7 @@ class Expert extends Model
 
     public function getWorkingMailAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 
@@ -65,7 +66,7 @@ class Expert extends Model
 
     public function getCareerAttribute($image)
     {
-        if ($image) {
+        if ($image && Storage::exists($image)) {
             return asset('storage/' . $image);
         }
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyMember extends Model
 {
@@ -38,7 +39,7 @@ class CompanyMember extends Model
 
     public function getCompanyLegalityAttribute($companyLegality)
     {
-        if ($companyLegality) {
+        if ($companyLegality && Storage::exists($companyLegality)) {
             return asset('storage/' . $companyLegality);
         }
 
@@ -47,7 +48,7 @@ class CompanyMember extends Model
 
     public function getCompanyLogoAttribute($companyLogo)
     {
-        if ($companyLogo) {
+        if ($companyLogo && Storage::exists($companyLogo)) {
             return asset('storage/' . $companyLogo);
         }
 

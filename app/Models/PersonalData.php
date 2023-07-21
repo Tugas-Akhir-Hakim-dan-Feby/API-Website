@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class PersonalData extends Model
 {
@@ -15,6 +16,10 @@ class PersonalData extends Model
 
     public function getCurriculumVitaeAttribute($document)
     {
-        return asset('storage/' . $document);
+        if ($document && Storage::exists($document)) {
+            return asset('storage/' . $document);
+        }
+
+        return null;
     }
 }
