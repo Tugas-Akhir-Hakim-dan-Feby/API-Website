@@ -294,12 +294,7 @@ export default {
                                 <button
                                     class="btn btn-danger btn-sm"
                                     @click="handleDelete(examPacket.uuid)"
-                                    v-if="
-                                        examPacket.user?.name ==
-                                            $store.state.USER.uuid ||
-                                        checkRole($store.state.ADMIN_APP) ||
-                                        checkRole($store.state.ADMIN_HUB)
-                                    "
+                                    v-if="$can('delete', 'Exampacket')"
                                 >
                                     Hapus
                                 </button>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class ExamPacket extends Model
 {
@@ -28,6 +29,7 @@ class ExamPacket extends Model
         "start_time",
         "end_time",
         "period",
+        "certificate",
         "uuid",
     ];
 
@@ -36,6 +38,15 @@ class ExamPacket extends Model
         "operator_id",
         "welder_skill_id",
     ];
+
+    public function getDocumentPathAttribute($document)
+    {
+        if ($document && Storage::exists($document)) {
+            return asset('storage/' . $document);
+        }
+
+        return null;
+    }
 
     public function user(): HasOne
     {
