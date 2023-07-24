@@ -18,7 +18,7 @@ export default [
         meta: {
             requiresAuth: true,
         },
-        beforeEnter: checkPermission("payment", "cost"),
+        beforeEnter: checkPermission("payment", "history"),
     },
     {
         path: "/payment/history/:externalId",
@@ -28,7 +28,7 @@ export default [
             requiresAuth: true,
         },
         props: true,
-        beforeEnter: checkPermission("payment", "cost"),
+        beforeEnter: checkPermission("payment", "history"),
     },
     {
         path: "/payment/recapitulation-invoice",
