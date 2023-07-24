@@ -7,6 +7,7 @@ use App\Http\Filters\User\Expert\Approved;
 use App\Http\Filters\User\Expert\Role as ExpertRole;
 use App\Http\Filters\User\Expert\Search;
 use App\Http\Requests\User\Expert\ExpertRequestStore;
+use App\Http\Requests\User\Expert\ExpertRequestUpdate;
 use App\Http\Requests\User\Expert\UploadFileRequest;
 use App\Http\Resources\User\Expert\ExpertCollection;
 use App\Http\Resources\User\Expert\ExpertDetail;
@@ -154,9 +155,48 @@ class ExpertController extends Controller
         return new ExpertDetail($user);
     }
 
-    public function update(Request $request, $id)
+    public function update(ExpertRequestUpdate $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            $user->update([
+                "name" => $request->name,
+                "email" => $request->email
+            ]);
+
+            $user->welderMember()->update([
+                "resident_id_card" => $request->resident_id_card,
+                "date_birth" => $request->date_birth,
+                "birth_place" => $request->birth_place,
+                "working_status" => $request->working_status,
+            ]);
+
+            $user->personalData()->update([
+                "province" => $request->province,
+                "regency" => $request->regency,
+                "district" => $request->district,
+                "village" => $request->village,
+                "citizenship" => $request->citizenship,
+                "zip_code" => $request->zip_code,
+                "phone" => $request->phone,
+            ]);
+
+            $user->expert()->update([
+                "instance" => $request->instance
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function confirmation($id)

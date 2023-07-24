@@ -6,6 +6,7 @@ import ProfileAdminApp from "./profile/ProfileAdminApp.vue";
 import ProfileAdminBranch from "./profile/ProfileAdminBranch.vue";
 import ProfileCompanyMember from "./profile/ProfileCompanyMember.vue";
 import ProfileWelderMember from "./profile/ProfileWelderMember.vue";
+import ProfileExpert from "./profile/ProfileExpert.vue";
 
 export default {
     methods: {
@@ -27,20 +28,21 @@ export default {
         ProfileAdminBranch,
         ProfileCompanyMember,
         ProfileWelderMember,
+        ProfileExpert,
     },
 };
 </script>
 <template>
     <ProfileAdminApp
         v-if="
-            ($can('update-admin-app', 'Profile') ||
-                $can('update-guest', 'Profile')) &&
-            ($store.state.USER.roleId == 7 || $store.state.USER.roleId == 1)
+            $can('update-admin-app', 'Profile') ||
+            $can('update-guest', 'Profile')
         "
     />
     <ProfileAdminHub v-if="$can('update-admin-hub', 'Profile')" />
     <ProfileAdminBranch v-if="$can('update-admin-branch', 'Profile')" />
     <ProfileCompanyMember v-if="$can('update-company-member', 'Profile')" />
     <ProfileWelderMember v-if="$can('update-welder-member', 'Profile')" />
+    <ProfileExpert />
     <ChangePassword v-if="$can('update-password', 'Profile')" />
 </template>
