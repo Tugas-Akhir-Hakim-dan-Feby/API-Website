@@ -70,6 +70,7 @@ export default {
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
                     this.isLoading = false;
+                    this.users = response.user;
                     this.setForm(response.user);
                     this.getRegency({
                         target: {

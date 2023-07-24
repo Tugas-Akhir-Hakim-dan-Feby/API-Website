@@ -100,32 +100,135 @@ export default {
                                         </div>
                                     </td>
                                 </tr>
-                                <!-- <tr
-                                    v-if="
-                                        document.competencyCertificates
-                                            ?.length < 1
-                                    "
-                                >
-                                    <td>Sertifikat Kompetensi</td>
+                                <tr>
+                                    <td>Sertifikat Profesi</td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a
                                                 href="#"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#uploadDocument"
+                                                data-bs-target="#uploadPasPhoto"
                                                 ><i class="mdi mdi-upload"></i>
                                                 Unggah</a
                                             >
+                                            <p v-if="document.pasPhoto">|</p>
+                                            <a
+                                                target="_blank"
+                                                :href="document.pasPhoto"
+                                                v-if="document.pasPhoto"
+                                                ><i
+                                                    class="mdi mdi-download"
+                                                ></i>
+                                                Unduh</a
+                                            >
                                         </div>
                                     </td>
-                                </tr> -->
+                                </tr>
+                                <tr>
+                                    <td>Surat keterangan aktif bekerja</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a
+                                                href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#uploadPasPhoto"
+                                                ><i class="mdi mdi-upload"></i>
+                                                Unggah</a
+                                            >
+                                            <p v-if="document.pasPhoto">|</p>
+                                            <a
+                                                target="_blank"
+                                                :href="document.pasPhoto"
+                                                v-if="document.pasPhoto"
+                                                ><i
+                                                    class="mdi mdi-download"
+                                                ></i>
+                                                Unduh</a
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Riwayat Pekerjaan</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a
+                                                href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#uploadPasPhoto"
+                                                ><i class="mdi mdi-upload"></i>
+                                                Unggah</a
+                                            >
+                                            <p v-if="document.pasPhoto">|</p>
+                                            <a
+                                                target="_blank"
+                                                :href="document.pasPhoto"
+                                                v-if="document.pasPhoto"
+                                                ><i
+                                                    class="mdi mdi-download"
+                                                ></i>
+                                                Unduh</a
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-lg-4">
+            <h4>Informasi Sertifikat</h4>
+            <p>Perbaharui informasi sertifikat.</p>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-centered mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Dokumen</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sertifikat Kompetensi 1</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a
+                                                href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#uploadPasPhoto"
+                                                ><i class="mdi mdi-upload"></i>
+                                                Unggah</a
+                                            >
+                                            <p v-if="document.pasPhoto">|</p>
+                                            <a
+                                                target="_blank"
+                                                :href="document.pasPhoto"
+                                                v-if="document.pasPhoto"
+                                                ><i
+                                                    class="mdi mdi-download"
+                                                ></i>
+                                                Unduh</a
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr
                                     v-for="(
                                         certificate, index
                                     ) in document.competencyCertificates"
                                     :key="index"
                                 >
-                                    <td>Sertifikat Kompetensi</td>
+                                    <td>
+                                        Sertifikat Kompetensi {{ index + 2 }}
+                                    </td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a
