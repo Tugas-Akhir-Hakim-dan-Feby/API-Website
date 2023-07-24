@@ -179,7 +179,7 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Kumpulan Paket Pertanyaan" />
+    <PageTitle title="Uji Kompetensi" />
 
     <div class="card position-relative">
         <Loader v-if="isLoading" />
