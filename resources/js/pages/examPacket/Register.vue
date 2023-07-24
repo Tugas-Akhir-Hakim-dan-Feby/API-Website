@@ -204,7 +204,9 @@ export default {
                                     data-bs-toggle="modal"
                                     data-bs-target="#registerExam"
                                     @click="
-                                        (titleExamPacket = examPacket.name),
+                                        (titleExamPacket =
+                                            examPacket.competenceSchema
+                                                ?.skillName),
                                             (idExamPacket = examPacket.uuid)
                                     "
                                     v-else
@@ -232,7 +234,7 @@ export default {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="registerExamLabel">
-                        Registrasi Paket Uji Kompetensi
+                        Registrasi Uji Kompetensi
                     </h5>
                 </div>
                 <form @submit.prevent="handleSubmit" method="post">
