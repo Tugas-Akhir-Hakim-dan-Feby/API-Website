@@ -18,9 +18,7 @@ export default {
         };
     },
     beforeMount() {
-        if (this.id) {
-            this.getExamPacket();
-        }
+        this.getExamPacket();
     },
     mounted() {},
     methods: {
@@ -78,7 +76,12 @@ export default {
 </script>
 
 <template>
+    <div class="alert alert-warning mt-3 text-center" v-if="!examPacket">
+        Harap tunggu...
+    </div>
+
     <PageTitle
+        v-if="examPacket"
         :title="`Detail Paket ${examPacket.competenceSchema?.skillName}`"
         :isBack="true"
         @onBack="onBack($event)"
@@ -104,7 +107,7 @@ export default {
         :isShowParticipant="true"
     />
 
-    <div class="card">
+    <div class="card" v-if="examPacket">
         <div
             class="card-header d-flex justify-content-between align-items-center"
         >

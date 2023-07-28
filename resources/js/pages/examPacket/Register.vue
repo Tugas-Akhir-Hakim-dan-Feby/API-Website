@@ -70,13 +70,12 @@ export default {
                 });
         },
         getCheckExamPacket(examPacketId) {
-            this.$store
-                .dispatch("showData", ["user-exam-packet/check", examPacketId])
-                .then((response) => {
-                    this.isRegistered = response;
-                });
-
-            return this.isRegistered;
+            // this.$store
+            //     .dispatch("showData", ["user-exam-packet/check", examPacketId])
+            //     .then((response) => {
+            //         this.isRegistered = response;
+            //     });
+            // return this.isRegistered;
         },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");

@@ -176,10 +176,7 @@ export default {
                 });
         },
         onBack() {
-            this.$router.push({
-                name: "Job Vacancy Detail",
-                params: { slug: this.slug },
-            });
+            this.$router.back(-1);
         },
         onOk() {
             this.$emit("onSuccess", true);
