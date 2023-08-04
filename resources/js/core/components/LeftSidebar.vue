@@ -205,3 +205,9 @@ export default {
         </div>
     </div>
 </template>
+
+<style scoped>
+.side-nav .side-nav-link {
+    color: #cedce4 !important;
+}
+</style>

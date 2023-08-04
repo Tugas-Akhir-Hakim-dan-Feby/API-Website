@@ -50,7 +50,7 @@ class WelderHasExamPacketController extends Controller
                 ByWelderId::class
             ])
             ->thenReturn()
-            ->with(["examPacket.exam", "user"])
+            ->with(["examPacket.exam", "user", "examPacket.competenceSchema"])
             ->paginate($request->per_page);
 
         return new WelderHasExamPacketCollection($examPackets);

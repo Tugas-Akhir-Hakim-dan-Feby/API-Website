@@ -220,7 +220,7 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Nama Paket</th>
+                            <th>Skema Uji Kompetensi</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
                             <th v-if="$can('update-status', 'Exampacket')">
@@ -238,7 +238,10 @@ export default {
                         >
                             <th v-html="iteration(index)"></th>
                             <td
-                                v-html="welderHasExamPacket.examPacket?.name"
+                                v-html="
+                                    welderHasExamPacket.examPacket
+                                        ?.competenceSchema?.skillName
+                                "
                             ></td>
                             <td
                                 v-html="
