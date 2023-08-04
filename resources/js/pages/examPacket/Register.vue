@@ -69,15 +69,6 @@ export default {
                     this.isLoading = false;
                 });
         },
-        getCheckExamPacket(examPacketId) {
-            this.$store
-                .dispatch("showData", ["user-exam-packet/check", examPacketId])
-                .then((response) => {
-                    this.isRegistered = response;
-                });
-
-            return this.isRegistered;
-        },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
@@ -195,7 +186,7 @@ export default {
                                 <button
                                     class="badge border-0 btn-success ms-2"
                                     style="cursor: auto"
-                                    v-if="getCheckExamPacket(examPacket.uuid)"
+                                    v-if="examPacket.userRegistered"
                                 >
                                     Terdaftar
                                 </button>
@@ -204,7 +195,9 @@ export default {
                                     data-bs-toggle="modal"
                                     data-bs-target="#registerExam"
                                     @click="
-                                        (titleExamPacket = examPacket.name),
+                                        (titleExamPacket =
+                                            examPacket.competenceSchema
+                                                ?.skillName),
                                             (idExamPacket = examPacket.uuid)
                                     "
                                     v-else
@@ -232,7 +225,7 @@ export default {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="registerExamLabel">
-                        Registrasi Paket Uji Kompetensi
+                        Registrasi Uji Kompetensi
                     </h5>
                 </div>
                 <form @submit.prevent="handleSubmit" method="post">

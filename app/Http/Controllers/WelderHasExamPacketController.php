@@ -50,7 +50,7 @@ class WelderHasExamPacketController extends Controller
                 ByWelderId::class
             ])
             ->thenReturn()
-            ->with(["examPacket.exam", "user"])
+            ->with(["examPacket.exam", "user", "examPacket.competenceSchema"])
             ->paginate($request->per_page);
 
         return new WelderHasExamPacketCollection($examPackets);
@@ -60,13 +60,19 @@ class WelderHasExamPacketController extends Controller
     {
         $examPacket = $this->examPacketRepository->findOrFail($examPacketId);
 
-        $welderExamPacket = $this->welderHasExamPacket->findByCriteria([["exam_packet_id", $examPacket->id]]);
+        $welderExamPacket = $this->welderHasExamPacket->findByCriteria(["exam_packet_id" => $examPacket->id]);
 
         if (!$welderExamPacket) {
-            return false;
+            return 2;
+            // return response()->json([
+            //     "status" => "WARNING"
+            // ]);
         }
 
-        return true;
+        return 1;
+        // return response()->json([
+        //     "status" => "SUCCESS"
+        // ]);
     }
 
     public function store(Request $request)

@@ -1,5 +1,6 @@
 @php
     use Carbon\Carbon;
+    // dd($packet['packet']->competenceSchema->skill_name);
 @endphp
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -70,7 +71,9 @@
                                         <p style="text-align: center">Selamat
                                             <strong>{{ $packet['user']->name }}</strong>! anda
                                             terdaftar pada paket
-                                            uji kompetensi <strong>{{ $packet['packet']->name }}</strong> dengan detail
+                                            uji kompetensi
+                                            <strong>{{ $packet['packet']->competenceSchema->skill_name }}</strong>
+                                            dengan detail
                                             paket berikut ini:
                                         </p>
                                         <table class="information" width="100%" cellpadding="0" cellspacing="0"
@@ -100,7 +103,7 @@
                                                                         <td
                                                                             style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; padding: 10px;">
                                                                             <strong>
-                                                                                {{ $packet['packet']->name }}</strong>
+                                                                                {{ $packet['packet']->competenceSchema->skill_name }}</strong>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -115,7 +118,7 @@
                                                                         <td
                                                                             style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; padding: 10px;">
                                                                             <strong>
-                                                                                {{ Carbon::createFromFormat('Y-m-d H:i:s', $packet['packet']->schedule)->isoFormat('DD MMMM YY') }}</strong>
+                                                                                {{ Carbon::createFromFormat('Y-m-d H:i:s', $packet['packet']->exam_schedule)->isoFormat('DD MMMM YY') }}</strong>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -130,7 +133,7 @@
                                                                         <td
                                                                             style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; padding: 10px;">
                                                                             <strong>
-                                                                                {{ $packet['packet']->practice_exam_address }}</strong>
+                                                                                {{ $packet['packet']->operator->address }}</strong>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>

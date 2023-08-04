@@ -13,16 +13,14 @@ class SendDetailPacket extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $packet;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($packet)
+    public function __construct(public $packet)
     {
-        $this->packet = $packet;
     }
 
     /**
@@ -46,7 +44,6 @@ class SendDetailPacket extends Mailable
     {
         return new Content(
             view: 'email.key-packet',
-            with: $this->packet
         );
     }
 

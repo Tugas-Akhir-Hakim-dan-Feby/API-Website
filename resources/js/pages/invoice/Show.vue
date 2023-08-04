@@ -149,7 +149,7 @@ export default {
                     <div class="d-print-none mt-4">
                         <div class="text-end">
                             <a
-                                href=""
+                                :href="`/print/invoice/${externalId}`"
                                 target="_blank"
                                 class="btn-sm btn btn-info"
                                 v-if="payment.status == $store.state.PAID"
