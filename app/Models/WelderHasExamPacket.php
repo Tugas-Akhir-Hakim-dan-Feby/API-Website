@@ -20,7 +20,8 @@ class WelderHasExamPacket extends Model
         "penalty",
         "status",
         "key_packet",
-        "practice_value",
+        "grade",
+        "notes",
         "uuid",
     ];
 

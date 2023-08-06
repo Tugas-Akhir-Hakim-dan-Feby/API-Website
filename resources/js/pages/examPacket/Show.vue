@@ -293,5 +293,5 @@ export default {
         </div>
     </div>
 
-    <Success :msg="'data berhasil ditambahkan.'" />
+    <Success :msg="'data berhasil disimpan.'" />
 </template>

@@ -26,6 +26,7 @@ export default {
             form: {
                 valuePractice: "",
             },
+            documentEvaluation: null,
             date: null,
             isLoading: false,
             examId: null,
@@ -76,32 +77,33 @@ export default {
                 });
         },
         handleSubmit() {
+            this.isLoading = true;
             this.errors = {};
 
-            this.isLoading = true;
+            const formData = new FormData();
 
-            Object.assign(this.form, {
-                userId: this.userId,
-                examPacketId: this.id,
-            });
+            formData.append("document_evaluation", this.documentEvaluation);
 
             this.$store
-                .dispatch("postData", [
-                    "user-exam-packet/insert-value-practice",
-                    this.form,
+                .dispatch("postDataUpload", [
+                    "exam-packet/upload-evaluation/" + this.id,
+                    formData,
                 ])
                 .then((response) => {
                     this.isLoading = false;
                     this.getWelderHasExamPacket();
-                    $("#insertValuePractice").modal("hide");
+                    $("#successModal").modal("show");
+                    $("#uploadEvaluation").modal("hide");
+                    this.msg = "data penilaian berhasil disimpan.";
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    this.errors = error.response.data.messages;
+                    this.errors = error.response.data.message;
                 });
         },
         handleResetKey() {
             this.isLoading = true;
+            this.errors = {};
 
             const params = {
                 userId: this.userId,
@@ -140,6 +142,9 @@ export default {
         },
         onBack(e) {
             this.$router.push({ name: "Exam Packet" });
+        },
+        uploadEvaluation(e) {
+            this.documentEvaluation = e.target.files[0];
         },
     },
     components: { PageTitle, Success, Show, Confirm, Loader, Pagination },
@@ -196,7 +201,7 @@ export default {
                         placeholder="pencarian"
                         @keyup="onSearch"
                         v-model="filters.search"
-                        v-if="$can('search', 'Adminbranch')"
+                        v-if="$can('search', 'Exampacket')"
                     />
                 </div>
 
@@ -208,13 +213,29 @@ export default {
             </div>
         </div>
         <div class="card-body">
+            <a
+                v-if="examPacket"
+                target="_blank"
+                :href="`/export/participant/${examPacket.uuid}`"
+                class="btn btn-sm btn-primary mb-3 me-2"
+            >
+                Unduh Data Peserta
+            </a>
+            <a
+                data-bs-toggle="modal"
+                data-bs-target="#uploadEvaluation"
+                class="btn btn-sm btn-primary mb-3"
+            >
+                Unggah Data Penilaian
+            </a>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>No.</th>
                             <th>Nama Peserta</th>
-                            <th>Nilai Praktek</th>
+                            <th>Penilaian</th>
+                            <th>Catatan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -227,16 +248,9 @@ export default {
                         <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="index + 1"></th>
                             <td v-html="user.user?.name"></td>
-                            <td>{{ user.practiceValue ?? 0 }}</td>
+                            <td><p v-html="user.grade"></p></td>
+                            <td v-html="user.notes ?? '-'"></td>
                             <td>
-                                <button
-                                    @click="userId = user.user.uuid"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#insertValuePractice"
-                                    class="btn btn-primary btn-sm me-2 text-white"
-                                >
-                                    Masukan Nilai Praktek
-                                </button>
                                 <button
                                     @click="userId = user.user.uuid"
                                     data-bs-toggle="modal"
@@ -315,42 +329,39 @@ export default {
     </div>
     <div
         class="modal fade"
-        id="insertValuePractice"
+        id="uploadEvaluation"
         tabindex="-1"
-        aria-labelledby="insertValuePracticeLabel"
+        aria-labelledby="uploadEvaluationLabel"
         aria-hidden="true"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
     >
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="insertValuePracticeLabel">
-                        Masukan Nilai Praktek
+                    <h5 class="modal-title" id="uploadEvaluationLabel">
+                        Masukan Hasil Penilaian
                     </h5>
                 </div>
                 <form @submit.prevent="handleSubmit" method="post">
                     <div class="modal-body">
                         <div>
-                            <label
-                                >Masukan Nilai Praktek
-                                <span class="small text-muted"
-                                    >(masukan 1 - 100)</span
-                                ></label
-                            >
+                            <label>Masukan Penilaian </label>
                             <input
-                                type="number"
+                                type="file"
                                 class="form-control"
-                                :class="{ 'is-invalid': errors.valuePractice }"
-                                v-model="form.valuePractice"
+                                :class="{
+                                    'is-invalid': errors.documentEvaluation,
+                                }"
                                 :disabled="isLoading"
-                                max="100"
-                                min="0"
+                                @change="uploadEvaluation"
                             />
                             <div
                                 class="invalid-feedback"
-                                v-if="errors.valuePractice"
-                                v-for="(error, index) in errors.valuePractice"
+                                v-if="errors.documentEvaluation"
+                                v-for="(
+                                    error, index
+                                ) in errors.documentEvaluation"
                                 :key="index"
                             >
                                 {{ error }}
@@ -362,7 +373,6 @@ export default {
                             type="button"
                             class="btn btn-sm btn-secondary"
                             data-bs-dismiss="modal"
-                            @click="(form.valuePractice = 0), (errors = {})"
                         >
                             Batal
                         </button>

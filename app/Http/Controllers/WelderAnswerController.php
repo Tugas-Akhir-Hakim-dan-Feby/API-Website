@@ -54,6 +54,12 @@ class WelderAnswerController extends Controller
     {
         $examPacket = $this->examPacketRepository->findOrFail($examPacketId);
 
+        $examPacket->evaluation = $examPacket->examPacketHasWelder()->where([
+            "user_id" => auth()->user()->id
+        ])->first();
+
+        $examPacket->load(["competenceSchema", "operator"]);
+
         return new WelderAnswerCorrection($examPacket);
     }
 
@@ -103,9 +109,9 @@ class WelderAnswerController extends Controller
         }
     }
 
-    public function show(string $welderAnswer)
+    public function show(string $id)
     {
-        $welderAnswer = $this->welderAnswerRepository->where(["uuid" => $welderAnswer])->first();
+        $welderAnswer = $this->welderAnswerRepository->where(["uuid" => $id])->first();
 
         return new WelderAnswerDetail($welderAnswer);
     }

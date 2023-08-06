@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ParticipantExport;
 use App\Http\Filters\ExamPacket\CheckSchedule;
 use App\Http\Filters\ExamPacket\Search;
 use App\Http\Filters\ExamPacket\ShowByExpert;
@@ -12,6 +13,7 @@ use App\Http\Requests\ExamPacket\UpdateCertificateRequest;
 use App\Http\Resources\ExamPacket\ExamPacketCollection;
 use App\Http\Resources\ExamPacket\ExamPacketDetail;
 use App\Http\Traits\MessageFixer;
+use App\Imports\EvaluationImport;
 use App\Models\ExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\User\UserRepository;
@@ -22,6 +24,8 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExamPacketController extends Controller
 {
@@ -52,6 +56,40 @@ class ExamPacketController extends Controller
             ->paginate($request->per_page);
 
         return new ExamPacketCollection($examPackets);
+    }
+
+    public function exportParticipant($examPacketId)
+    {
+        $examPacket = $this->examPacketRepository->findOrFail($examPacketId);
+
+        return Excel::download(new ParticipantExport($examPacket->examPacketHasWelders), date("YmdHis") . "_" . Str::slug($examPacket->competenceSchema->skill_name, '_') . ".xlsx");
+    }
+
+    public function uploadEvaluation(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            "document_evaluation" => "required|file|mimes:xlsx"
+        ], [], [
+            "document_evaluation" => "penilaian"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->warningMessage($validator->errors());
+        }
+
+        $examPacket = $this->examPacketRepository->findOrFail($id);
+
+        try {
+            Excel::import(new EvaluationImport($examPacket), $request->file('document_evaluation'));
+
+            DB::commit();
+            return $this->successMessage("data berhasil ditambahkan", $examPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function store(ExamPacketRequestStore $request)

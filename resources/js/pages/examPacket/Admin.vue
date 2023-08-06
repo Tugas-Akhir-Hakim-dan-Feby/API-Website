@@ -274,9 +274,7 @@ export default {
                                     }"
                                     class="badge btn-success"
                                 >
-                                    {{
-                                        examPacket.examPacketHasWelders?.length
-                                    }}
+                                    {{ examPacket.examPacketHasWelders }}
                                     Peserta
                                 </router-link>
                             </td>
