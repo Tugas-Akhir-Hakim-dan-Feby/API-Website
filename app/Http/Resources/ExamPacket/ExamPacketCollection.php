@@ -27,7 +27,7 @@ class ExamPacketCollection extends ResourceCollection
                 "competence_schema" => $examPacket->competenceSchema,
                 "end_time" => $examPacket->end_time,
                 "exam" => $examPacket->exam,
-                "exam_packet_has_welder" => $examPacket->examPacketHasWelder,
+                "exam_packet_has_welders" => $examPacket->examPacketHasWelders()->count(),
                 "exam_schedule" => $examPacket->exam_schedule,
                 "operator" => $examPacket->operator,
                 "price" => $examPacket->price,

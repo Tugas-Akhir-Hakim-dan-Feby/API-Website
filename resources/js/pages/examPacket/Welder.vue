@@ -160,12 +160,7 @@ export default {
             let now = dayjs();
             schedule = dayjs(schedule).locale("id");
 
-            let nowTime = now.format("HH:mm");
-
-            if (
-                (now.isSame(schedule, "day") || schedule.diff(now) > 0) &&
-                nowTime >= endTime
-            ) {
+            if (schedule.isBefore(now, "day")) {
                 this.isAfterSchedule = true;
                 return true;
             }
@@ -246,7 +241,8 @@ export default {
                             <td
                                 v-html="
                                     getSchedule(
-                                        welderHasExamPacket.examPacket?.schedule
+                                        welderHasExamPacket.examPacket
+                                            ?.examSchedule
                                     )
                                 "
                             ></td>
@@ -332,7 +328,7 @@ export default {
                                     v-if="
                                         checkSchedule(
                                             welderHasExamPacket.examPacket
-                                                ?.schedule,
+                                                ?.examSchedule,
                                             [
                                                 welderHasExamPacket.examPacket
                                                     ?.startTime,
@@ -347,10 +343,12 @@ export default {
                                     v-else-if="
                                         checkAfterSchedule(
                                             welderHasExamPacket.examPacket
-                                                ?.schedule,
+                                                ?.examSchedule,
                                             welderHasExamPacket.examPacket
                                                 ?.endTime
-                                        )
+                                        ) &&
+                                        (welderHasExamPacket.status == 1 ||
+                                            welderHasExamPacket.status == 3)
                                     "
                                     :to="{
                                         name: 'Exam Packet Success',

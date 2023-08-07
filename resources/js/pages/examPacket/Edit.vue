@@ -38,9 +38,11 @@ export default {
     },
     methods: {
         getExamPacket() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["exam-packet", this.id])
                 .then((response) => {
+                    this.isLoading = false;
                     this.form = {
                         welderSkillId: response.data.competenceSchema?.uuid,
                         operatorId: response.data.operator?.uuid,
@@ -87,6 +89,8 @@ export default {
             if (this.user.roleId == 8) {
                 this.form.operatorId = this.user.operator.uuid;
             }
+
+            this.form.method = "put";
 
             this.$store
                 .dispatch("updateData", ["exam-packet", this.id, this.form])

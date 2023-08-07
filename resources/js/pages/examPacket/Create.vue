@@ -16,6 +16,8 @@ export default {
                 endTime: "",
                 welderSkillId: "",
                 operatorId: "",
+                price: "",
+                documentCertificate: "",
             },
             welderSkills: [],
             minDate: new Date().toISOString().split("T")[0],
@@ -23,6 +25,26 @@ export default {
             user: {},
             isLoading: false,
         };
+    },
+    computed: {
+        formData() {
+            let formData = new FormData();
+
+            formData.append("name", this.form.name);
+            formData.append("exam_schedule", this.form.examSchedule);
+            formData.append("close_schedule", this.form.closeSchedule);
+            formData.append("start_time", this.form.startTime);
+            formData.append("end_time", this.form.endTime);
+            formData.append("welder_skill_id", this.form.welderSkillId);
+            formData.append("price", this.form.price);
+            formData.append("operator_id", this.user.operator.uuid);
+            formData.append(
+                "document_certificate",
+                this.form.documentCertificate
+            );
+
+            return formData;
+        },
     },
     mounted() {
         this.getTuk();
@@ -59,12 +81,8 @@ export default {
         handleSubmit() {
             this.isLoading = true;
 
-            if (this.user.roleId == 8) {
-                this.form.operatorId = this.user.operator.uuid;
-            }
-
             this.$store
-                .dispatch("postData", ["exam-packet", this.form])
+                .dispatch("postDataUpload", ["exam-packet", this.formData])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
@@ -104,6 +122,9 @@ export default {
                 this.form.operatorId = $(this.$refs.tuk).val();
                 $(".select2-hidden-accessible").removeClass("is-invalid");
             });
+        },
+        uploadDocumentCertificate(e) {
+            this.form.documentCertificate = e.target.files[0];
         },
         onCancel() {
             this.$router.back(-1);
@@ -267,11 +288,11 @@ export default {
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label for="schedule">Harga Uji Kompetensi</label>
+                            <label for="">Harga Uji Kompetensi</label>
                             <input
                                 type="number"
                                 class="form-control form-validation"
-                                id="schedule"
+                                id=""
                                 :class="{ 'is-invalid': errors.price }"
                                 v-model="form.price"
                                 :disabled="isLoading"
@@ -280,6 +301,35 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errors.price"
                                 v-for="(error, index) in errors.price"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">Unggah Sertifikat</label>
+                            <input
+                                type="file"
+                                class="form-control form-validation"
+                                id=""
+                                :class="{
+                                    'is-invalid': errors.documentCertificate,
+                                }"
+                                :disabled="isLoading"
+                                @change="uploadDocumentCertificate"
+                            />
+                            <small
+                                >unduh contoh penulisan
+                                <a href="/assets/files/example-certificate.docx"
+                                    >sertifikat</a
+                                ></small
+                            >.
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.documentCertificate"
+                                v-for="(
+                                    error, index
+                                ) in errors.documentCertificate"
                                 :key="index"
                             >
                                 {{ error }}

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class WelderHasExamPacketController extends Controller
 {
@@ -222,5 +223,24 @@ class WelderHasExamPacketController extends Controller
             DB::rollback();
             return $this->errorMessage($th->getMessage());
         }
+    }
+
+
+    public function downloadCertificate(string $id)
+    {
+        $welderAnswer = $this->welderHasExamPacket->findByCriteria(["uuid" => $id])->first();
+
+        $template = new TemplateProcessor("./storage/" . $welderAnswer->examPacket->certificate);
+        $template->setValues([
+            "participant_name" => $welderAnswer->user->name,
+            "scheme" => $welderAnswer->examPacket->competenceSchema->skill_name,
+        ]);
+
+        $template->setImageValue("logo", str_replace(url('/') . '/', '', $welderAnswer->examPacket->operator->logo->document_path));
+
+
+        $template->saveAs("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
+
+        return response()->download("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
     }
 }

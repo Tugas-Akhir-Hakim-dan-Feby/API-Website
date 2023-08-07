@@ -55,15 +55,18 @@ export default {
 
                     <div class="text-start">
                         <p class="text-muted">
-                            <strong>Nama Paket :</strong>
-                            <span class="ms-2" v-html="examPacket.name"></span>
+                            <strong>Skema Uji Kompetensi :</strong>
+                            <span
+                                class="ms-2"
+                                v-html="examPacket.competenceSchema?.skillName"
+                            ></span>
                         </p>
 
                         <p class="text-muted">
                             <strong>Tanggal Ujian :</strong
                             ><span
                                 class="ms-2"
-                                v-html="getSchedule(examPacket.schedule)"
+                                v-html="getSchedule(examPacket.examSchedule)"
                             ></span>
                         </p>
 
@@ -71,7 +74,7 @@ export default {
                             <strong>Alamat Tempat Ujian :</strong>
                             <span
                                 class="ms-2"
-                                v-html="examPacket.practiceExamAddress"
+                                v-html="examPacket.operator?.address"
                             ></span>
                         </p>
                     </div>
@@ -83,47 +86,41 @@ export default {
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Rincian</th>
-                                    <th>Tanggal</th>
-                                    <th>Presentase</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Ujian Teori</td>
-                                    <td
-                                        v-html="
-                                            getSchedule(examPacket.schedule)
-                                        "
-                                    ></td>
-                                    <td
-                                        v-html="
-                                            examPacket.correctPrecentage
-                                                ? `${examPacket.correctPrecentage} %`
-                                                : '0 %'
-                                        "
-                                    ></td>
-                                </tr>
-                                <tr>
-                                    <td>Ujian Praktek</td>
-                                    <td
-                                        v-html="
-                                            getSchedule(examPacket.schedule)
-                                        "
-                                    ></td>
-                                    <td
-                                        v-html="
-                                            examPacket.practiceValue
-                                                ? `${examPacket.practiceValue} %`
-                                                : `0 %`
-                                        "
-                                    ></td>
-                                </tr>
-                            </tbody>
+                            <tr>
+                                <th class="p-2 border">Aspek Penilaian</th>
+                                <td
+                                    class="p-2 border"
+                                    v-html="examPacket.evaluation?.grade"
+                                ></td>
+                            </tr>
+                            <tr>
+                                <th class="p-2 border">Catatan</th>
+                                <td
+                                    class="p-2 border"
+                                    v-html="
+                                        examPacket.evaluation?.notes ??
+                                        'Tidak Ada'
+                                    "
+                                ></td>
+                            </tr>
                         </table>
                     </div>
+                    <div>
+                        <p class="mb-2">K = Kompeten</p>
+                        <p class="">TK = Tidak Kompeten</p>
+                    </div>
+                </div>
+                <div
+                    class="card-footer"
+                    v-if="examPacket.evaluation?.status == 3"
+                >
+                    <a
+                        :href="`/download/certificate/${examPacket.evaluation?.uuid}`"
+                        target="_blank"
+                        class="btn btn-sm btn-primary float-end"
+                    >
+                        Unduh Sertifikat
+                    </a>
                 </div>
             </div>
         </div>
