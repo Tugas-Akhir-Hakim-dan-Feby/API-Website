@@ -103,6 +103,27 @@ export default {
                     this.errors = error.response.data.message;
                 });
         },
+        handleValidated() {
+            this.isLoading = true;
+
+            this.$store
+                .dispatch("updateData", [
+                    "user-exam-packet/payment-validated",
+                    this.examPacket.uuid,
+                    {},
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getWelderHasExamPacket();
+                    $("#validationPayment").modal("hide");
+                    $("#successModal").modal("show");
+                    this.msg = "data penilaian berhasil disimpan.";
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
+        },
         handleResetKey() {
             this.isLoading = true;
             this.errors = {};
@@ -243,45 +264,64 @@ export default {
             </div>
         </div>
         <div class="card-body">
-            <a
-                v-if="examPacket"
-                target="_blank"
-                :href="`/export/participant/${examPacket.uuid}`"
-                class="btn btn-sm btn-primary mb-3 me-2"
-            >
-                Unduh Data Peserta
-            </a>
-            <a
-                data-bs-toggle="modal"
-                data-bs-target="#uploadEvaluation"
-                class="btn btn-sm btn-primary mb-3"
-            >
-                Unggah Data Penilaian
-            </a>
+            <div v-if="users.length > 0">
+                <a
+                    v-if="examPacket"
+                    target="_blank"
+                    :href="`/export/participant/${examPacket.uuid}`"
+                    class="btn btn-sm btn-primary mb-3 me-2"
+                >
+                    Unduh Data Peserta
+                </a>
+                <a
+                    data-bs-toggle="modal"
+                    data-bs-target="#uploadEvaluation"
+                    class="btn btn-sm btn-primary mb-3"
+                >
+                    Unggah Data Penilaian
+                </a>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th>No. Sertifikat</th>
                             <th>Nama Peserta</th>
                             <th>Penilaian</th>
                             <th>Catatan</th>
-                            <th>No. Sertifikat</th>
+                            <th>Status Validasi</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="users?.length < 1">
-                            <td colspan="4" class="text-center">
+                            <td colspan="7" class="text-center">
                                 belum ada peserta yang daftar
                             </td>
                         </tr>
                         <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="index + 1"></th>
+                            <td v-html="user.certificateNumber ?? '-'"></td>
                             <td v-html="user.user?.name"></td>
                             <td><p v-html="user.grade"></p></td>
                             <td v-html="user.notes ?? '-'"></td>
-                            <td v-html="user.certificateNumber ?? '-'"></td>
+                            <td>
+                                <span
+                                    class="badge bg-success"
+                                    v-if="user.validatedAt"
+                                    >LUNAS</span
+                                >
+                                <button
+                                    @click="examPacket = user"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#validationPayment"
+                                    class="btn btn-success btn-sm me-2 mb-2 text-white"
+                                    v-if="!user.validatedAt"
+                                >
+                                    Validasi Pembayaran
+                                </button>
+                            </td>
                             <td>
                                 <button
                                     data-bs-toggle="modal"
@@ -517,6 +557,67 @@ export default {
                                 {{ error }}
                             </div>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
+        id="validationPayment"
+        tabindex="-1"
+        aria-labelledby="validationPaymentLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="validationPaymentLabel">
+                        Validasi Pembayaran
+                    </h5>
+                </div>
+                <form @submit.prevent="handleValidated" method="post">
+                    <div class="modal-body">
+                        <a
+                            v-if="examPacket"
+                            :href="examPacket.payment"
+                            target="_blank"
+                        >
+                            <img
+                                :src="examPacket.payment"
+                                style="width: 100%"
+                            />
+                        </a>
                     </div>
                     <div class="modal-footer">
                         <button

@@ -30,6 +30,7 @@ class ExamPacket extends Model
         "end_time",
         "period",
         "certificate",
+        "account_number",
         "uuid",
     ];
 

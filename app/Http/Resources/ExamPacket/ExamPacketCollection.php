@@ -38,6 +38,7 @@ class ExamPacketCollection extends ResourceCollection
                 "uuid" => $examPacket->uuid,
                 "year" => $examPacket->year,
                 "created_at" => $examPacket->created_at,
+                "account_number" => $examPacket->account_number,
                 "user_registered" => false
             ];
 

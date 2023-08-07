@@ -218,6 +218,7 @@ export default {
                             <th>Skema Uji Kompetensi</th>
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
+                            <th>Status Validasi</th>
                             <th v-if="$can('update-status', 'Exampacket')">
                                 Status
                             </th>
@@ -260,6 +261,16 @@ export default {
                                     )} Menit)`
                                 "
                             ></td>
+                            <td>
+                                <span
+                                    class="badge bg-success"
+                                    v-if="welderHasExamPacket.validatedAt"
+                                    >VALIDASI</span
+                                >
+                                <span class="badge bg-warning" v-else
+                                    >BELUM VALIDASI</span
+                                >
+                            </td>
                             <td v-if="$can('update-status', 'Exampacket')">
                                 <div class="form-check form-switch">
                                     <input
@@ -361,7 +372,11 @@ export default {
                                     class="btn btn-sm btn-info"
                                     >Lihat Hasil</router-link
                                 >
-                                <p v-else>-</p>
+                                <span
+                                    v-else
+                                    class="badge bg-warning text-uppercase text-white"
+                                    >Belum Mulai</span
+                                >
                             </td>
                         </tr>
                     </tbody>

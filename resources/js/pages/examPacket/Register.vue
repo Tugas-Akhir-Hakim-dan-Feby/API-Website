@@ -12,6 +12,7 @@ export default {
     data() {
         return {
             examPackets: [],
+            examPacketDetail: {},
             errors: {},
             pagination: {
                 perPage: 10,
@@ -26,10 +27,21 @@ export default {
             titleExamPacket: "",
             idExamPacket: "",
             uuid: null,
+            documentPayment: null,
             isLoading: false,
             isError: false,
             isRegistered: false,
         };
+    },
+    computed: {
+        formData() {
+            let formData = new FormData();
+
+            formData.append("exam_packet_id", this.idExamPacket);
+            formData.append("document_payment", this.documentPayment);
+
+            return formData;
+        },
     },
     mounted() {
         this.getExamPackets();
@@ -74,13 +86,10 @@ export default {
         },
         handleSubmit() {
             this.isLoading = true;
-
-            const form = {
-                examPacketId: this.idExamPacket,
-            };
+            this.errors = {};
 
             this.$store
-                .dispatch("postData", ["user-exam-packet", form])
+                .dispatch("postDataUpload", ["user-exam-packet", this.formData])
                 .then((response) => {
                     this.isLoading = false;
                     $("#registerExam").modal("hide");
@@ -91,6 +100,7 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
+                    this.errors = error.response.data.message;
                 });
         },
         onPageChange(e) {
@@ -109,6 +119,9 @@ export default {
         },
         onBack() {
             this.$router.push({ name: "Exam Packet" });
+        },
+        uploadDocumentPayment(e) {
+            this.documentPayment = e.target.files[0];
         },
     },
     components: { PageTitle, Success, Pagination, Confirm, Loader },
@@ -161,7 +174,7 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-if="examPackets.length < 1">
-                            <td colspan="5" class="text-center">
+                            <td colspan="7" class="text-center">
                                 Belum ada data uji kompetensi.
                             </td>
                         </tr>
@@ -195,10 +208,8 @@ export default {
                                     data-bs-toggle="modal"
                                     data-bs-target="#registerExam"
                                     @click="
-                                        (titleExamPacket =
-                                            examPacket.competenceSchema
-                                                ?.skillName),
-                                            (idExamPacket = examPacket.uuid)
+                                        (idExamPacket = examPacket.uuid),
+                                            (examPacketDetail = examPacket)
                                     "
                                     v-else
                                 >
@@ -253,9 +264,48 @@ export default {
                             <input
                                 type="text"
                                 class="form-control"
-                                :value="titleExamPacket"
+                                :value="
+                                    examPacketDetail.competenceSchema?.skillName
+                                "
                                 disabled
                             />
+                        </div>
+                        <div class="mb-3">
+                            <label>Biaya Uji Kompetensi</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                :value="examPacketDetail.price"
+                                disabled
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label>Rekening Pembayaran</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                :value="examPacketDetail.accountNumber"
+                                disabled
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label>Unggah Bukti Pembayaran</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                :class="{
+                                    'is-invalid': errors.documentPayment,
+                                }"
+                                @change="uploadDocumentPayment"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.documentPayment"
+                                v-for="(error, index) in errors.documentPayment"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

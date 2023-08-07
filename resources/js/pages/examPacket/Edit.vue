@@ -53,6 +53,7 @@ export default {
                             response.data.closeSchedule
                         ),
                         startTime: response.data.startTime,
+                        accountNumber: response.data.accountNumber,
                         endTime: response.data.endTime,
                         price: response.data.price,
                     };
@@ -295,6 +296,25 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errors.price"
                                 v-for="(error, index) in errors.price"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">Nomor Rekening</label>
+                            <input
+                                type="text"
+                                class="form-control form-validation"
+                                :class="{ 'is-invalid': errors.accountNumber }"
+                                v-model="form.accountNumber"
+                                :disabled="isLoading"
+                                placeholder="BCA-081219911"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.accountNumber"
+                                v-for="(error, index) in errors.accountNumber"
                                 :key="index"
                             >
                                 {{ error }}

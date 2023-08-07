@@ -15,6 +15,7 @@ use App\Models\WelderHasExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\WelderHasExamPacket\WelderHasExamPacketRepository;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -66,33 +67,38 @@ class WelderHasExamPacketController extends Controller
 
         if (!$welderExamPacket) {
             return 2;
-            // return response()->json([
-            //     "status" => "WARNING"
-            // ]);
         }
 
         return 1;
-        // return response()->json([
-        //     "status" => "SUCCESS"
-        // ]);
     }
 
     public function store(Request $request)
     {
         DB::beginTransaction();
 
+        $validator = Validator::make($request->all(), [
+            "document_payment" => "required|image|mimes:png,jpg,jpeg"
+        ], [], [
+            "document_payment" => "bukti pembayaran"
+        ]);
+
+        if ($validator->fails()) {
+            return $this->warningMessage($validator->errors());
+        }
+
         $keyPacket = Str::random(8);
 
         $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
 
-        $request->merge([
-            "uuid" => Str::uuid(),
-            "user_id" => auth()->user()->id,
-            "exam_packet_id" => $examPacket->id,
-            "key_packet" => Hash::make($keyPacket)
-        ]);
-
         try {
+            $request->merge([
+                "uuid" => Str::uuid(),
+                "user_id" => auth()->user()->id,
+                "exam_packet_id" => $examPacket->id,
+                "key_packet" => Hash::make($keyPacket),
+                "payment" => $request->file('document_payment')->store('payment_document')
+            ]);
+
             $welderHasExamPacket = $this->welderHasExamPacket->create($request->all());
             $welderHasExamPacket = [
                 "packet" => $examPacket,
@@ -197,6 +203,26 @@ class WelderHasExamPacketController extends Controller
 
             DB::commit();
             return $this->successMessage("kunci paket berhasil diperbaharui", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function paymentValidate(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            "uuid" => $id,
+        ]);
+
+        try {
+            $welderHasExamPacket->validated_at = Carbon::now();
+            $welderHasExamPacket->save();
+
+            DB::commit();
+            return $this->successMessage("validasi berhasil diperbaharui", $welderHasExamPacket);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
