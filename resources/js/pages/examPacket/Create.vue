@@ -17,6 +17,7 @@ export default {
                 welderSkillId: "",
                 operatorId: "",
                 price: "",
+                accountNumber: "",
                 documentCertificate: "",
             },
             welderSkills: [],
@@ -37,6 +38,7 @@ export default {
             formData.append("end_time", this.form.endTime);
             formData.append("welder_skill_id", this.form.welderSkillId);
             formData.append("price", this.form.price);
+            formData.append("account_number", this.form.accountNumber);
             formData.append("operator_id", this.user.operator.uuid);
             formData.append(
                 "document_certificate",
@@ -135,7 +137,7 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Tambah Paket">
+    <PageTitle title="Tambah Paket" :isBack="true" @onBack="onCancel">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
@@ -154,7 +156,7 @@ export default {
             <form @submit.prevent="handleSubmit" method="post">
                 <div class="card">
                     <div class="card-body">
-                        <div class="mb-2" v-if="user.roleId != 8">
+                        <!-- <div class="mb-2" v-if="user.roleId != 8">
                             <label for="name">TUK</label>
                             <select
                                 class="form-select form-validation select2-hidden-accessible"
@@ -170,7 +172,7 @@ export default {
                             >
                                 {{ error }}
                             </div>
-                        </div>
+                        </div> -->
                         <div class="mb-2">
                             <label for="name">Skema Kompetensi</label>
                             <select
@@ -301,6 +303,25 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errors.price"
                                 v-for="(error, index) in errors.price"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">Nomor Rekening</label>
+                            <input
+                                type="text"
+                                class="form-control form-validation"
+                                :class="{ 'is-invalid': errors.accountNumber }"
+                                v-model="form.accountNumber"
+                                :disabled="isLoading"
+                                placeholder="BCA-081219911"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.accountNumber"
+                                v-for="(error, index) in errors.accountNumber"
                                 :key="index"
                             >
                                 {{ error }}

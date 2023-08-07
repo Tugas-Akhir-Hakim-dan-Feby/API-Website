@@ -158,7 +158,7 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Kumpulan Paket Uji Kompetensi">
+    <PageTitle title="Kumpulan Uji Kompetensi">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>

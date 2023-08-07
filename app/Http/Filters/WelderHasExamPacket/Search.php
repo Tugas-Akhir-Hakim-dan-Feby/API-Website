@@ -17,6 +17,8 @@ class Search
             $query->where('name', 'like', '%' . request('search') . '%');
         });
 
+        $query->orderBy("validated_at", "asc");
+
         return $next($query);
     }
 }

@@ -30,6 +30,7 @@ class ExamPacketDetail extends JsonResource
             "close_schedule" => $this->close_schedule,
             "operator" => $this->operator,
             "price" => $this->price,
+            "account_number" => $this->account_number,
         ];
 
         if (auth()->user()->onlyRoles([User::ADMIN_APP, User::EXPERT, User::OPERATOR])) {
