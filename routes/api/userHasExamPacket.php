@@ -12,4 +12,5 @@ Route::middleware(['auth:sanctum'])->prefix('user-exam-packet')->group(function 
     Route::post('/punishment', [WelderHasExamPacketController::class, 'punishment'])->name('api.user.exam.packet.update.punishment');
     Route::post('/update-penalty', [WelderHasExamPacketController::class, 'updatePenalty'])->name('api.user.exam.packet.update.penalty');
     Route::post('/update-key-packet', [WelderHasExamPacketController::class, 'updateKeyPacket'])->name('api.user.exam.packet.update.key.packet');
+    Route::put('/update-evaluation/{id}', [WelderHasExamPacketController::class, 'updateEvaluation'])->name('api.user.exam.packet.update.evaluation');
 });

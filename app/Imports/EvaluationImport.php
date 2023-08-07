@@ -35,11 +35,32 @@ class EvaluationImport implements ToCollection, WithHeadingRow
                 "exam_packet_id" => $this->examPacket->id
             ])->first();
 
+            $certificateNumber = Util::generateAbbreviation($welderHasExamPacket->examPacket->competenceSchema->skill_name);
+
             $welderHasExamPacket->grade = nl2br($collect["penilaian"]);
             $welderHasExamPacket->status = $collect["sertifikat"] == "Ya" ? 3 : 1;
             $welderHasExamPacket->notes = $collect["catatan"];
 
+            if (!$welderHasExamPacket->certificate_number) {
+                $welderHasExamPacket->certificate_number = $collect["sertifikat"] == "Ya" ? $certificateNumber : null;
+            }
+
             $welderHasExamPacket->save();
         }
+    }
+}
+
+class Util
+{
+    public static function generateAbbreviation($fullName)
+    {
+        $words = explode(' ', $fullName);
+        $abbreviation = '';
+
+        foreach ($words as $word) {
+            $abbreviation .= strtoupper($word[0]);
+        }
+
+        return $abbreviation  . '_' . mt_rand(1000000000, 9999999999);
     }
 }

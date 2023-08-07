@@ -22,6 +22,7 @@ class WelderHasExamPacket extends Model
         "key_packet",
         "grade",
         "notes",
+        "certificate_number",
         "uuid",
     ];
 

@@ -9,6 +9,7 @@ use App\Http\Requests\ExamPacket\KeyCheckRequest;
 use App\Http\Requests\ExamPacket\ValuePracticeRequest;
 use App\Http\Resources\ExamPacket\WelderHasExamPacketCollection;
 use App\Http\Traits\MessageFixer;
+use App\Imports\Util;
 use App\Mail\SendDetailPacket;
 use App\Models\WelderHasExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
@@ -204,6 +205,8 @@ class WelderHasExamPacketController extends Controller
 
     public function punishment(Request $request)
     {
+        DB::beginTransaction();
+
         $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
 
         $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
@@ -225,6 +228,34 @@ class WelderHasExamPacketController extends Controller
         }
     }
 
+    public function updateEvaluation(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            "uuid" => $id
+        ]);
+
+        try {
+            $welderHasExamPacket->grade = $request->grade;
+            $welderHasExamPacket->notes = $request->notes;
+            $welderHasExamPacket->status = $request->status;
+
+            if ($request->status == 3) {
+                $welderHasExamPacket->certificate_number = $this->generateAbbreviation($welderHasExamPacket->examPacket->competenceSchema->skill_name);
+            } else {
+                $welderHasExamPacket->certificate_number = null;
+            }
+
+            $welderHasExamPacket->save();
+
+            DB::commit();
+            return $this->successMessage("penilaian berhasil disimpan", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
 
     public function downloadCertificate(string $id)
     {
@@ -242,5 +273,17 @@ class WelderHasExamPacketController extends Controller
         $template->saveAs("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
 
         return response()->download("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
+    }
+
+    public function generateAbbreviation($fullName)
+    {
+        $words = explode(' ', $fullName);
+        $abbreviation = '';
+
+        foreach ($words as $word) {
+            $abbreviation .= strtoupper($word[0]);
+        }
+
+        return $abbreviation  . '_' . mt_rand(1000000000, 9999999999);
     }
 }

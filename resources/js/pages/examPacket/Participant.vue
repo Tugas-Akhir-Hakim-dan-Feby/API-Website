@@ -13,6 +13,7 @@ export default {
         return {
             userId: null,
             users: [],
+            evaluation: {},
             examPacket: null,
             errors: {},
             pagination: {
@@ -92,6 +93,7 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.getWelderHasExamPacket();
+                    this.documentEvaluation = null;
                     $("#successModal").modal("show");
                     $("#uploadEvaluation").modal("hide");
                     this.msg = "data penilaian berhasil disimpan.";
@@ -120,6 +122,34 @@ export default {
                     this.isLoading = false;
                     this.getWelderHasExamPacket();
                     $("#resetKeyPacket").modal("hide");
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                    this.errors = error.response.data.messages;
+                });
+        },
+        handleEvaluation() {
+            this.isLoading = true;
+            this.errors = {};
+
+            const params = {
+                grade: this.evaluation.grade,
+                notes: this.evaluation.notes,
+                status: this.evaluation.status,
+            };
+
+            this.$store
+                .dispatch("updateData", [
+                    "user-exam-packet/update-evaluation",
+                    this.evaluation.id,
+                    params,
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getWelderHasExamPacket();
+                    $("#updateEvaluation").modal("hide");
+                    $("#successModal").modal("show");
+                    this.msg = "data penilaian berhasil disimpan.";
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -236,6 +266,7 @@ export default {
                             <th>Nama Peserta</th>
                             <th>Penilaian</th>
                             <th>Catatan</th>
+                            <th>No. Sertifikat</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -250,12 +281,26 @@ export default {
                             <td v-html="user.user?.name"></td>
                             <td><p v-html="user.grade"></p></td>
                             <td v-html="user.notes ?? '-'"></td>
+                            <td v-html="user.certificateNumber ?? '-'"></td>
                             <td>
+                                <button
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateEvaluation"
+                                    class="btn btn-warning btn-sm me-2 mb-2 text-white"
+                                    @click="
+                                        (evaluation.grade = user.grade),
+                                            (evaluation.notes = user.notes),
+                                            (evaluation.status = user.status),
+                                            (evaluation.id = user.uuid)
+                                    "
+                                >
+                                    Edit Penilaian
+                                </button>
                                 <button
                                     @click="userId = user.user.uuid"
                                     data-bs-toggle="modal"
                                     data-bs-target="#resetKeyPacket"
-                                    class="btn btn-warning btn-sm me-2 text-white"
+                                    class="btn btn-warning btn-sm me-2 mb-2 text-white"
                                 >
                                     Reset Kunci Paket
                                 </button>
@@ -293,6 +338,111 @@ export default {
                                 v-model="keyPacket"
                                 readonly
                             />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div
+        class="modal fade"
+        id="updateEvaluation"
+        tabindex="-1"
+        aria-labelledby="updateEvaluationLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateEvaluationLabel">
+                        Perbaharui Penilaian
+                    </h5>
+                </div>
+                <form @submit.prevent="handleEvaluation" method="post">
+                    <div class="modal-body">
+                        <div class="mb-2">
+                            <label>Penilaian</label>
+                            <textarea
+                                class="form-control"
+                                :class="{ 'is-invalid': errors.grade }"
+                                :disabled="isLoading"
+                                v-model="evaluation.grade"
+                            ></textarea>
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.grade"
+                                v-for="(error, index) in errors.grade"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label>Catatan</label>
+                            <textarea
+                                class="form-control"
+                                :class="{ 'is-invalid': errors.notes }"
+                                :disabled="isLoading"
+                                v-model="evaluation.notes"
+                            ></textarea>
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.notes"
+                                v-for="(error, index) in errors.notes"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label>Status Kelulusan</label>
+                            <select
+                                class="form-select"
+                                v-model="evaluation.status"
+                                :disabled="isLoading"
+                                :class="{ 'is-invalid': errors.status }"
+                            >
+                                <option value="3">Ya</option>
+                                <option value="2">Tidak</option>
+                            </select>
+                            <div
+                                class="invalid-feedback"
+                                v-if="errors.status"
+                                v-for="(error, index) in errors.status"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
