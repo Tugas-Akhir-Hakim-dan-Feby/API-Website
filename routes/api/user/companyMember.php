@@ -3,9 +3,10 @@
 use App\Http\Controllers\User\CompanyMemberController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user/company-member', [CompanyMemberController::class, 'index'])->name('api.user.company.member.index');
+Route::get('/user/company-member/all', [CompanyMemberController::class, 'all'])->name('api.user.company.member.all');
 
 Route::middleware(['auth:sanctum'])->prefix('user/company-member')->group(function () {
+    Route::get('/user/company-member', [CompanyMemberController::class, 'index'])->name('api.user.company.member.index');
     Route::post('/', [CompanyMemberController::class, 'store'])->name('api.user.company.member.store');
     Route::post('/upload-excel', [CompanyMemberController::class, 'uploadExcel'])->name('api.company.member.upload.excel');
     Route::get('/{id}', [CompanyMemberController::class, 'show'])->name('api.user.company.member.show');

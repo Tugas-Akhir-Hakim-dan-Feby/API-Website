@@ -13,8 +13,11 @@ class Search
             return $next($query);
         }
 
-        $query->whereHas('user', function ($query) {
-            $query->where('name', 'like', '%' . request('search') . '%');
+        $query->where(function ($query) {
+            $query->where('certificate_number', 'like', '%' . request('search') . '%');
+            $query->orWhereHas('user', function ($query) {
+                $query->where('name', 'like', '%' . request('search') . '%');
+            });
         });
 
         $query->orderBy("validated_at", "asc");

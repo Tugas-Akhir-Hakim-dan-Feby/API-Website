@@ -3,6 +3,8 @@
 use App\Http\Controllers\WelderHasExamPacketController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/user-exam-packet/all', [WelderHasExamPacketController::class, 'all'])->name('api.user.exam.packet.all');
+
 Route::middleware(['auth:sanctum'])->prefix('user-exam-packet')->group(function () {
     Route::get('/', [WelderHasExamPacketController::class, 'index'])->name('api.user.exam.packet.index');
     Route::get('/check/{examPacketId}', [WelderHasExamPacketController::class, 'check'])->name('api.user.exam.packet.check');

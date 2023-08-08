@@ -53,6 +53,20 @@ class CompanyMemberController extends Controller
         return new CompanyMemberCollection($companyMembers);
     }
 
+    public function all(Request $request)
+    {
+        $companyMembers = app(Pipeline::class)
+            ->send($this->userRepository->query())
+            ->through([
+                CompanyMemberRole::class,
+                Search::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
+        return new CompanyMemberCollection($companyMembers);
+    }
+
     public function create()
     {
         //

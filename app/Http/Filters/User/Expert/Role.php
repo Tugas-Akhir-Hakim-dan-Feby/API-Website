@@ -10,7 +10,7 @@ class Role
 {
     public function handle(Builder $query, Closure $next)
     {
-        $query->with(['expert', 'welderHasSkills.welderSkill']);
+        $query->with(['expert', 'welderHasSkills.welderSkill', 'welderMember']);
 
         $query->where('role_id', User::EXPERT);
 

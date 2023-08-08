@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ActivationAccountController;
 use App\Http\Controllers\ExamPacketController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\WelderHasExamPacketController;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +33,5 @@ Route::prefix('/download')->group(function () {
 });
 
 Route::get('/email', function () {
-    return view('email.work.reject');
+    return QrCode::generate('Make me into a QrCode!');
 });

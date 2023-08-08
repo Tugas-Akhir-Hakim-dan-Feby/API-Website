@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Filters\WelderHasExamPacket\ByExamPacketId;
 use App\Http\Filters\WelderHasExamPacket\ByWelderId;
 use App\Http\Filters\WelderHasExamPacket\Search;
+use App\Http\Filters\WelderHasExamPacket\ShowByStatus;
 use App\Http\Requests\ExamPacket\KeyCheckRequest;
 use App\Http\Requests\ExamPacket\ValuePracticeRequest;
+use App\Http\Resources\ExamPacket\GuestCollection;
 use App\Http\Resources\ExamPacket\WelderHasExamPacketCollection;
 use App\Http\Traits\MessageFixer;
 use App\Imports\Util;
@@ -57,6 +59,20 @@ class WelderHasExamPacketController extends Controller
             ->paginate($request->per_page);
 
         return new WelderHasExamPacketCollection($examPackets);
+    }
+
+    public function all(Request $request)
+    {
+        $examPackets = app(Pipeline::class)
+            ->send($this->welderHasExamPacket->query())
+            ->through([
+                Search::class,
+                ShowByStatus::class
+            ])
+            ->thenReturn()
+            ->paginate($request->per_page);
+
+        return new GuestCollection($examPackets);
     }
 
     public function check($examPacketId)
