@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpWord\TemplateProcessor;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class WelderHasExamPacketController extends Controller
 {
@@ -306,11 +307,14 @@ class WelderHasExamPacketController extends Controller
         $template = new TemplateProcessor("./storage/" . $welderAnswer->examPacket->certificate);
         $template->setValues([
             "participant_name" => $welderAnswer->user->name,
-            "scheme" => $welderAnswer->examPacket->competenceSchema->skill_name,
+            "certificate_number" => $welderAnswer->certificate_number,
+            "schema" => $welderAnswer->examPacket->competenceSchema->skill_name,
+            "created_at" => Carbon::createFromFormat("Y-m-d H:i:s", $welderAnswer->created_at)->isoFormat("DD MMMM YY")
         ]);
 
-        $template->setImageValue("logo", str_replace(url('/') . '/', '', $welderAnswer->examPacket->operator->logo->document_path));
+        $qrcode = QrCode::format('png')->generate($welderAnswer->certificate_number);
 
+        $template->setImageValue("qrcode", $qrcode);
 
         $template->saveAs("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
 
