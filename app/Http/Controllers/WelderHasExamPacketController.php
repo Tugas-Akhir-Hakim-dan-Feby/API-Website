@@ -312,7 +312,7 @@ class WelderHasExamPacketController extends Controller
             "created_at" => Carbon::createFromFormat("Y-m-d H:i:s", $welderAnswer->created_at)->isoFormat("DD MMMM YY")
         ]);
 
-        $qrcode = QrCode::format('png')->generate($welderAnswer->certificate_number);
+        $qrcode = QrCode::size(200)->format('png')->generate($welderAnswer->certificate_number);
 
         $template->setImageValue("qrcode", $qrcode);
 
