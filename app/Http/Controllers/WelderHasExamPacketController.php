@@ -27,8 +27,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Milon\Barcode\Facades\DNS1DFacade;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class WelderHasExamPacketController extends Controller
 {
@@ -312,13 +314,20 @@ class WelderHasExamPacketController extends Controller
             "created_at" => Carbon::createFromFormat("Y-m-d H:i:s", $welderAnswer->created_at)->isoFormat("DD MMMM YY")
         ]);
 
-        $qrcode = QrCode::size(200)->format('png')->generate($welderAnswer->certificate_number);
+        $typeDoc = ".docx";
+        $pathSaveDocx = "archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_');
+        $template->saveAs($pathSaveDocx . $typeDoc);
 
-        $template->setImageValue("qrcode", $qrcode);
+        $phpWord = IOFactory::load($pathSaveDocx . $typeDoc);
 
-        $template->saveAs("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
+        Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
+        Settings::setPdfRendererName('DomPDF');
 
-        return response()->download("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
+        $typeDoc = ".pdf";
+        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        $pdfWriter->save($pathSaveDocx . $typeDoc);
+
+        // return response()->download("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
     }
 
     public function generateAbbreviation($fullName)
