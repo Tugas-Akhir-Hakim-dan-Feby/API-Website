@@ -36,7 +36,7 @@ export default {
         },
         getCreatedAt(date) {
             date = dayjs(date).locale("id");
-            return date.format("D-MMMM-YY");
+            return date.format("DD MMMM YYYY");
         },
         getRupiah(amount) {
             return Util.getRupiah(amount);
@@ -114,7 +114,9 @@ export default {
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Perkiraan Gaji</label>
-                        <p v-html="getRupiah(jobVacancy.salary)"></p>
+                        <p
+                            v-html="'&plusmn; ' + getRupiah(jobVacancy.salary)"
+                        ></p>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Jenis Pekerjaan</label>
@@ -135,6 +137,7 @@ export default {
                 <h5 class="my-3">Tentang Perusahaan</h5>
                 <div v-html="jobVacancy.companyMember?.companyProfile"></div>
             </div>
+            <hr />
         </div>
     </div>
 </template>

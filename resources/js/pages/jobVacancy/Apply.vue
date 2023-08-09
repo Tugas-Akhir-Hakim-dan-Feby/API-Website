@@ -35,6 +35,7 @@ export default {
     },
     methods: {
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
@@ -48,12 +49,15 @@ export default {
         getDataPersonal(user) {
             this.$store
                 .dispatch("showData", ["user/personal-data", user.uuid])
-                .then((response) => {})
+                .then((response) => {
+                    this.isLoading = false;
+                })
                 .catch((error) => {
                     if (
                         error.response.data.statusCode == 404 &&
                         error.response.data.status == "WARNING"
                     ) {
+                        this.isLoading = false;
                         this.isNullPersonalData = true;
                     }
                 });
@@ -110,7 +114,8 @@ export default {
         v-if="!isNullPersonalData"
     />
 
-    <div v-if="!isNullPersonalData">
+    <div v-if="!isNullPersonalData" class="position-relative">
+        <Loader v-if="isLoading" />
         <form @submit.prevent="handleSubmit" method="post">
             <div class="row">
                 <div class="col-md-4">

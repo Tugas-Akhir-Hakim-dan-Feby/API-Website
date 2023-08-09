@@ -96,7 +96,7 @@ export default {
                     $("#successModal").modal("show");
                     this.msg =
                         "Registrasi berhasil. Silahkan periksa email anda untuk mengetahui info selebihnya.";
-                    this.getUser();
+                    this.getExamPackets();
                 })
                 .catch((error) => {
                     this.isLoading = false;

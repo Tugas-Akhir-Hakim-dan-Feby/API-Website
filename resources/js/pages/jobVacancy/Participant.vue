@@ -4,6 +4,7 @@ import PageTitle from "../../components/PageTitle.vue";
 import Pagination from "../../components/Pagination.vue";
 import Success from "../../components/notifications/Success.vue";
 import util from "../../store/utils/util";
+import camelcaseKeys from "camelcase-keys";
 
 export default {
     props: ["uuid"],
@@ -66,48 +67,9 @@ export default {
                     this.isLoading = false;
                 });
         },
-        getVillage(id) {
-            if (this.isDetail) {
-                fetch(`${this.$store.state.BASE_URL_REGION}village/${id}.json`)
-                    .then((response) => response.json())
-                    .then((village) => {
-                        this.village = util.convertToCapitalize(village.name);
-                    });
-
-                return this.village;
-            }
-        },
-        getDistrict(id) {
-            if (this.isDetail) {
-                fetch(`${this.$store.state.BASE_URL_REGION}district/${id}.json`)
-                    .then((response) => response.json())
-                    .then((district) => {
-                        this.district = util.convertToCapitalize(district.name);
-                    });
-
-                return this.district;
-            }
-        },
-        getRegency(id) {
-            if (this.isDetail) {
-                fetch(`${this.$store.state.BASE_URL_REGION}regency/${id}.json`)
-                    .then((response) => response.json())
-                    .then((regency) => {
-                        this.regency = util.convertToCapitalize(regency.name);
-                    });
-
-                return this.regency;
-            }
-        },
-        getProvince(id) {
-            if (this.isDetail) {
-                fetch(`${this.$store.state.BASE_URL_REGION}province/${id}.json`)
-                    .then((response) => response.json())
-                    .then((province) => {
-                        this.province = util.convertToCapitalize(province.name);
-                    });
-
-                return this.province;
+        capitalize(string) {
+            if (string) {
+                return string.replace(/\b\w/g, (char) => char.toUpperCase());
             }
         },
         getCitizenship(citizenship) {
@@ -370,20 +332,24 @@ export default {
                                         <th class="p-2 border bg-primary">
                                             Alamat
                                         </th>
-                                        <td class="p-2 border">
+                                        <td class="p-2 border text-lowercase">
                                             {{
-                                                `desa ${getVillage(
+                                                `desa ${capitalize(
                                                     detailWorker.user
                                                         ?.personalData?.village
-                                                )}, kec. ${getDistrict(
+                                                        ?.name
+                                                )}, kec. ${capitalize(
                                                     detailWorker.user
                                                         ?.personalData?.district
-                                                )}, kab. ${getRegency(
+                                                        ?.name
+                                                )}, kab. ${capitalize(
                                                     detailWorker.user
                                                         ?.personalData?.regency
-                                                )}, ${getProvince(
+                                                        ?.name
+                                                )}, ${capitalize(
                                                     detailWorker.user
                                                         ?.personalData?.province
+                                                        ?.name
                                                 )}, ${
                                                     detailWorker.user
                                                         ?.personalData?.zipCode

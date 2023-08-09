@@ -327,7 +327,9 @@ class WelderHasExamPacketController extends Controller
         $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
         $pdfWriter->save($pathSaveDocx . $typeDoc);
 
-        // return response()->download("archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_') . ".docx");
+        unlink($pathSaveDocx . ".docx");
+
+        return response()->download($pathSaveDocx . $typeDoc);
     }
 
     public function generateAbbreviation($fullName)

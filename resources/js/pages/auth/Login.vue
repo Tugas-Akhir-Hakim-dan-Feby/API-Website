@@ -162,7 +162,7 @@ export default {
                     </div>
                     <footer class="main-footer">
                         <div class="text-center mt-5 text-small">
-                            Copyright &copy; 2023 Asosiasi Profesi Indonesia.
+                            Copyright &copy; 2023 Asosiasi Pengelasan Indonesia.
                         </div>
                     </footer>
                 </div>
