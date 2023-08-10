@@ -58,6 +58,7 @@ export default {
                 nip: user.adminHub?.nip,
                 name: user.name,
                 email: user.email,
+                membershipCard: user.membershipCard,
                 phone: user.adminHub?.phone,
                 birthPlace: user.adminHub?.birthPlace,
                 dateBirth: user.adminHub?.dateBirth,
@@ -106,21 +107,21 @@ export default {
         <form @submit.prevent="handleSubmit">
             <div class="card-body">
                 <div class="mb-2">
-                    <label>NIP</label>
+                    <label>No KTA</label>
                     <input
-                        type="number"
-                        class="form-validation form-control"
-                        :class="{ 'is-invalid': errors.nip }"
-                        v-model="form.nip"
+                        type="text"
+                        class="form-control form-validation"
+                        :class="{ 'is-invalid': errors.membershipCard }"
+                        v-model="form.membershipCard"
                         :disabled="isLoading"
                     />
                     <div
                         class="invalid-feedback"
-                        v-if="errors.nip"
-                        v-for="(error, index) in errors.nip"
+                        v-if="errors.membershipCard"
+                        v-for="(error, index) in errors.membershipCard"
                         :key="index"
                     >
-                        {{ error }}.
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">

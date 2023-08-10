@@ -180,6 +180,7 @@ export default {
                     <thead>
                         <tr>
                             <th>No.</th>
+                            <th>No. KTA</th>
                             <th>Nama Pengguna</th>
                             <th>Email Pengguna</th>
                             <th>Cabang</th>
@@ -196,6 +197,7 @@ export default {
                         </tr>
                         <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="iteration(index)"></th>
+                            <td v-html="user.membershipCard"></td>
                             <td v-html="user.name"></td>
                             <td v-html="user.email"></td>
                             <td
