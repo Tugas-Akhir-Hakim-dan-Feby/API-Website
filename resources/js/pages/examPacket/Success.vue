@@ -2,12 +2,14 @@
 import PageTitle from "../../components/PageTitle.vue";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import Loader from "../../components/Loader.vue";
 
 export default {
     props: ["examPacketId"],
     data() {
         return {
             examPacket: {},
+            isLoading: false,
         };
     },
     mounted() {
@@ -15,15 +17,19 @@ export default {
     },
     methods: {
         getExamPacket() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", [
                     "welder-answer/correct-answer",
                     this.examPacketId,
                 ])
                 .then((response) => {
+                    this.isLoading = false;
                     this.examPacket = response.data;
                 })
-                .catch((error) => {});
+                .catch((error) => {
+                    this.isLoading = false;
+                });
         },
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
@@ -32,7 +38,7 @@ export default {
             this.$router.push({ name: "Exam Packet" });
         },
     },
-    components: { PageTitle },
+    components: { PageTitle, Loader },
 };
 </script>
 
@@ -43,13 +49,26 @@ export default {
         @onBack="onBack($event)"
     />
 
-    <div class="row">
+    <div class="row position-relative">
+        <Loader v-if="isLoading" />
         <div class="col-lg-5">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title mt-0 mb-3">
+                    <h4 class="header-title mt-0">
                         Informasi Paket Uji Kompetensi
                     </h4>
+                    <span
+                        style="cursor: default"
+                        class="btn mb-1 btn-sm btn-success"
+                        v-if="examPacket.certificateNumber"
+                        >KOMPETEN</span
+                    >
+                    <span
+                        style="cursor: default"
+                        class="btn mb-1 btn-sm btn-danger"
+                        v-else
+                        >TIDAK KOMPETEN</span
+                    >
 
                     <hr />
 
