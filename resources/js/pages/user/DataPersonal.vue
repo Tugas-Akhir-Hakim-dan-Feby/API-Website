@@ -169,6 +169,7 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
+                    this.$emit("onSuccess", true);
                 })
                 .catch((error) => {
                     this.isLoading = false;

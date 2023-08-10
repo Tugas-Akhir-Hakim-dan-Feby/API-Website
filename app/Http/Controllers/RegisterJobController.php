@@ -52,11 +52,18 @@ class RegisterJobController extends Controller
         $jobVacancy = $this->jobVacancyRepository->findOrFail($request->job_vacancy_id);
 
         $request->merge([
-            "user_id" => auth()->user()->id
+            "user_id" => auth()->user()->id,
         ]);
 
         try {
+            if ($request->hasFile('document_police_record')) {
+                $request->merge([
+                    "police_record" => $request->file('document_police_record')->store('police_record')
+                ]);
+            }
+
             $jobVacancy->registerJobs()->create($request->all());
+
             DB::commit();
             return $this->successMessage("lamaran berhasil diregister.", $jobVacancy->registerJobs);
         } catch (\Throwable $th) {

@@ -13,7 +13,7 @@ class RegisterJob extends Model
 
     const REJECT = 2;
 
-    protected $fillable = ["user_id", "job_vacancy_id", "experience", "promote", "status"];
+    protected $fillable = ["user_id", "job_vacancy_id", "experience", "promote", "status", "police_record"];
 
     protected $hidden = ["user_id", "job_vacancy_id", "id"];
 
