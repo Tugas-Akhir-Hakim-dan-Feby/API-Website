@@ -17,6 +17,11 @@ class RegisterJob extends Model
 
     protected $hidden = ["user_id", "job_vacancy_id", "id"];
 
+    public function getPoliceRecordAttribute($file)
+    {
+        return asset('storage/' . $file);
+    }
+
     public function user()
     {
         return $this->hasOne(User::class, "id", "user_id");

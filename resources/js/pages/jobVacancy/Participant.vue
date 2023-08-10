@@ -220,6 +220,7 @@ export default {
                         <tr>
                             <th>No.</th>
                             <th>Nama Pelamar</th>
+                            <th>Email Pelamar</th>
                             <th>No. Telepon</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -232,6 +233,7 @@ export default {
                         >
                             <td>1</td>
                             <td>{{ registerJob.user?.name }}</td>
+                            <td>{{ registerJob.user?.email }}</td>
                             <td>{{ registerJob.user?.personalData?.phone }}</td>
                             <td>
                                 <span
@@ -433,6 +435,15 @@ export default {
                                                         >CV</a
                                                     >
                                                 </li>
+                                                <li>
+                                                    <a
+                                                        :href="
+                                                            detailWorker.policeRecord
+                                                        "
+                                                        target="_blank"
+                                                        >SKCK</a
+                                                    >
+                                                </li>
                                                 <li
                                                     v-for="(
                                                         certificate, index
@@ -466,7 +477,12 @@ export default {
                     >
                         Kembali
                     </button>
-                    <div v-if="detailWorker.status == 0">
+                    <div
+                        v-if="
+                            detailWorker.status == 0 &&
+                            $can('approval', 'Jobvacancy')
+                        "
+                    >
                         <button
                             :disabled="isLoading"
                             type="button"

@@ -269,7 +269,7 @@ export default {
                     v-if="examPacket"
                     target="_blank"
                     :href="`/export/participant/${examPacket.uuid}`"
-                    class="btn btn-sm btn-primary mb-3 me-2"
+                    class="btn btn-sm btn-success mb-3 me-2"
                 >
                     Unduh Data Peserta
                 </a>
@@ -277,6 +277,7 @@ export default {
                     data-bs-toggle="modal"
                     data-bs-target="#uploadEvaluation"
                     class="btn btn-sm btn-primary mb-3"
+                    v-if="$can('evaluation', 'Exampacket')"
                 >
                     Unggah Data Penilaian
                 </a>
@@ -288,15 +289,23 @@ export default {
                             <th>No.</th>
                             <th>No. Sertifikat</th>
                             <th>Nama Peserta</th>
-                            <th>Penilaian</th>
+                            <th>Nilai Ujian Teori</th>
+                            <th>Penilaian Kompetensi</th>
                             <th>Catatan</th>
                             <th>Status Validasi</th>
-                            <th>Aksi</th>
+                            <th v-if="$can('evaluation', 'Exampacket')">
+                                Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="users?.length < 1">
-                            <td colspan="7" class="text-center">
+                            <td
+                                :colspan="
+                                    $can('evaluation', 'Exampacket') ? 8 : 7
+                                "
+                                class="text-center"
+                            >
                                 belum ada peserta yang daftar
                             </td>
                         </tr>
@@ -304,6 +313,25 @@ export default {
                             <th v-html="index + 1"></th>
                             <td v-html="user.certificateNumber ?? '-'"></td>
                             <td v-html="user.user?.name"></td>
+                            <td>
+                                <tr>
+                                    <td>Jawaban Benar</td>
+                                    <td>:</td>
+                                    <td v-html="user.correctAnswer"></td>
+                                </tr>
+                                <tr>
+                                    <td>Jawaban Salah</td>
+                                    <td>:</td>
+                                    <td v-html="user.wrongAnswer"></td>
+                                </tr>
+                                <tr>
+                                    <td>Persentase</td>
+                                    <td>:</td>
+                                    <td
+                                        v-html="user.correctPrecentage + '%'"
+                                    ></td>
+                                </tr>
+                            </td>
                             <td><p v-html="user.grade"></p></td>
                             <td v-html="user.notes ?? '-'"></td>
                             <td>
@@ -317,12 +345,15 @@ export default {
                                     data-bs-toggle="modal"
                                     data-bs-target="#validationPayment"
                                     class="btn btn-success btn-sm me-2 mb-2 text-white"
-                                    v-if="!user.validatedAt"
+                                    v-if="
+                                        !user.validatedAt &&
+                                        $can('evaluation', 'Exampacket')
+                                    "
                                 >
                                     Validasi Pembayaran
                                 </button>
                             </td>
-                            <td>
+                            <td v-if="$can('evaluation', 'Exampacket')">
                                 <button
                                     data-bs-toggle="modal"
                                     data-bs-target="#updateEvaluation"
@@ -333,6 +364,7 @@ export default {
                                             (evaluation.status = user.status),
                                             (evaluation.id = user.uuid)
                                     "
+                                    v-if="$can('evaluation', 'Exampacket')"
                                 >
                                     Edit Penilaian
                                 </button>
@@ -340,7 +372,8 @@ export default {
                                     @click="userId = user.user.uuid"
                                     data-bs-toggle="modal"
                                     data-bs-target="#resetKeyPacket"
-                                    class="btn btn-warning btn-sm me-2 mb-2 text-white"
+                                    class="btn btn-danger btn-sm me-2 mb-2 text-white"
+                                    v-if="$can('reset-key', 'Exampacket')"
                                 >
                                     Reset Kunci Paket
                                 </button>
