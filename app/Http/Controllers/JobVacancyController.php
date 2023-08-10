@@ -6,6 +6,7 @@ use App\Http\Filters\JobVacancy\LoggedIn;
 use App\Http\Filters\JobVacancy\Search;
 use App\Http\Filters\JobVacancy\SearchRegion;
 use App\Http\Filters\JobVacancy\SearchSpecificSkill;
+use App\Http\Filters\JobVacancy\SearchStatus;
 use App\Http\Requests\JobVacancy\JobVacancyRequestStore;
 use App\Http\Requests\JobVacancy\JobVacancyRequestUpdate;
 use App\Http\Resources\JobVacancy\JobVacancyCollection;
@@ -48,6 +49,7 @@ class JobVacancyController extends Controller
                 Search::class,
                 LoggedIn::class,
                 SearchRegion::class,
+                SearchStatus::class,
                 SearchSpecificSkill::class
             ])
             ->thenReturn()
