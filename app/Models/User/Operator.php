@@ -3,9 +3,11 @@
 namespace App\Models\User;
 
 use App\Models\Document;
+use App\Models\ExamPacket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
@@ -39,5 +41,10 @@ class Operator extends Model
     public function logo(): MorphOne
     {
         return $this->morphOne(Document::class, 'documentable');
+    }
+
+    public function examPackets(): HasMany
+    {
+        return $this->hasMany(ExamPacket::class, "operator_id", "id");
     }
 }

@@ -113,6 +113,11 @@ export default {
                                     >Welder Member</router-link
                                 >
                             </li>
+                            <li v-if="$can('index', 'Weldermember')">
+                                <router-link :to="{ name: 'User Operator' }"
+                                    >TUK Member</router-link
+                                >
+                            </li>
                         </ul>
                     </div>
                 </li>
