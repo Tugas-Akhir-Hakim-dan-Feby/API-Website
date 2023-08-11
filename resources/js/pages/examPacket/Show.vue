@@ -108,6 +108,7 @@ export default {
                 ])
                 .then((response) => {
                     this.isLoading = false;
+                    this.documentCertificate = null;
                     $("#updateCertificate").modal("hide");
                     $("#successModal").modal("show");
                 })
@@ -284,8 +285,24 @@ export default {
                         >
                             Batal
                         </button>
-                        <button type="submit" class="btn btn-sm btn-success">
-                            Simpan
+                        <button
+                            class="btn btn-sm btn-primary"
+                            v-if="!isLoading"
+                        >
+                            Kirim
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            type="button"
+                            disabled
+                            v-if="isLoading"
+                        >
+                            <span
+                                class="spinner-border spinner-border-sm me-1"
+                                role="status"
+                                aria-hidden="true"
+                            ></span>
+                            Harap Tunggu...
                         </button>
                     </div>
                 </form>

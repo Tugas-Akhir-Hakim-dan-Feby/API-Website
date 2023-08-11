@@ -29,6 +29,7 @@ class RegisterJobRequestStore extends FormRequest
         return [
             "experience" => "required",
             "promote" => "required",
+            "document_police_record" => "file|mimes:pdf"
         ];
     }
 
@@ -37,6 +38,7 @@ class RegisterJobRequestStore extends FormRequest
         return [
             "experience" => "pengalaman kerja",
             "promote" => "promosi diri anda",
+            "document_police_record" => "dokumen skck",
         ];
     }
 

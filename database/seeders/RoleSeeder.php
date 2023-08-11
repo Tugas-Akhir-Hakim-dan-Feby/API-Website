@@ -66,7 +66,7 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::MEMBER_COMPANY]['Profile'] = ['index', 'update-password', 'update-company-member'];
         $access[User::MEMBER_COMPANY]['Payment'] = ['history'];
-        $access[User::MEMBER_COMPANY]['JobVacancy'] = ['index', 'index-admin', 'info', 'create', 'show', 'update', 'delete'];
+        $access[User::MEMBER_COMPANY]['JobVacancy'] = ['index', 'index-admin', 'info', 'create', 'show', 'update', 'delete', 'approval'];
 
         $access[User::MEMBER_INDIVIDUAL]['Dashboard'] = ['index'];
         $access[User::MEMBER_INDIVIDUAL]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
@@ -90,7 +90,7 @@ class RoleSeeder extends Seeder
         $access[User::OPERATOR]['Profile'] = ['index', 'update-password', 'update-guest'];
         $access[User::OPERATOR]['Member'] = ['index', 'company-member', 'welder-member'];
         $access[User::OPERATOR]['Payment'] = ['history'];
-        $access[User::OPERATOR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
+        $access[User::OPERATOR]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin', 'evaluation', 'reset-key'];
         $access[User::OPERATOR]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
 
         $this->disableForeignKeys();
@@ -106,12 +106,12 @@ class RoleSeeder extends Seeder
         $permission['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $permission['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $permission['Article'] = ['index', 'index-guest', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet', 'dashboard-admin', 'dashboard-member'];
+        $permission['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'register-packet', 'dashboard-admin', 'dashboard-member', 'evaluation', 'reset-key'];
         $permission['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
         $permission['Payment'] = ['cost', 'invoice', 'history'];
         $permission['Member'] = ['index', 'company-member', 'welder-member', 'expert'];
-        $permission['JobVacancy'] = ['index', 'index-welder', 'index-admin', 'info', 'info-company', 'create', 'show', 'update', 'delete'];
+        $permission['JobVacancy'] = ['index', 'index-welder', 'index-admin', 'info', 'info-company', 'create', 'show', 'update', 'delete', 'approval'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {

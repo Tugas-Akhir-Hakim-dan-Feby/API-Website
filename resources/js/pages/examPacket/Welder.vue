@@ -143,10 +143,12 @@ export default {
             schedule = dayjs(schedule).locale("id");
 
             let nowTime = now.format("HH:mm");
+            let startTime = timing[0];
+            let endTime = timing[1];
 
             if (
-                nowTime >= timing[0] &&
-                nowTime <= timing[1] &&
+                nowTime >= startTime &&
+                nowTime <= endTime &&
                 now.isSame(schedule, "day")
             ) {
                 this.isSchedule = true;
@@ -156,11 +158,11 @@ export default {
             this.isSchedule = false;
             return false;
         },
-        checkAfterSchedule(schedule, endTime) {
+        checkAfterSchedule(schedule) {
             let now = dayjs();
             schedule = dayjs(schedule).locale("id");
 
-            if (schedule.isBefore(now, "day")) {
+            if (schedule.isBefore(now)) {
                 this.isAfterSchedule = true;
                 return true;
             }
@@ -219,9 +221,7 @@ export default {
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
                             <th>Status Validasi</th>
-                            <th v-if="$can('update-status', 'Exampacket')">
-                                Status
-                            </th>
+                            <th>Status</th>
                             <th v-if="isSchedule || isAfterSchedule">Aksi</th>
                         </tr>
                     </thead>
@@ -271,27 +271,15 @@ export default {
                                     >BELUM VALIDASI</span
                                 >
                             </td>
-                            <td v-if="$can('update-status', 'Exampacket')">
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        style="cursor: pointer"
-                                        :checked="
-                                            welderHasExamPacket.examPacket
-                                                ?.status
-                                        "
-                                        @click="
-                                            onUpdateStatus(
-                                                welderHasExamPacket.examPacket
-                                                    ?.uuid,
-                                                welderHasExamPacket.examPacket
-                                                    ?.status
-                                            )
-                                        "
-                                    />
-                                </div>
+                            <td>
+                                <span
+                                    class="badge bg-success"
+                                    v-if="welderHasExamPacket.certificateNumber"
+                                    >KOMPETEN</span
+                                >
+                                <span class="badge bg-warning" v-else
+                                    >TIDAK KOMPETEN</span
+                                >
                             </td>
                             <td
                                 v-if="
@@ -357,9 +345,9 @@ export default {
                                                 ?.examSchedule,
                                             welderHasExamPacket.examPacket
                                                 ?.endTime
-                                        ) &&
-                                        (welderHasExamPacket.status == 1 ||
-                                            welderHasExamPacket.status == 3)
+                                        ) ||
+                                        welderHasExamPacket.status == 1 ||
+                                        welderHasExamPacket.status == 3
                                     "
                                     :to="{
                                         name: 'Exam Packet Success',

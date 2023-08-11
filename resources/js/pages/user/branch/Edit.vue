@@ -41,6 +41,7 @@ export default {
                 nip: user.adminBranch?.nip,
                 name: user.name,
                 email: user.email,
+                membershipCard: user.membershipCard,
                 phone: user.adminBranch?.phone,
                 birthPlace: user.adminBranch?.birthPlace,
                 dateBirth: this.getDateBirth(user.adminBranch?.dateBirth),
@@ -168,18 +169,18 @@ export default {
                     </div>
                 </div>
                 <div class="mb-2">
-                    <label>NIP</label>
+                    <label>No KTA</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-control form-validation"
-                        :class="{ 'is-invalid': errors.nip }"
-                        v-model="form.nip"
+                        :class="{ 'is-invalid': errors.membershipCard }"
+                        v-model="form.membershipCard"
                         :disabled="isLoading"
                     />
                     <div
                         class="invalid-feedback"
-                        v-if="errors.nip"
-                        v-for="(error, index) in errors.nip"
+                        v-if="errors.membershipCard"
+                        v-for="(error, index) in errors.membershipCard"
                         :key="index"
                     >
                         {{ error }}.

@@ -83,7 +83,7 @@ export default {
                         class="side-nav-link"
                     >
                         <i class="uil-users-alt"></i>
-                        <span> Pengguna </span>
+                        <span> Data Pengguna </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <div class="collapse" id="user">
@@ -110,7 +110,12 @@ export default {
                             </li>
                             <li v-if="$can('index', 'Weldermember')">
                                 <router-link :to="{ name: 'User Member' }"
-                                    >Welder Member</router-link
+                                    >Individu Member</router-link
+                                >
+                            </li>
+                            <li v-if="$can('index', 'Weldermember')">
+                                <router-link :to="{ name: 'User Operator' }"
+                                    >TUK Member</router-link
                                 >
                             </li>
                         </ul>

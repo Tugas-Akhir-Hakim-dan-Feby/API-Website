@@ -35,7 +35,7 @@ class AdminHubRequestStore extends FormRequest
             'gender' => 'required|in:L,P',
             'birth_place' => 'required',
             'date_birth' => 'required',
-            'nip' => 'required|numeric',
+            'membership_card' => 'required',
         ];
     }
 
@@ -59,8 +59,7 @@ class AdminHubRequestStore extends FormRequest
             'gender.in' => 'harap masukan jenis kelamin "L" atau "P"',
             'birth_place.required' => 'kolom tempat lahir wajib diisi',
             'date_birth.required' => 'kolom tanggal lahir wajib diisi',
-            'nip.required' => 'kolom nip wajib diisi',
-            'nip.numeric' => 'nip wajib berisi angka',
+            'membership_card.required' => 'kolom no kta wajib diisi',
         ];
     }
 

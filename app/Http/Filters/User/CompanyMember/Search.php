@@ -9,7 +9,7 @@ class Search
 {
     public function handle(Builder $query, Closure $next)
     {
-        if (!request()->has('search')) {
+        if (!request('search')) {
             return $next($query);
         }
         $query->where(function ($query) {

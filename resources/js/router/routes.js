@@ -15,6 +15,7 @@ import expert from "./services/expert";
 import payment from "./services/payment";
 import jobVacancy from "./services/jobVacancy";
 import { checkPermission } from "../store/utils/middleware";
+import operator from "./services/user/operator";
 
 const routes = [
     ...auth,
@@ -33,6 +34,7 @@ const routes = [
     ...expert,
     ...payment,
     ...jobVacancy,
+    ...operator,
     {
         path: "/",
         name: "Dashboard",

@@ -44,7 +44,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository
             $expirationDate = Carbon::parse($payment->created_at)->addMonth();
 
             if (Carbon::now()->gt($expirationDate) && $payment->status == Payment::PAID) {
-                if ($payment->user->onlyRoles([User::MEMBER_INDIVIDUAL, User::MEMBER_APPLICATION]) && !$payment->isRecreated()) {
+                if ($payment->user->onlyRoles([User::MEMBER_INDIVIDUAL, User::EXPERT]) && !$payment->isRecreated()) {
                     $this->pay(Cost::WELDER_MEMBER, false, $payment->user);
                     Mail::to($payment->user->email)->send(new SendReminderPayment());
                     $payment->markAsRecreated();
@@ -52,6 +52,12 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository
 
                 if ($payment->user->onlyRoles([User::MEMBER_COMPANY]) && !$payment->isRecreated()) {
                     $this->pay(Cost::COMPANY_MEMBER, false, $payment->user);
+                    Mail::to($payment->user->email)->send(new SendReminderPayment());
+                    $payment->markAsRecreated();
+                }
+
+                if ($payment->user->onlyRoles([User::OPERATOR]) && !$payment->isRecreated()) {
+                    $this->pay(Cost::TEST_INSTITUTION, false, $payment->user);
                     Mail::to($payment->user->email)->send(new SendReminderPayment());
                     $payment->markAsRecreated();
                 }

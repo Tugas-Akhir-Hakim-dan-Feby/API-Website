@@ -124,15 +124,6 @@ export default {
         </ol>
     </PageTitle>
 
-    <div
-        class="alert alert-warning"
-        v-if="jobVacancies && $can('info', 'Jobvacancy')"
-    >
-        Limit postingan anda tersisa
-        <strong>{{ 4 - jobVacancies.length }}</strong
-        >.
-    </div>
-
     <div class="card position-relative">
         <Loader v-if="isLoading" />
         <div class="card-body">
@@ -143,11 +134,7 @@ export default {
                     <router-link
                         :to="{ name: 'Job Vacancy Create' }"
                         class="btn btn-sm btn-primary mb-2"
-                        v-if="
-                            jobVacancies &&
-                            jobVacancies.length < 4 &&
-                            $can('create', 'Jobvacancy')
-                        "
+                        v-if="$can('create', 'Jobvacancy')"
                     >
                         Tambah Lowongan
                     </router-link>

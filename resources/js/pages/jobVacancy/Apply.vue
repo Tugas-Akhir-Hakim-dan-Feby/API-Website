@@ -17,6 +17,7 @@ export default {
                 experience: "",
                 promote: "",
                 jobVacancyId: "",
+                documentPoliceRecord: null,
             },
             jobVacancy: {},
             experiences: [],
@@ -35,6 +36,7 @@ export default {
     },
     methods: {
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
@@ -48,12 +50,15 @@ export default {
         getDataPersonal(user) {
             this.$store
                 .dispatch("showData", ["user/personal-data", user.uuid])
-                .then((response) => {})
+                .then((response) => {
+                    this.isLoading = false;
+                })
                 .catch((error) => {
                     if (
                         error.response.data.statusCode == 404 &&
                         error.response.data.status == "WARNING"
                     ) {
+                        this.isLoading = false;
                         this.isNullPersonalData = true;
                     }
                 });
@@ -72,9 +77,22 @@ export default {
         handleSubmit() {
             this.isLoading = true;
             this.errors = {};
-            this.form.jobVacancyId = this.jobVacancy.uuid;
+
+            let formData = new FormData();
+
+            formData.append("experience", this.form.experience);
+            formData.append("promote", this.form.promote);
+            formData.append("job_vacancy_id", this.jobVacancy.uuid);
+
+            if (this.form.documentPoliceRecord) {
+                formData.append(
+                    "document_police_record",
+                    this.form.documentPoliceRecord
+                );
+            }
+
             this.$store
-                .dispatch("postData", ["register-job", this.form])
+                .dispatch("postDataUpload", ["register-job", formData])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
@@ -96,6 +114,10 @@ export default {
         },
         onSuccess() {
             this.isNullPersonalData = false;
+            this.getUser();
+        },
+        uploadPoliceRecord(e) {
+            this.form.documentPoliceRecord = e.target.files[0];
         },
     },
     components: { PageTitle, Loader, Success, DataPersonal },
@@ -110,7 +132,8 @@ export default {
         v-if="!isNullPersonalData"
     />
 
-    <div v-if="!isNullPersonalData">
+    <div v-if="!isNullPersonalData" class="position-relative">
+        <Loader v-if="isLoading" />
         <form @submit.prevent="handleSubmit" method="post">
             <div class="row">
                 <div class="col-md-4">
@@ -213,6 +236,24 @@ export default {
                                     {{ error }}
                                 </div>
                             </div>
+                            <div class="mb-3">
+                                <label>Unggah Dokumen SKCK! </label>
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    @change="uploadPoliceRecord"
+                                />
+                                <div
+                                    class="invalid-feedback"
+                                    v-if="errors.documentPoliceRecord"
+                                    v-for="(
+                                        error, index
+                                    ) in errors.documentPoliceRecord"
+                                    :key="index"
+                                >
+                                    {{ error }}
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer text-center">
                             <button
@@ -241,10 +282,10 @@ export default {
         </form>
     </div>
 
-    <DataPersonal v-if="isNullPersonalData" @onSuccess="onSuccess()" />
+    <DataPersonal v-if="isNullPersonalData" @onSuccess="onSuccess" />
     <Success
         v-if="!isNullPersonalData"
-        :url="{ name: 'Dashboard' }"
+        :url="{ name: 'Job Vacancy' }"
         :msg="'lamaran berhasil dikirim.'"
     />
 </template>

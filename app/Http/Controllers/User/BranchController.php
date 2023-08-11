@@ -67,7 +67,8 @@ class BranchController extends Controller
                 'password' => bcrypt('password'),
                 'role_id' => User::ADMIN_BRANCH,
                 'remember_token' => Str::random(20),
-                'email_verified_at' => now()
+                'email_verified_at' => now(),
+                'nip' => 1
             ]);
 
             $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());

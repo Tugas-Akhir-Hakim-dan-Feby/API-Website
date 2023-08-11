@@ -21,6 +21,7 @@ export default {
                 search: "",
                 skill: "",
                 region: "",
+                status: "",
             },
             metaPagination: {},
             welderSkills: [],
@@ -47,6 +48,7 @@ export default {
                 `search=${this.filters.search}`,
                 `skill=${this.filters.skill}`,
                 `region=${this.filters.region}`,
+                `status=${this.filters.status}`,
             ].join("&");
 
             this.$store
@@ -107,6 +109,11 @@ export default {
                 this.getJobVacancies();
             }, 1000);
         },
+        onSearchStatus() {
+            setTimeout(() => {
+                this.getJobVacancies();
+            }, 1000);
+        },
     },
     components: { PageTitle, Loader, Pagination },
 };
@@ -123,7 +130,7 @@ export default {
     </div>
 
     <div class="row">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 col-lg-3 col-sm mb-3">
             <input
                 type="search"
                 class="form-control"
@@ -132,7 +139,7 @@ export default {
                 @input="onSearch()"
             />
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 col-lg-3 col-sm mb-3">
             <input
                 type="search"
                 class="form-control"
@@ -141,7 +148,7 @@ export default {
                 @input="onSearchRegion()"
             />
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 col-lg-3 col-sm mb-3">
             <select
                 class="form-select"
                 v-model="filters.skill"
@@ -156,6 +163,18 @@ export default {
                     :value="welderSkill.uuid"
                     v-html="welderSkill.skillName"
                 ></option>
+            </select>
+        </div>
+        <div class="col-md-6 col-lg-3 col-sm mb-3">
+            <select
+                class="form-select"
+                v-model="filters.status"
+                @change="onSearchStatus()"
+            >
+                <option selected disabled value="">Status lamaran</option>
+                <option value="3">Terdaftar</option>
+                <option value="1">Diterima</option>
+                <option value="2">Ditolak</option>
             </select>
         </div>
     </div>
