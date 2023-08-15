@@ -311,7 +311,7 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Daftar Member Welder" :isBack="true" @onBack="onBack" />
+    <PageTitle title="Daftar Member Individu" :isBack="true" @onBack="onBack" />
 
     <form
         @submit.prevent="handleSubmit"

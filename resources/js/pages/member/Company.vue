@@ -101,7 +101,11 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Daftar Member Company" :isBack="true" @onBack="onBack" />
+    <PageTitle
+        title="Daftar Member Perusahaan"
+        :isBack="true"
+        @onBack="onBack"
+    />
 
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">

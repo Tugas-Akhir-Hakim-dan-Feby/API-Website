@@ -39,7 +39,6 @@ class AdminHubRequestUpdate extends FormRequest
             'gender' => 'required|in:L,P',
             'birth_place' => 'required',
             'date_birth' => 'required',
-            'nip' => 'required|numeric',
             'membership_card' => 'required',
         ];
     }

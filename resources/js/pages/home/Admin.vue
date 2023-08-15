@@ -36,7 +36,7 @@ export default {
                                             class="ri-list-check-2 text-muted font-24"
                                         ></i>
                                         <h3 class="text-dark">
-                                            <span>71</span>
+                                            <span>10</span>
                                         </h3>
                                         <p class="text-muted font-15 mb-0">
                                             Jumlah Pengguna API Cabang
@@ -56,7 +56,7 @@ export default {
                                             class="ri-group-line text-muted font-24"
                                         ></i>
                                         <h3 class="text-dark">
-                                            <span>31</span>
+                                            <span>12</span>
                                         </h3>
                                         <p class="text-muted font-15 mb-0">
                                             Jumlah Pengguna Pakar
@@ -90,7 +90,7 @@ export default {
                                 >
                                     <div class="card-body text-center">
                                         <h3 class="text-dark">
-                                            <span>90</span>
+                                            <span>20</span>
                                         </h3>
                                         <p class="text-muted font-15 mb-0">
                                             Jumlah Welder Member
