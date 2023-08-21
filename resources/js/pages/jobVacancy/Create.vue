@@ -214,7 +214,7 @@ export default {
                 <div class="mb-2">
                     <label>Kontak Yang Dihubungi</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-control"
                         v-model="form.contact"
                         :class="{ 'is-invalid': errors.contact }"
@@ -318,11 +318,11 @@ export default {
                     :disabled="isLoading"
                     >Batal</router-link
                 >
-                <button class="btn btn-sm btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-sm btn-success"
+                    class="btn btn-sm btn-primary"
                     type="button"
                     disabled
                     v-if="isLoading"

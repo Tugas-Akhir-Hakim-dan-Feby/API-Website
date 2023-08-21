@@ -221,13 +221,13 @@ export default {
                                         params: { id: jobVancacy.uuid },
                                     }"
                                     v-if="$can('update', 'Jobvacancy')"
-                                    class="btn btn-sm btn-warning text-white me-2"
+                                    class="btn btn-sm btn-warning text-white mb-2 me-2"
                                     >Edit</router-link
                                 >
                                 <button
                                     @click="handleDelete(jobVancacy.uuid)"
                                     v-if="$can('delete', 'Jobvacancy')"
-                                    class="btn btn-sm btn-danger text-white"
+                                    class="btn btn-sm btn-danger text-white mb-2"
                                 >
                                     Hapus
                                 </button>

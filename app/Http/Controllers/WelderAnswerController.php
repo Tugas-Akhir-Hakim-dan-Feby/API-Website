@@ -14,6 +14,7 @@ use App\Repositories\Answer\AnswerRepository;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\WelderAnswer\WelderAnswerRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
@@ -97,7 +98,8 @@ class WelderAnswerController extends Controller
 
             if ($request->has('status')) {
                 $exam->examPacket->examPacketHasWelder()->welderAuth()->update([
-                    "status" => WelderHasExamPacket::FINISH
+                    "status" => WelderHasExamPacket::FINISH,
+                    "finished_at" => Carbon::now()
                 ]);
             }
 

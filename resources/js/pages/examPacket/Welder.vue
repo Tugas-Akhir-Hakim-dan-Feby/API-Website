@@ -177,7 +177,6 @@ export default {
 
 <template>
     <PageTitle title="Uji Kompetensi" />
-
     <div class="card position-relative">
         <Loader v-if="isLoading" />
         <div class="card-body">
@@ -221,7 +220,7 @@ export default {
                             <th>Jadwal Ujian</th>
                             <th>Tenggat Ujian</th>
                             <th>Status Validasi</th>
-                            <th>Status</th>
+                            <th>Penilaian</th>
                             <th v-if="isSchedule || isAfterSchedule">Aksi</th>
                         </tr>
                     </thead>
@@ -277,8 +276,13 @@ export default {
                                     v-if="welderHasExamPacket.certificateNumber"
                                     >KOMPETEN</span
                                 >
-                                <span class="badge bg-warning" v-else
+                                <span
+                                    class="badge bg-danger"
+                                    v-else-if="welderHasExamPacket.grade"
                                     >TIDAK KOMPETEN</span
+                                >
+                                <span v-else class="badge bg-info"
+                                    >BELUM ADA PENILAIAN</span
                                 >
                             </td>
                             <td
@@ -345,9 +349,7 @@ export default {
                                                 ?.examSchedule,
                                             welderHasExamPacket.examPacket
                                                 ?.endTime
-                                        ) ||
-                                        welderHasExamPacket.status == 1 ||
-                                        welderHasExamPacket.status == 3
+                                        ) && welderHasExamPacket.finishedAt
                                     "
                                     :to="{
                                         name: 'Exam Packet Success',

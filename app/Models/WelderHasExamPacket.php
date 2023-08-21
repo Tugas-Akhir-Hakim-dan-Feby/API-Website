@@ -27,6 +27,7 @@ class WelderHasExamPacket extends Model
         "certificate_number",
         "uuid",
         "validated_at",
+        "finished_at",
     ];
 
     protected $hidden = [

@@ -57,7 +57,7 @@ export default {
 };
 </script>
 <template>
-    <PageTitle title="Tambah Pengguna API Pusat">
+    <PageTitle title="Tambah Admin Pusat">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
@@ -113,7 +113,7 @@ export default {
                 <div class="mb-2">
                     <label>Email</label>
                     <input
-                        type="text"
+                        type="email"
                         class="form-control form-validation"
                         :class="{ 'is-invalid': errors.email }"
                         v-model="form.email"
@@ -131,7 +131,7 @@ export default {
                 <div class="mb-2">
                     <label>Telepon</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-control form-validation"
                         :class="{ 'is-invalid': errors.phone }"
                         v-model="form.phone"

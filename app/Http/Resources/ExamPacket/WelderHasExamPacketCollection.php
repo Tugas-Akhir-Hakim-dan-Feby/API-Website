@@ -36,6 +36,7 @@ class WelderHasExamPacketCollection extends ResourceCollection
                 "created_at" => $examPacket->created_at,
                 "updated_at" => $examPacket->updated_at,
                 "validated_at" => $examPacket->validated_at,
+                "finished_at" => $examPacket->finished_at,
             ];
         }
 
@@ -78,7 +79,7 @@ class WelderHasExamPacketCollection extends ResourceCollection
             $precentage = 0;
         }
 
-        return $precentage;
+        return number_format($precentage, 2);
     }
 
     protected function getWrongPrecentage($exams)
@@ -91,6 +92,6 @@ class WelderHasExamPacketCollection extends ResourceCollection
             $precentage = 0;
         }
 
-        return $precentage;
+        return number_format($precentage, 2);
     }
 }

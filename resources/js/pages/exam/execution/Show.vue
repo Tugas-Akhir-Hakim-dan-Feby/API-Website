@@ -83,6 +83,7 @@ export default {
                 if (currentTime >= endTime) {
                     clearInterval(interval);
                     this.currentTime = "Waktu telah habis";
+                    this.handleClearTime();
                 } else {
                     const remainingTime = endTime - currentTime;
                     const hours = Math.floor(remainingTime / (1000 * 60 * 60));
@@ -299,17 +300,15 @@ export default {
                 });
         },
         handlePenalty(message) {
-            if (this.isOk) {
-                this.message = message;
-                $("#announcmentPenalty").modal("show");
-            }
+            // if (this.isOk) {
+            //     this.message = message;
+            //     $("#announcmentPenalty").modal("show");
+            // }
             // if (this.examPacket.examPacketHasWelder?.penalty > 0) {
             //     this.isLoading = true;
-
             //     let formData = {
             //         examPacketId: this.examPacketId,
             //     };
-
             //     this.$store
             //         .dispatch("postData", [
             //             "user-exam-packet/update-penalty",
@@ -331,6 +330,20 @@ export default {
 
             this.$store
                 .dispatch("postData", ["user-exam-packet/punishment", formData])
+                .then((response) => {
+                    localStorage.removeItem("pageStory");
+                    cookie.remove("examSession");
+                    window.location.href = "/exam-packet";
+                })
+                .catch((error) => {});
+        },
+        handleClearTime() {
+            let formData = {
+                examPacketId: this.examPacketId,
+            };
+
+            this.$store
+                .dispatch("postData", ["user-exam-packet/finish", formData])
                 .then((response) => {
                     localStorage.removeItem("pageStory");
                     cookie.remove("examSession");
@@ -371,29 +384,6 @@ export default {
             <div class="content">
                 <div class="navbar-custom">
                     <ul class="list-unstyled topbar-menu float-end mb-0">
-                        <li class="notification-list topbar-dropdown">
-                            <a
-                                href="#"
-                                class="nav-link"
-                                style="cursor: default"
-                            >
-                                <span
-                                    class="btn btn-sm text-white disabled"
-                                    :class="
-                                        examPacket.examPacketHasWelder
-                                            ? examPacket.examPacketHasWelder
-                                                  .penalty > 2
-                                                ? 'btn-warning'
-                                                : 'btn-danger'
-                                            : ''
-                                    "
-                                    >Sisa Percobaan
-                                    {{
-                                        examPacket.examPacketHasWelder?.penalty
-                                    }}</span
-                                >
-                            </a>
-                        </li>
                         <li class="notification-list topbar-dropdown">
                             <a href="#" class="nav-link">
                                 <button
@@ -447,12 +437,20 @@ export default {
                                             :key="index"
                                             class="shadow-sm d-flex align-items-center justify-content-between"
                                         >
-                                            <p class="m-0">
+                                            <p
+                                                class="m-0"
+                                                v-if="
+                                                    exam.type == 'MutipleChoice'
+                                                "
+                                            >
                                                 {{
                                                     answer.answer == 1
                                                         ? "Benar"
                                                         : "Salah"
                                                 }}
+                                            </p>
+                                            <p v-else>
+                                                {{ answer.answer }}
                                             </p>
                                             <input
                                                 type="radio"

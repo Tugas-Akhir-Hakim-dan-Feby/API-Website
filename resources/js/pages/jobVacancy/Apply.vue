@@ -150,7 +150,7 @@ export default {
                                             jobVacancy.companyMember
                                                 ?.companyName
                                         "
-                                        height="50"
+                                        style="height: 50px; width: 100%"
                                     />
                                 </div>
                                 <div class="col-md-8 col-sm-12">

@@ -27,7 +27,7 @@ class AdminHubRequestStore extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'email|required|unique:users',
+            'email' => 'required|email|unique:users',
             'name' => 'required',
             'position' => 'required',
             'phone' => 'required|numeric',

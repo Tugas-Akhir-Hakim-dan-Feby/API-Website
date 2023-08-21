@@ -468,7 +468,10 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer d-flex justify-content-between">
+                <div
+                    class="modal-footer d-flex justify-content-between position-relative"
+                >
+                    <Loader style="margin-left: -0.71rem" v-if="isLoading" />
                     <button
                         :disabled="isLoading"
                         type="button"

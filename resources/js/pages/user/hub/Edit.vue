@@ -89,7 +89,7 @@ export default {
 </script>
 <template>
     {{ user }}
-    <PageTitle title="Edit Pengguna API Pusat">
+    <PageTitle title="Edit Admin Pusat">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
@@ -163,7 +163,7 @@ export default {
                 <div class="mb-2">
                     <label>Telepon</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-validation form-control"
                         :class="{ 'is-invalid': errors.phone }"
                         v-model="form.phone"

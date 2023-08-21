@@ -206,6 +206,16 @@ export default {
                         <span> Uji Kompetensi </span>
                     </router-link>
                 </li>
+
+                <li class="side-nav-item">
+                    <router-link
+                        :to="{ name: 'Check Certificate' }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-file-search"></i>
+                        <span> Cek Sertifikat </span>
+                    </router-link>
+                </li>
             </ul>
         </div>
     </div>

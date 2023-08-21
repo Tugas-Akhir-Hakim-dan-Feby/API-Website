@@ -333,13 +333,13 @@ export default {
                             Batal
                         </router-link>
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
                             Simpan
                         </button>
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             type="button"
                             disabled
                             v-if="isLoading"

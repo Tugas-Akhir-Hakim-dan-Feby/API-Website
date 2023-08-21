@@ -161,9 +161,12 @@ export default {
                             Keuntungan
                         </li>
                         <hr />
-                        <!-- <li>Mendapatkan Informasi Terbaru Pengelasan</li>
-                        <li>Mendapatkan Konsultasi bersama Pakar IWS</li>
-                        <li>Menyajikan Berita terkait Perusahaan</li> -->
+                        <li>Mendapatkan Informasi Terbaru Pengelasan</li>
+                        <li>Dapat mengadakan pelatihan kerja</li>
+                        <li>
+                            Dapat berkolaborasi dengan perusahaan hingga
+                            organisasi lainnya
+                        </li>
                     </ul>
                     <router-link
                         :to="{ name: 'Member Operator' }"

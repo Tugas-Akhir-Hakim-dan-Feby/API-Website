@@ -29,6 +29,8 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
             throw new Exception("Harap masukan kurang dari 100 data!");
         }
 
+        dd($collection);
+
         foreach ($collection as $collect) {
             $dateBirth = ($collect['date_birth'] - 25569) * 86400;
 
@@ -47,7 +49,6 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
 
             $user->welderMember()->create([
                 "uuid" => Str::uuid(),
-                "welder_skill_id" => $welderSkill->id,
                 "resident_id_card" => $collect["nik"],
                 "date_birth" => gmdate("Y-m-d", $dateBirth),
                 "birth_place" => $collect["birth_place"],
@@ -55,7 +56,11 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
                 "status" => $collect["status"],
             ]);
 
-            $roles = Role::whereIn('id', [User::MEMBER_INDIVIDUAL, User::MEMBER_APPLICATION])->get();
+            $user->welderHasSkills()->create([
+                "welder_skill_id" => $welderSkill->id
+            ]);
+
+            $roles = Role::whereIn('id', [User::MEMBER_INDIVIDUAL])->get();
 
             $user->syncRoles($roles);
         }

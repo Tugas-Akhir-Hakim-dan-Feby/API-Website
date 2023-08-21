@@ -52,6 +52,11 @@ const routes = [
             requiresAuth: true,
         },
     },
+    {
+        path: "/check-certificate",
+        name: "Check Certificate",
+        component: () => import("../pages/CheckCertificate.vue"),
+    },
 ];
 
 export default routes;

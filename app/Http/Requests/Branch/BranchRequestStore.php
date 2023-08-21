@@ -29,7 +29,7 @@ class BranchRequestStore extends FormRequest
         return [
             'branch_name' => 'required',
             'branch_address' => 'required',
-            'branch_phone' => 'required',
+            'branch_phone' => 'required|numeric',
         ];
     }
 
@@ -44,6 +44,13 @@ class BranchRequestStore extends FormRequest
             'branch_name.required' => 'kolom cabang wajib diisi',
             'branch_address.required' => 'kolom alamat cabang wajib diisi',
             'branch_phone.required' => 'kolom telepon cabang wajib diisi',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'branch_phone' => 'kolom telepon'
         ];
     }
 

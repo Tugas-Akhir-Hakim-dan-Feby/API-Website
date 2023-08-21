@@ -34,6 +34,7 @@ export default {
             formData.append("salary", this.form.salary);
             formData.append("deadline", this.form.deadline);
             formData.append("description", this.form.description);
+            formData.append("contact", this.form.contact);
 
             if (this.form.documentPamphlet) {
                 formData.append(
@@ -58,6 +59,7 @@ export default {
                 workType: jobVacancy.workType,
                 placement: jobVacancy.placement,
                 salary: jobVacancy.salary,
+                contact: jobVacancy.contact,
                 deadline: this.getDeadline(jobVacancy.deadline),
                 description: jobVacancy.description,
                 pamphlet: jobVacancy.pamphlet,
@@ -124,10 +126,10 @@ export default {
             </li>
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Job Vacancy' }"
-                    >Edit Lowongan</router-link
+                    >Lowongan</router-link
                 >
             </li>
-            <li class="breadcrumb-item active">Tambah Lowongan</li>
+            <li class="breadcrumb-item active">Edit Lowongan</li>
         </ol>
     </PageTitle>
 
@@ -180,6 +182,24 @@ export default {
                         :key="index"
                     >
                         {{ error }}.
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label>Kontak Yang Dihubungi</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        v-model="form.contact"
+                        :class="{ 'is-invalid': errors.contact }"
+                        :disabled="isLoading"
+                    />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.contact"
+                        v-for="(error, index) in errors.contact"
+                        :key="index"
+                    >
+                        {{ error }}
                     </div>
                 </div>
                 <div class="mb-2">
@@ -263,32 +283,6 @@ export default {
                         {{ error }}.
                     </div>
                 </div>
-                <div class="mb-2">
-                    <label>Brosur Lowongan</label>
-                    <input
-                        type="file"
-                        class="form-control"
-                        @change="uploadDocumentPamphlet"
-                        :class="{ 'is-invalid': errors.documentPamphlet }"
-                        :disabled="isLoading"
-                    />
-                    <div
-                        class="invalid-feedback"
-                        v-if="errors.documentPamphlet"
-                        v-for="(error, index) in errors.documentPamphlet"
-                        :key="index"
-                    >
-                        {{ error }}.
-                    </div>
-                </div>
-                <div class="mb-2" v-if="form.pamphlet">
-                    <img
-                        :src="form.pamphlet"
-                        :alt="form.pamphlet"
-                        class="img-fluid"
-                        height="250"
-                    />
-                </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <router-link
@@ -296,7 +290,22 @@ export default {
                     class="btn btn-sm btn-secondary"
                     >Batal</router-link
                 >
-                <button class="btn btn-sm btn-success">Simpan</button>
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
+                    Simpan
+                </button>
+                <button
+                    class="btn btn-sm btn-primary"
+                    type="button"
+                    disabled
+                    v-if="isLoading"
+                >
+                    <span
+                        class="spinner-border spinner-border-sm me-1"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Harap Tunggu...
+                </button>
             </div>
         </div>
     </form>

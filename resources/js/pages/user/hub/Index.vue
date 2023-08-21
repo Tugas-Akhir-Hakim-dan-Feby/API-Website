@@ -106,12 +106,12 @@ export default {
 };
 </script>
 <template>
-    <PageTitle title="Daftar Pengguna Admin Pusat">
+    <PageTitle title="Daftar Admin Pusat">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
             </li>
-            <li class="breadcrumb-item active">Daftar Pengguna Admin Pusat</li>
+            <li class="breadcrumb-item active">Daftar Admin Pusat</li>
         </ol>
     </PageTitle>
 

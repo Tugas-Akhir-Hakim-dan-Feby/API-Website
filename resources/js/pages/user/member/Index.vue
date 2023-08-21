@@ -167,14 +167,12 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Pengguna Welder Member'">
+    <PageTitle :title="'Daftar Individu Member'">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
             </li>
-            <li class="breadcrumb-item active">
-                Daftar Pengguna Welder Member
-            </li>
+            <li class="breadcrumb-item active">Daftar Individu Member</li>
         </ol>
     </PageTitle>
 

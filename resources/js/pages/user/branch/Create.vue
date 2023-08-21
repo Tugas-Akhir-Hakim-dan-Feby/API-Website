@@ -26,6 +26,17 @@ export default {
             },
         };
     },
+    computed: {
+        maxDateBirth() {
+            let date = new Date();
+            date.setFullYear(date.getFullYear() - 17);
+            date.setMonth(date.getMonth());
+            date.setDate(date.getDate());
+
+            let formattedDate = date.toISOString().split("T")[0];
+            return formattedDate;
+        },
+    },
     mounted() {
         this.getBranches();
         Util.removeInvalidClass();
@@ -77,7 +88,7 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Tambah Pengguna Admin Cabang'">
+    <PageTitle :title="'Tambah Admin Cabang'">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
@@ -97,7 +108,7 @@ export default {
         <form @submit.prevent="handleSubmit">
             <div class="card-body">
                 <div class="mb-2">
-                    <label>Cabang API</label>
+                    <label>Cabang</label>
                     <select
                         class="form-select form-validation"
                         :class="{ 'is-invalid': errors.branchId }"
@@ -179,7 +190,7 @@ export default {
                 <div class="mb-2">
                     <label>Telepon</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-control form-validation"
                         :class="{ 'is-invalid': errors.phone }"
                         v-model="form.phone"
@@ -220,6 +231,7 @@ export default {
                         :class="{ 'is-invalid': errors.dateBirth }"
                         v-model="form.dateBirth"
                         :disabled="isLoading"
+                        :max="maxDateBirth"
                     />
                     <div
                         class="invalid-feedback"

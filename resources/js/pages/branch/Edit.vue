@@ -95,7 +95,7 @@ export default {
                 <div class="mb-2">
                     <label for="branchPhone">No. Telepon Cabang</label>
                     <input
-                        type="number"
+                        type="text"
                         class="form-control"
                         id="branchPhone"
                         v-model="branch.branchPhone"
@@ -121,11 +121,11 @@ export default {
                 >
                     Batal
                 </button>
-                <button class="btn btn-sm btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-sm btn-success"
+                    class="btn btn-sm btn-primary"
                     type="button"
                     disabled
                     v-if="isLoading"

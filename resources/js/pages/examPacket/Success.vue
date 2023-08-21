@@ -60,14 +60,20 @@ export default {
                     <span
                         style="cursor: default"
                         class="btn mb-1 btn-sm btn-success"
-                        v-if="examPacket.certificateNumber"
+                        v-if="examPacket.evaluation?.certificateNumber"
                         >KOMPETEN</span
                     >
                     <span
                         style="cursor: default"
                         class="btn mb-1 btn-sm btn-danger"
-                        v-else
+                        v-else-if="examPacket.evaluation?.grade"
                         >TIDAK KOMPETEN</span
+                    >
+                    <span
+                        v-else
+                        style="cursor: default"
+                        class="btn mb-1 btn-sm btn-info"
+                        >BELUM ADA PENILAIAN</span
                     >
 
                     <hr />
@@ -78,6 +84,19 @@ export default {
                             <span
                                 class="ms-2"
                                 v-html="examPacket.competenceSchema?.skillName"
+                            ></span>
+                        </p>
+
+                        <p
+                            class="text-muted"
+                            v-if="examPacket.evaluation?.certificateNumber"
+                        >
+                            <strong>Nomor Sertifikat :</strong>
+                            <span
+                                class="ms-2"
+                                v-html="
+                                    examPacket.evaluation?.certificateNumber
+                                "
                             ></span>
                         </p>
 

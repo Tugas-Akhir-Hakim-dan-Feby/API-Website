@@ -248,6 +248,31 @@ class WelderHasExamPacketController extends Controller
         }
     }
 
+    public function finish(Request $request)
+    {
+        DB::beginTransaction();
+
+        $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+
+        $welderHasExamPacket = $this->welderHasExamPacket->findByCriteria([
+            ["exam_packet_id", $examPacket->id],
+            ["user_id", auth()->user()->id]
+        ]);
+
+        try {
+            $welderHasExamPacket->update([
+                "status" => WelderHasExamPacket::FINISH,
+                "finished_at" => Carbon::now()
+            ]);
+
+            DB::commit();
+            return $this->successMessage("pembekuan ujian berlaku", $welderHasExamPacket);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
     public function punishment(Request $request)
     {
         DB::beginTransaction();
@@ -287,7 +312,9 @@ class WelderHasExamPacketController extends Controller
             $welderHasExamPacket->status = $request->status;
 
             if ($request->status == 3) {
-                $welderHasExamPacket->certificate_number = $this->generateAbbreviation($welderHasExamPacket->examPacket->competenceSchema->skill_name);
+                if (!$welderHasExamPacket->certificate_number) {
+                    $welderHasExamPacket->certificate_number = $this->generateAbbreviation($welderHasExamPacket->examPacket->competenceSchema->skill_name);
+                }
             } else {
                 $welderHasExamPacket->certificate_number = null;
             }
@@ -341,6 +368,6 @@ class WelderHasExamPacketController extends Controller
             $abbreviation .= strtoupper($word[0]);
         }
 
-        return $abbreviation  . '_' . mt_rand(1000000000, 9999999999);
+        return $abbreviation  . '-' . mt_rand(1000000000, 9999999999);
     }
 }

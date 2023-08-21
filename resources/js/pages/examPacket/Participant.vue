@@ -664,7 +664,7 @@ export default {
                             class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
-                            Kirim
+                            Validasi
                         </button>
                         <button
                             class="btn btn-sm btn-primary"
