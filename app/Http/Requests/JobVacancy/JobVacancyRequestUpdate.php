@@ -34,6 +34,7 @@ class JobVacancyRequestUpdate extends FormRequest
             "deadline" => "required",
             "description" => "required",
             "contact" => "required|numeric",
+            "contact_name" => "required",
         ];
     }
 
@@ -48,6 +49,7 @@ class JobVacancyRequestUpdate extends FormRequest
             "description" => "deskripsi",
             "document_pamphlet" => "brosur",
             "contact" => "kontak yang dihubungi",
+            "contact_name" => "nama kontak",
         ];
     }
 

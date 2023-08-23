@@ -167,12 +167,12 @@ export default {
 };
 </script>
 <template>
-    <PageTitle :title="'Daftar Member Individu'">
+    <PageTitle :title="'Daftar Personal Member'">
         <ol class="breadcrumb m-0">
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
             </li>
-            <li class="breadcrumb-item active">Daftar Member Individu</li>
+            <li class="breadcrumb-item active">Daftar Personal Member</li>
         </ol>
     </PageTitle>
 

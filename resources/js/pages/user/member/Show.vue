@@ -52,7 +52,7 @@ export default {
 </script>
 <template>
     <PageTitle
-        :title="'Detail Member Individu'"
+        :title="'Detail Personal Member'"
         :isBack="true"
         @onBack="onBack"
     >
@@ -62,7 +62,7 @@ export default {
             </li>
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'User Member' }"
-                    >Member Individu</router-link
+                    >Personal Member</router-link
                 >
             </li>
             <li class="breadcrumb-item active">Detail Welder</li>

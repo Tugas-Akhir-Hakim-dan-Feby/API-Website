@@ -21,6 +21,7 @@ class JobVacancy extends Model
         "placement",
         "work_type",
         "contact",
+        "contact_name",
         "deadline",
         "salary",
         "status",

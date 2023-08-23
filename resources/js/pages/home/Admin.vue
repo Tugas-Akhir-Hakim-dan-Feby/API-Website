@@ -7,6 +7,10 @@ export default {
     },
     mounted() {
         this.getSkillChart();
+
+        $("#chart-1").mouseenter(function () {
+            console.log("OK");
+        });
     },
     methods: {
         getSkillChart() {
@@ -112,11 +116,15 @@ export default {
                             <h3>Perkembangan Minat Welder</h3>
                             <span class="small">({{ skillChart.info }})</span>
                         </div>
-                        <!-- <div>
-                            <button class="btn btn-sm btn-primary">
+                        <div>
+                            <a
+                                href="/download/chart/skill"
+                                target="_blank"
+                                class="btn btn-sm btn-primary"
+                            >
                                 Unduh Hasil
-                            </button>
-                        </div> -->
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">

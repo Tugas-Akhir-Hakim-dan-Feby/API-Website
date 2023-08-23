@@ -23,7 +23,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 Route::get('/{any}', [PageController::class, 'app'])->where('any', '^(?!auth|laravel-version|email|attempt|print|export|download).*$');
 Route::get('/attempt/{any}', [PageController::class, 'attempt'])->where('any', '^(?!activation-account).*$')->name('web.attempt');
 Route::get('/auth/{any}', [PageController::class, 'auth'])->where('any', '^(?!activation-account).*$')->name('web.auth');
-Route::get('/print/invoice/{externalId}', PrintController::class)->name('web.print.invoice');
+Route::get('/print/invoice/{externalId}', [PrintController::class, 'invoice'])->name('web.print.invoice');
 
 Route::get('/auth/activation-account', ActivationAccountController::class);
 
@@ -31,7 +31,7 @@ Route::get('/export/participant/{examPacketId}', [ExamPacketController::class, '
 
 Route::prefix('/download')->group(function () {
     Route::get('/certificate/{examPacketId}', [WelderHasExamPacketController::class, 'downloadCertificate'])->name('web.download.certificate');
-    // Route::get('/chart/skill', [AdminAppController::class, 'downloadCertificate'])->name('web.download.certificate');
+    Route::get('/chart/skill', [PrintController::class, 'chartSkill'])->name('web.download.certificate');
 });
 
 Route::get('/email', function () {

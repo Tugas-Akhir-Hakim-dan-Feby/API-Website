@@ -230,6 +230,24 @@ export default {
                     </div>
                 </div>
                 <div class="mb-2">
+                    <label>Nama Kontak Yang Dihubungi</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        v-model="form.contactName"
+                        :class="{ 'is-invalid': errors.contactName }"
+                        :disabled="isLoading"
+                    />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.contactName"
+                        v-for="(error, index) in errors.contactName"
+                        :key="index"
+                    >
+                        {{ error }}
+                    </div>
+                </div>
+                <div class="mb-2">
                     <label>Penempatan Kerja</label>
                     <input
                         type="text"

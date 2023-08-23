@@ -128,7 +128,13 @@ export default {
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                         <label class="fw-bold">Kontak Yang Dihubungi</label>
-                        <p v-html="jobVacancy.contact"></p>
+                        <p
+                            v-html="
+                                `${jobVacancy.contact} (${
+                                    jobVacancy.contactName ?? 'Admin Perusahaan'
+                                })`
+                            "
+                        ></p>
                     </div>
                 </div>
             </div>

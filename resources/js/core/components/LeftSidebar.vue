@@ -110,7 +110,7 @@ export default {
                             </li>
                             <li v-if="$can('index', 'Weldermember')">
                                 <router-link :to="{ name: 'User Member' }"
-                                    >Individu Member</router-link
+                                    >Personal Member</router-link
                                 >
                             </li>
                             <li v-if="$can('index', 'Weldermember')">

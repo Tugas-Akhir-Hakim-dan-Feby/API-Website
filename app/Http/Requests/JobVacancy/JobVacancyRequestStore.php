@@ -35,6 +35,7 @@ class JobVacancyRequestStore extends FormRequest
             "deadline" => "required",
             "description" => "required",
             "contact" => "required|numeric",
+            "contact_name" => "required",
             "company_member_id" => "required|exists:user_company_members,uuid"
         ];
 
@@ -53,6 +54,7 @@ class JobVacancyRequestStore extends FormRequest
             "deadline" => "waktu penutupan",
             "description" => "deskripsi",
             "contact" => "kontak yang dihubungi",
+            "contact_name" => "nama kontak",
             "company_member_id" => "perusahaan member",
         ];
     }
