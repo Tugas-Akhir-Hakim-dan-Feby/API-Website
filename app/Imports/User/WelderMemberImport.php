@@ -29,8 +29,6 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
             throw new Exception("Harap masukan kurang dari 100 data!");
         }
 
-        dd($collection);
-
         foreach ($collection as $collect) {
             $dateBirth = ($collect['date_birth'] - 25569) * 86400;
 

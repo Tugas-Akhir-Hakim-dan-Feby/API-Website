@@ -52,7 +52,7 @@ export default {
 </script>
 <template>
     <PageTitle
-        :title="'Detail Pengguna Welder Member'"
+        :title="'Detail Member Individu'"
         :isBack="true"
         @onBack="onBack"
     >
@@ -62,7 +62,7 @@ export default {
             </li>
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'User Member' }"
-                    >Member Welder</router-link
+                    >Member Individu</router-link
                 >
             </li>
             <li class="breadcrumb-item active">Detail Welder</li>
@@ -101,12 +101,15 @@ export default {
                             <div class="row">
                                 <div class="col-md-5">
                                     <h6 class="font-14">Keahlian:</h6>
-                                    <p
-                                        v-html="
-                                            user.welderMember?.welderSkill
-                                                ?.skillName
-                                        "
-                                    ></p>
+                                    <ul>
+                                        <li
+                                            v-for="(
+                                                skill, index
+                                            ) in user.welderHasSkills"
+                                            :key="index"
+                                            v-html="skill.welderSkill.skillName"
+                                        ></li>
+                                    </ul>
                                 </div>
                                 <div class="col-md-7">
                                     <h6 class="font-14">

@@ -105,8 +105,19 @@ export default {
 
             <div class="card">
                 <div class="card-header">
-                    <h3>Perkembangan Minat Welder</h3>
-                    <span class="small">({{ skillChart.info }})</span>
+                    <div
+                        class="d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            <h3>Perkembangan Minat Welder</h3>
+                            <span class="small">({{ skillChart.info }})</span>
+                        </div>
+                        <!-- <div>
+                            <button class="btn btn-sm btn-primary">
+                                Unduh Hasil
+                            </button>
+                        </div> -->
+                    </div>
                 </div>
                 <div class="card-body">
                     <line-chart

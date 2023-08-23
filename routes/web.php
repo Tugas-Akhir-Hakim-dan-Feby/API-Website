@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ActivationAccountController;
 use App\Http\Controllers\ExamPacketController;
 use App\Http\Controllers\PrintController;
+use App\Http\Controllers\User\AdminAppController;
 use App\Http\Controllers\WelderHasExamPacketController;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -30,6 +31,7 @@ Route::get('/export/participant/{examPacketId}', [ExamPacketController::class, '
 
 Route::prefix('/download')->group(function () {
     Route::get('/certificate/{examPacketId}', [WelderHasExamPacketController::class, 'downloadCertificate'])->name('web.download.certificate');
+    // Route::get('/chart/skill', [AdminAppController::class, 'downloadCertificate'])->name('web.download.certificate');
 });
 
 Route::get('/email', function () {

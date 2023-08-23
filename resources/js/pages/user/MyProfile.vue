@@ -43,6 +43,6 @@ export default {
     <ProfileAdminBranch v-if="$can('update-admin-branch', 'Profile')" />
     <ProfileCompanyMember v-if="$can('update-company-member', 'Profile')" />
     <ProfileWelderMember v-if="$can('update-welder-member', 'Profile')" />
-    <ProfileExpert />
+    <ProfileExpert v-if="$can('update-expert', 'Profile')" />
     <ChangePassword v-if="$can('update-password', 'Profile')" />
 </template>

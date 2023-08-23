@@ -45,9 +45,9 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_HUB]['WelderMember'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel'];
         $access[User::ADMIN_HUB]['WelderSkill'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::ADMIN_HUB]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::ADMIN_HUB]['ExamPacket'] = ['index', 'show', 'delete', 'search', 'pagination', 'update-status'];
+        $access[User::ADMIN_HUB]['ExamPacket'] = ['index', 'show', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
         $access[User::ADMIN_HUB]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
-        $access[User::ADMIN_HUB]['Profile'] = ['index', 'update-password', 'update-admin-hub'];
+        $access[User::ADMIN_HUB]['Profile'] = ['index', 'update-password', 'update-admin-app'];
         $access[User::ADMIN_HUB]['Payment'] = ['cost', 'invoice'];
         $access[User::ADMIN_HUB]['JobVacancy'] = ['index', 'index-admin', 'info-company', 'create', 'show', 'update', 'delete'];
 
