@@ -144,13 +144,13 @@ export default {
                     </div>
                     <div class="card-footer d-flex justify-content-end">
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
                             Simpan
                         </button>
                         <button
-                            class="btn btn-success btn-sm"
+                            class="btn btn-primary btn-sm"
                             type="button"
                             disabled
                             v-if="isLoading"

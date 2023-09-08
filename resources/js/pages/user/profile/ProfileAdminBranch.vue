@@ -35,7 +35,7 @@ export default {
                 birthPlace: user.adminBranch?.birthPlace,
                 dateBirth: this.getDateBirth(user.adminBranch?.dateBirth),
                 gender: user.adminBranch?.gender,
-                nip: user.adminBranch?.nip,
+                membershipCard: user.membershipCard,
                 position: user.adminBranch?.position,
                 address: user.adminBranch?.address,
                 branchId: user.adminBranch?.branch?.uuid,
@@ -44,13 +44,16 @@ export default {
             };
         },
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    console.log(response);
+                    this.isLoading = false;
                     this.setForm(response.user);
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    this.isLoading = false;
+                });
         },
         getDateBirth(date) {
             return dayjs(date).locale("id").format("YYYY-MM-DD");
@@ -119,21 +122,23 @@ export default {
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-sm-3">NIP</label>
+                            <label class="col-sm-3">No KTA</label>
                             <div class="col">
                                 <input
                                     type="text"
                                     class="form-control"
-                                    v-model="form.nip"
+                                    v-model="form.membershipCard"
                                     :disabled="isLoading"
                                     :class="{
-                                        'is-invalid': errors.nip,
+                                        'is-invalid': errors.membershipCard,
                                     }"
                                 />
                                 <div
                                     class="invalid-feedback"
-                                    v-if="errors.nip"
-                                    v-for="(error, index) in errors.nip"
+                                    v-if="errors.membershipCard"
+                                    v-for="(
+                                        error, index
+                                    ) in errors.membershipCard"
                                     :key="index"
                                     v-html="error"
                                 ></div>
@@ -360,13 +365,13 @@ export default {
                     </div>
                     <div class="card-footer d-flex justify-content-end">
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
                             Simpan
                         </button>
                         <button
-                            class="btn btn-success btn-sm"
+                            class="btn btn-primary btn-sm"
                             type="button"
                             disabled
                             v-if="isLoading"
