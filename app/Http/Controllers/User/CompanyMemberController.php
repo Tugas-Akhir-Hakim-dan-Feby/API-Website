@@ -155,10 +155,10 @@ class CompanyMemberController extends Controller
         try {
             $user->update([
                 "name" => $request->name,
-                "email" => $request->email
+                "email" => $request->email,
             ]);
 
-            $user->companyMember()->update($request->except(["name", "email", "id"]));
+            $user->companyMember()->update($request->except(["name", "email", "id", "membership_card"]));
 
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $user);
@@ -181,11 +181,11 @@ class CompanyMemberController extends Controller
             if ($user->companyMember->company_legality) {
                 $path = str_replace(url('storage') . '/', '', $user->companyMember->company_legality);
                 Storage::delete($path);
-
-                $user->companyMember()->update([
-                    "company_legality" => $request->file('document')->store('company_legality')
-                ]);
             }
+
+            $user->companyMember()->update([
+                "company_legality" => $request->file('document')->store('company_legality')
+            ]);
 
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $user);
@@ -208,11 +208,11 @@ class CompanyMemberController extends Controller
             if ($user->companyMember->company_logo) {
                 $path = str_replace(url('storage') . '/', '', $user->companyMember->company_logo);
                 Storage::delete($path);
-
-                $user->companyMember()->update([
-                    "company_logo" => $request->file('logo')->store('company_logo')
-                ]);
             }
+
+            $user->companyMember()->update([
+                "company_logo" => $request->file('logo')->store('company_logo')
+            ]);
 
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $user);

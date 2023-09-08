@@ -111,7 +111,7 @@ class BranchController extends Controller
         DB::beginTransaction();
 
         $branch = $this->branchRepository->findOrFail($request->branch_id);
-        $user = $this->userRepository->findByCriteria(['uuid' => $id, 'role_id' => User::ADMIN_BRANCH]);
+        $user = $this->userRepository->findByCriteria(['uuid' => $id]);
 
         if (!$user) {
             abort(404);

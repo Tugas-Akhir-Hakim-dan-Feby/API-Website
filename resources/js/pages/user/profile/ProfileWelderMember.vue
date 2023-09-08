@@ -4,6 +4,7 @@ import iziToast from "izitoast";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import UploadFileWelderMember from "./uploadFile/UploadFileWelderMember.vue";
+import jsCookie from "js-cookie";
 
 export default {
     data() {
@@ -21,16 +22,17 @@ export default {
     },
     methods: {
         setForm(user) {
-            this.form = {
-                name: user.name,
-                email: user.email,
-                welderSkillId: user.welderMember?.welderSkill?.uuid,
-                residentIdCard: user.welderMember?.residentIdCard,
-                dateBirth: this.getDateBirth(user.welderMember?.dateBirth),
-                birthPlace: user.welderMember?.birthPlace,
-                workingStatus: user.welderMember?.workingStatus,
-                id: user.uuid,
-            };
+            this.form.name = user.name;
+            this.form.email = user.email;
+            this.form.residentIdCard = user.welderMember?.residentIdCard;
+            this.form.dateBirth = this.getDateBirth(
+                user.welderMember?.dateBirth
+            );
+            this.form.birthPlace = user.welderMember?.birthPlace;
+            this.form.workingStatus = user.welderMember?.workingStatus;
+            this.form.id = user.uuid;
+
+            this.form.welderHasSkills = user.welderHasSkills;
 
             this.document = {
                 id: user.uuid,
@@ -48,16 +50,51 @@ export default {
                 .catch((error) => {});
         },
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
-                    console.log(response);
+                    this.isLoading = false;
                     this.setForm(response.user);
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    this.isLoading = false;
+                });
         },
         getDateBirth(date) {
             return dayjs(date).locale("id").format("YYYY-MM-DD");
+        },
+        getWelderSkills() {
+            $(this.$refs.welderSkill).select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 20,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((skill) => ({
+                                id: skill.uuid,
+                                text: skill.skill_name,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+            });
+
+            $(this.$refs.welderSkill).on("change", () => {
+                this.form.welderSkillIds = $(this.$refs.welderSkill).val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
         },
         handleSubmit() {
             this.isLoading = true;
@@ -240,42 +277,48 @@ export default {
                                 ></div>
                             </div>
                         </div>
-                        <div class="row mb-3">
+                        <div class="row mb-1">
                             <label class="col-sm-3">Jenis Kompetensi</label>
                             <div class="col">
                                 <select
-                                    class="form-select"
-                                    v-model="form.welderSkillId"
+                                    class="select2-hidden-accessible form-select"
+                                    ref="welderSkill"
                                     :class="{
-                                        'is-invalid': errors.welderSkillId,
+                                        'is-invalid': errors.welderSkillIds,
                                     }"
                                     :disabled="isLoading"
-                                >
-                                    <option disabled selected></option>
-                                    <option
-                                        v-for="(
-                                            welderSkill, index
-                                        ) in welderSkills"
-                                        :key="index"
-                                        :value="welderSkill.uuid"
-                                        v-html="welderSkill.skillName"
-                                    ></option>
-                                </select>
+                                    multiple
+                                ></select>
                                 <div
                                     class="invalid-feedback"
-                                    v-if="errors.welderSkillId"
+                                    v-if="errors.welderSkillIds"
                                     v-for="(
                                         error, index
-                                    ) in errors.welderSkillId"
+                                    ) in errors.welderSkillIds"
                                     :key="index"
                                 >
-                                    {{ error }}.
+                                    {{ error }}
                                 </div>
                                 <div
                                     class="invalid-feedback"
                                     v-if="typeof errors == 'string'"
                                     v-html="errors"
                                 ></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3">&nbsp;</label>
+                            <div class="col">
+                                <ul style="padding-left: 1.2rem; margin-top: 0">
+                                    <li
+                                        v-for="(
+                                            welderSkill, index
+                                        ) in form.welderHasSkills"
+                                        :key="index"
+                                    >
+                                        {{ welderSkill.welderSkill.skillName }}
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

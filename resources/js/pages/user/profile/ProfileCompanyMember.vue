@@ -22,6 +22,7 @@ export default {
             this.form = {
                 name: user.name,
                 email: user.email,
+                membershipCard: user.membershipCard,
                 companyName: user.companyMember?.companyName,
                 companyDirector: user.companyMember?.companyDirector,
                 companyAddress: user.companyMember?.companyAddress,
@@ -39,12 +40,16 @@ export default {
             };
         },
         getUser() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["user", "me"])
                 .then((response) => {
+                    this.isLoading = false;
                     this.setForm(response.user);
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    this.isLoading = false;
+                });
         },
         getDateBirth(date) {
             return dayjs(date).locale("id").format("YYYY-MM-DD");
@@ -73,6 +78,11 @@ export default {
                 });
         },
         onSuccessUploadDocument(e) {
+            iziToast.success({
+                title: "Selamat",
+                message: "data anda berhasil diperbaharui",
+                position: "topCenter",
+            });
             this.getUser();
         },
     },
@@ -103,6 +113,17 @@ export default {
                             <strong>Galat - </strong> {{ errors }}
                         </div>
 
+                        <div class="row mb-3">
+                            <label class="col-sm-3">No KTA</label>
+                            <div class="col">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :disabled="true"
+                                    :value="form.membershipCard"
+                                />
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <label class="col-sm-3">Nama Pengguna</label>
                             <div class="col">
@@ -353,13 +374,13 @@ export default {
                     </div>
                     <div class="card-footer d-flex justify-content-end">
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
                             Simpan
                         </button>
                         <button
-                            class="btn btn-success btn-sm"
+                            class="btn btn-primary btn-sm"
                             type="button"
                             disabled
                             v-if="isLoading"

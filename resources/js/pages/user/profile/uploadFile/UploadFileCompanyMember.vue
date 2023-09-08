@@ -199,7 +199,7 @@ export default {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="uploadDocumentLabel">
-                        Unggah Dokumen
+                        Unggah Legalitas Perusahaan
                     </h5>
                 </div>
                 <form @submit.prevent="handleUploadDocument" method="post">
@@ -230,17 +230,20 @@ export default {
                         <div>
                             <button
                                 type="button"
-                                class="btn btn-secondary me-2"
+                                class="btn btn-sm btn-secondary me-2"
                                 data-bs-dismiss="modal"
                                 :disabled="isDisabled"
                             >
                                 Batal
                             </button>
-                            <button class="btn btn-primary" v-if="!isDisabled">
+                            <button
+                                class="btn btn-sm btn-primary"
+                                v-if="!isDisabled"
+                            >
                                 Kirim
                             </button>
                             <button
-                                class="btn btn-primary"
+                                class="btn btn-sm btn-primary"
                                 type="button"
                                 disabled
                                 v-if="isDisabled"
@@ -302,17 +305,20 @@ export default {
                         <div>
                             <button
                                 type="button"
-                                class="btn btn-secondary me-2"
+                                class="btn btn-sm btn-secondary me-2"
                                 data-bs-dismiss="modal"
                                 :disabled="isDisabled"
                             >
                                 Batal
                             </button>
-                            <button class="btn btn-primary" v-if="!isDisabled">
+                            <button
+                                class="btn btn-sm btn-primary"
+                                v-if="!isDisabled"
+                            >
                                 Kirim
                             </button>
                             <button
-                                class="btn btn-primary"
+                                class="btn btn-sm btn-primary"
                                 type="button"
                                 disabled
                                 v-if="isDisabled"
