@@ -211,27 +211,29 @@ class WelderMemberController extends Controller
             $fillablePersonalData = $this->onlyFillables($request->all(), $this->personalDataRepository->getFillable());
             $user->personalData()->update($fillablePersonalData);
 
-            $welderSkillIds = $request->welder_skill_ids;
-            $welderSkillIds = $this->welderSkillRepository->whereIn($welderSkillIds);
-            $welderSkillIds = $welderSkillIds->pluck('id')->toArray();
+            if ($request->welder_skill_ids) {
+                $welderSkillIds = $request->welder_skill_ids;
+                $welderSkillIds = $this->welderSkillRepository->whereIn($welderSkillIds);
+                $welderSkillIds = $welderSkillIds->pluck('id')->toArray();
 
-            $existingWelderSkills = $user->welderHasSkills()
-                ->whereIn('welder_skill_id', $welderSkillIds)
-                ->pluck('welder_skill_id')
-                ->toArray();
+                $existingWelderSkills = $user->welderHasSkills()
+                    ->whereIn('welder_skill_id', $welderSkillIds)
+                    ->pluck('welder_skill_id')
+                    ->toArray();
 
-            $newSkillIds = array_diff($welderSkillIds, $existingWelderSkills);
+                $newSkillIds = array_diff($welderSkillIds, $existingWelderSkills);
 
-            if (!empty($newSkillIds)) {
-                $skillsToCreate = [];
-                foreach ($newSkillIds as $skillId) {
-                    $skillsToCreate[] = [
-                        'welder_skill_id' => $skillId,
-                        'user_id' => auth()->user()->id
-                    ];
+                if (!empty($newSkillIds)) {
+                    $skillsToCreate = [];
+                    foreach ($newSkillIds as $skillId) {
+                        $skillsToCreate[] = [
+                            'welder_skill_id' => $skillId,
+                            'user_id' => auth()->user()->id
+                        ];
+                    }
+
+                    $user->welderHasSkills()->insert($skillsToCreate);
                 }
-
-                $user->welderHasSkills()->insert($skillsToCreate);
             }
 
             DB::commit();
