@@ -31,7 +31,7 @@ Route::get('/export/participant/{examPacketId}', [ExamPacketController::class, '
 
 Route::prefix('/download')->group(function () {
     Route::get('/certificate/{examPacketId}', [WelderHasExamPacketController::class, 'downloadCertificate'])->name('web.download.certificate');
-    Route::get('/chart/skill', [PrintController::class, 'chartSkill'])->name('web.download.certificate');
+    Route::get('/chart/skill', [PrintController::class, 'chartSkill'])->name('web.download.skill');
 });
 
 Route::get('/email', function () {

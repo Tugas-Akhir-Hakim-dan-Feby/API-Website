@@ -26,7 +26,7 @@ class UserController extends Controller
 
     public function me()
     {
-        $user = Auth::user();
+        $user = $this->userRepository->findOrFail(Auth::user()->uuid);
 
         $data = [
             'user' => $user,
@@ -34,7 +34,6 @@ class UserController extends Controller
         ];
 
         if ($user->isMemberWelder() || $user->isExpert()) {
-            $data["skill"] = $user->welderMember->welderSkill;
             $user->load(['welderMember', 'welderDocuments', 'welderHasSkills.welderSkill', 'personalData']);
         }
 

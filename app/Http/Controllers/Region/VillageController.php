@@ -14,13 +14,31 @@ class VillageController extends Controller
 
     public function index(Request $request)
     {
-        $villages = Http::get($this->apiRegion() . "/villages/$request->district_id.json");
-        return $this->successMessage("data berhasil diambil", $villages->json());
+        try {
+            $villages = Http::get($this->apiRegion() . "/villages/$request->district_id.json");
+
+            if (!$villages->successful() || $villages->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $villages->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function show($id)
     {
-        $village = Http::get($this->apiRegion() . "/village/$id.json");
-        return $this->successMessage("data berhasil diambil", $village->json());
+        try {
+            $village = Http::get($this->apiRegion() . "/village/$id.json");
+
+            if (!$village->successful() || $village->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $village->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

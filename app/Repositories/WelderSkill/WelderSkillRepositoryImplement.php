@@ -35,4 +35,11 @@ class WelderSkillRepositoryImplement extends Eloquent implements WelderSkillRepo
 
         return $branch;
     }
+
+    public function whereIn(array $data)
+    {
+        $skills = $this->model->whereIn('uuid', $data)->get();
+
+        return $skills;
+    }
 }

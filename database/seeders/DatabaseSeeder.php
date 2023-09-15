@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             WelderSkillSeeder::class,
             UserSeeder::class,
             RoleSeeder::class,
-            CostSeeder::class
+            CostSeeder::class,
+            BenefitSeeder::class,
         ]);
     }
 }

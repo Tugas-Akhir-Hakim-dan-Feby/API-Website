@@ -79,7 +79,7 @@ class RoleSeeder extends Seeder
 
         $access[User::MEMBER_APPLICATION]['Dashboard'] = ['index'];
         $access[User::MEMBER_APPLICATION]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
-        $access[User::MEMBER_APPLICATION]['Profile'] = ['index', 'update-password', 'update-guest'];
+        $access[User::MEMBER_APPLICATION]['Profile'] = ['index', 'update-password', 'update-welder-member'];
         $access[User::MEMBER_APPLICATION]['Member'] = ['index', 'company-member', 'welder-member'];
         $access[User::MEMBER_APPLICATION]['JobVacancy'] = ['index', 'index-welder', 'info', 'show'];
         $access[User::MEMBER_APPLICATION]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];

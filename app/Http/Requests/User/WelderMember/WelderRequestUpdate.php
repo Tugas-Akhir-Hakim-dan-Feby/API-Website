@@ -5,6 +5,7 @@ namespace App\Http\Requests\User\WelderMember;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class WelderRequestUpdate extends FormRequest
@@ -27,10 +28,18 @@ class WelderRequestUpdate extends FormRequest
     public function rules()
     {
         return [
-            'welder_skill_id' => 'required|exists:welder_skills,uuid',
+            'name' => 'required',
+            'email' => ['required', 'email', Rule::unique('users')->ignore(auth()->user()->id)],
             'resident_id_card' => 'required|numeric',
             'date_birth' => 'required|date',
             'birth_place' => 'required',
+            'citizenship' => 'required',
+            'village' => 'required',
+            'district' => 'required',
+            'regency' => 'required',
+            'province' => 'required',
+            'zip_code' => 'required',
+            'phone' => 'required',
             'working_status' => 'required|in:1,0',
         ];
     }
@@ -38,10 +47,18 @@ class WelderRequestUpdate extends FormRequest
     public function attributes()
     {
         return [
-            'welder_skill_id' => 'keahlian welder',
+            'name' => 'nama lengkap',
+            'email' => 'email',
             'resident_id_card' => 'nik',
             'date_birth' => 'tanggal lahir',
             'birth_place' => 'tempat lahir',
+            'citizenship' => 'kewarganegaraan',
+            'village' => 'desa/kelurahan',
+            'district' => 'kecamatan',
+            'regency' => 'kota/kabupaten',
+            'province' => 'provinsi',
+            'zip_code' => 'kode pos',
+            'phone' => 'telepon',
             'working_status' => 'status bekerja',
         ];
     }

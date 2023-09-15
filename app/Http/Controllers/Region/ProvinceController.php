@@ -14,13 +14,31 @@ class ProvinceController extends Controller
 
     public function index()
     {
-        $provinces = Http::get($this->apiRegion() . "/provinces.json");
-        return $this->successMessage("data berhasil diambil", $provinces->json());
+        try {
+            $provinces = Http::get($this->apiRegion() . "/provinces.json");
+
+            if (!$provinces->successful() || $provinces->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $provinces->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function show($id)
     {
-        $province = Http::get($this->apiRegion() . "/province/$id.json");
-        return $this->successMessage("data berhasil diambil", $province->json());
+        try {
+            $province = Http::get($this->apiRegion() . "/province/$id.json");
+
+            if (!$province->successful() || $province->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $province->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

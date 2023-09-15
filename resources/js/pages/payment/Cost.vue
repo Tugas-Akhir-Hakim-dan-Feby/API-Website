@@ -47,6 +47,7 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.getCosts();
+                    this.form = {};
                     $("#editCost").modal("hide");
                     $("#successModal").modal("show");
                 })
@@ -79,12 +80,13 @@ export default {
                             <th>No.</th>
                             <th>Jenis Harga</th>
                             <th>Nominal Harga</th>
+                            <th>Benefit</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="costs.length < 1">
-                            <td colspan="4" class="text-center">
+                            <td colspan="5" class="text-center">
                                 data harga tidak ada
                             </td>
                         </tr>
@@ -92,6 +94,18 @@ export default {
                             <th v-html="index + 1"></th>
                             <td v-html="cost.typePrice"></td>
                             <td v-html="getRupiah(cost.nominalPrice)"></td>
+                            <td>
+                                <ul v-if="cost.benefits.length > 0">
+                                    <li
+                                        v-for="(
+                                            benefit, index
+                                        ) in cost.benefits"
+                                        :key="index"
+                                        v-html="benefit.description"
+                                    ></li>
+                                </ul>
+                                <span v-else>-</span>
+                            </td>
                             <td>
                                 <button
                                     class="btn btn-warning text-white btn-sm me-2"

@@ -14,13 +14,31 @@ class DistrictController extends Controller
 
     public function index(Request $request)
     {
-        $districts = Http::get($this->apiRegion() . "/districts/$request->regency_id.json");
-        return $this->successMessage("data berhasil diambil", $districts->json());
+        try {
+            $districts = Http::get($this->apiRegion() . "/districts/$request->regency_id.json");
+
+            if (!$districts->successful() || $districts->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $districts->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function show($id)
     {
-        $district = Http::get($this->apiRegion() . "/district/$id.json");
-        return $this->successMessage("data berhasil diambil", $district->json());
+        try {
+            $district = Http::get($this->apiRegion() . "/district/$id.json");
+
+            if (!$district->successful() || $district->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $district->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

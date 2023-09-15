@@ -27,29 +27,61 @@ class PersonalData extends Model
 
     public function getProvinceAttribute()
     {
-        $apiProvince = Http::get($this->apiRegion() . "/province/" . $this->attributes['province'] . ".json")->json();
+        try {
+            $apiProvince = Http::get($this->apiRegion() . "/province/" . $this->attributes['province'] . ".json");
 
-        return $apiProvince;
+            if (!$apiProvince->successful() || $apiProvince->status() != 200) {
+                return null;
+            }
+
+            return $apiProvince->json();
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function getRegencyAttribute()
     {
-        $apiRegency = Http::get($this->apiRegion() . "/regency/" . $this->attributes['regency'] . ".json")->json();
+        try {
+            $apiRegency = Http::get($this->apiRegion() . "/regency/" . $this->attributes['regency'] . ".json");
 
-        return $apiRegency;
+            if (!$apiRegency->successful() || $apiRegency->status() != 200) {
+                return null;
+            }
+
+            return $apiRegency->json();
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function getDistrictAttribute()
     {
-        $apiDistrict = Http::get($this->apiRegion() . "/district/" . $this->attributes['district'] . ".json")->json();
+        try {
+            $apiDistrict = Http::get($this->apiRegion() . "/district/" . $this->attributes['district'] . ".json");
 
-        return $apiDistrict;
+            if (!$apiDistrict->successful() || $apiDistrict->status() != 200) {
+                return null;
+            }
+
+            return $apiDistrict->json();
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function getVillageAttribute()
     {
-        $apiVillage = Http::get($this->apiRegion() . "/village/" . $this->attributes['village'] . ".json")->json();
+        try {
+            $apiVillage = Http::get($this->apiRegion() . "/village/" . $this->attributes['village'] . ".json");
 
-        return $apiVillage;
+            if (!$apiVillage->successful() || $apiVillage->status() != 200) {
+                return null;
+            }
+
+            return $apiVillage->json();
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

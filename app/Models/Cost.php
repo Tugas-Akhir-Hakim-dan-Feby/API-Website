@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cost extends Model
 {
@@ -22,4 +23,9 @@ class Cost extends Model
         'nominal_price',
         'uuid'
     ];
+
+    public function benefits(): HasMany
+    {
+        return $this->hasMany(BenefitMember::class, 'cost_id', 'id');
+    }
 }

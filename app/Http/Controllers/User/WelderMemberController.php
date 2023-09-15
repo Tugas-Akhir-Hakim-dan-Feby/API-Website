@@ -9,6 +9,7 @@ use App\Http\Filters\User\WelderMember\WelderSkillId;
 use App\Http\Requests\User\WelderMember\UpdateDocumentRequest;
 use App\Http\Requests\User\WelderMember\UploadFileRequest;
 use App\Http\Requests\User\WelderMember\WelderRequestStore;
+use App\Http\Requests\User\WelderMember\WelderRequestUpdate;
 use App\Http\Resources\User\WelderMemberCollection;
 use App\Http\Resources\User\WelderMemberDetail;
 use App\Http\Traits\FillableFixer;
@@ -186,14 +187,59 @@ class WelderMemberController extends Controller
         return new WelderMemberDetail($welderMember);
     }
 
-    public function edit(WelderMember $welderMember)
+    public function edit(string $id)
     {
         //
     }
 
-    public function update(Request $request, WelderMember $welderMember)
+    public function update(WelderRequestUpdate $request, string $id)
     {
-        //
+        DB::beginTransaction();
+
+        $user = $this->userRepository->findOrFail($id);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
+            $user->update($fillableUser);
+
+            $fillableWelderMember = $this->onlyFillables($request->all(), $this->welderMemberRepository->getFillable());
+            $user->welderMember()->update($fillableWelderMember);
+
+            $fillablePersonalData = $this->onlyFillables($request->all(), $this->personalDataRepository->getFillable());
+            $user->personalData()->update($fillablePersonalData);
+
+            $welderSkillIds = $request->welder_skill_ids;
+            $welderSkillIds = $this->welderSkillRepository->whereIn($welderSkillIds);
+            $welderSkillIds = $welderSkillIds->pluck('id')->toArray();
+
+            $existingWelderSkills = $user->welderHasSkills()
+                ->whereIn('welder_skill_id', $welderSkillIds)
+                ->pluck('welder_skill_id')
+                ->toArray();
+
+            $newSkillIds = array_diff($welderSkillIds, $existingWelderSkills);
+
+            if (!empty($newSkillIds)) {
+                $skillsToCreate = [];
+                foreach ($newSkillIds as $skillId) {
+                    $skillsToCreate[] = [
+                        'welder_skill_id' => $skillId,
+                        'user_id' => auth()->user()->id
+                    ];
+                }
+
+                $user->welderHasSkills()->insert($skillsToCreate);
+            }
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function updateDocument(UpdateDocumentRequest $request, $id)
@@ -284,6 +330,28 @@ class WelderMemberController extends Controller
             $user->removeRole(PermissionModelsRole::findById(User::EXPERT, 'api'));
             $user->removeRole(PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api'));
             $user->update(["role_id" => User::MEMBER_APPLICATION]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function deleteSkill($id)
+    {
+        $skill = $this->welderSkillRepository->findOrFail($id);
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            $user->welderHasSkills()->where([
+                "welder_skill_id" => $skill->id
+            ])->delete();
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);

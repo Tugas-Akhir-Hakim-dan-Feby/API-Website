@@ -10,6 +10,8 @@ interface UserRepository extends Repository
 
     public function findByCriteria(array $data);
 
+    public function with(array $data);
+
     public function query();
 
     public function getFillable();

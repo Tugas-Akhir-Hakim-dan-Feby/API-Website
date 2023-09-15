@@ -1,11 +1,14 @@
 <script>
+import Loader from "../../components/Loader.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import util from "../../store/utils/util";
 
 export default {
     data() {
         return {
-            isLoading: false,
+            isLoadingWelder: false,
+            isLoadingCompany: false,
+            isLoadingTuk: false,
             costWelderMember: {},
             costCompanyMember: {},
             costTuk: {},
@@ -27,55 +30,55 @@ export default {
     },
     methods: {
         getCostWelderMember() {
-            this.isLoading = true;
+            this.isLoadingWelder = true;
             this.$store
                 .dispatch("showData", [
                     "cost",
                     this.$store.state.COST.MEMBER_WELDER,
                 ])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingWelder = false;
                     this.costWelderMember = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingWelder = false;
                 });
         },
         getCostCompanyMember() {
-            this.isLoading = true;
+            this.isLoadingCompany = true;
             this.$store
                 .dispatch("showData", [
                     "cost",
                     this.$store.state.COST.MEMBER_COMPANY,
                 ])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingCompany = false;
                     this.costCompanyMember = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingCompany = false;
                 });
         },
         getCostTuk() {
-            this.isLoading = true;
+            this.isLoadingTuk = true;
             this.$store
                 .dispatch("showData", [
                     "cost",
                     this.$store.state.COST.EXAM_INSTITUTE,
                 ])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingTuk = false;
                     this.costTuk = response.data;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingTuk = false;
                 });
         },
         getRupiah(amount) {
             return util.getRupiah(amount);
         },
     },
-    components: { PageTitle },
+    components: { PageTitle, Loader },
 };
 </script>
 <template>
@@ -89,10 +92,11 @@ export default {
 
     <div class="row mb-3">
         <div class="col-md-4">
-            <div class="card card-pricing">
+            <div class="card card-pricing position-relative">
+                <Loader v-if="isLoadingWelder" />
                 <div class="card-body text-center">
                     <p class="card-pricing-plan-name fw-bold text-uppercase">
-                        Member Individu
+                        {{ costWelderMember.typePrice }}
                     </p>
                     <h2 class="card-pricing-price">
                         {{ getRupiah(costWelderMember.nominalPrice) }}
@@ -103,9 +107,13 @@ export default {
                             Keuntungan
                         </li>
                         <hr />
-                        <li>Mendapatkan Informasi Terbaru Pengelasan</li>
-                        <li>Mendapatkan Informasi Lowongan Pekerjaan</li>
-                        <li>Mendapatkan Konsultasi bersama Pakar IWS</li>
+                        <li
+                            v-for="(
+                                benefit, index
+                            ) in costWelderMember.benefits"
+                            :key="index"
+                            v-html="benefit.description"
+                        ></li>
                     </ul>
                     <router-link
                         :to="{ name: 'Member Welder' }"
@@ -118,10 +126,11 @@ export default {
         </div>
 
         <div class="col-md-4">
-            <div class="card card-pricing">
+            <div class="card card-pricing position-relative">
+                <Loader v-if="isLoadingCompany" />
                 <div class="card-body text-center">
                     <p class="card-pricing-plan-name fw-bold text-uppercase">
-                        Member Perusahaan
+                        {{ costCompanyMember.typePrice }}
                     </p>
                     <h2 class="card-pricing-price">
                         {{ getRupiah(costCompanyMember.nominalPrice) }}
@@ -132,9 +141,13 @@ export default {
                             Keuntungan
                         </li>
                         <hr />
-                        <li>Mendapatkan Informasi Terbaru Pengelasan</li>
-                        <li>Mendapatkan Konsultasi bersama Pakar IWS</li>
-                        <li>Menyajikan Berita terkait Perusahaan</li>
+                        <li
+                            v-for="(
+                                benefit, index
+                            ) in costCompanyMember.benefits"
+                            :key="index"
+                            v-html="benefit.description"
+                        ></li>
                     </ul>
                     <router-link
                         :to="{ name: 'Member Company' }"
@@ -147,10 +160,11 @@ export default {
         </div>
 
         <div class="col-md-4">
-            <div class="card card-pricing">
+            <div class="card card-pricing position-relative">
+                <Loader v-if="isLoadingTuk" />
                 <div class="card-body text-center">
                     <p class="card-pricing-plan-name fw-bold text-uppercase">
-                        Member TUK
+                        {{ costTuk.typePrice }}
                     </p>
                     <h2 class="card-pricing-price">
                         {{ getRupiah(costTuk.nominalPrice) }}
@@ -161,12 +175,11 @@ export default {
                             Keuntungan
                         </li>
                         <hr />
-                        <li>Mendapatkan Informasi Terbaru Pengelasan</li>
-                        <li>Dapat mengadakan pelatihan kerja</li>
-                        <li>
-                            Dapat berkolaborasi dengan perusahaan hingga
-                            organisasi lainnya
-                        </li>
+                        <li
+                            v-for="(benefit, index) in costTuk.benefits"
+                            :key="index"
+                            v-html="benefit.description"
+                        ></li>
                     </ul>
                     <router-link
                         :to="{ name: 'Member Operator' }"

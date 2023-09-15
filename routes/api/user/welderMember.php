@@ -18,6 +18,7 @@ Route::prefix('user')->group(function () {
             Route::get('/{id}', [WelderMemberController::class, 'show'])->name('api.user.welder.member.show');
             Route::put('/update-document/{id}', [WelderMemberController::class, 'updateDocument'])->name('api.user.welder.member.update.document');
             Route::put('/{id}', [WelderMemberController::class, 'update'])->name('api.user.welder.member.update');
+            Route::delete('/delete-skill/{id}', [WelderMemberController::class, 'deleteSkill'])->name('api.user.welder.member.delete.skill');
             Route::delete('/{id}', [WelderMemberController::class, 'destroy'])->name('api.user.welder.member.destroy');
             Route::put('/update-status/{id}', [WelderMemberController::class, 'updateStatus'])->name('api.user.welder.member.update.status');
         });

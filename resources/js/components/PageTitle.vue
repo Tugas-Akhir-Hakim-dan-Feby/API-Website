@@ -33,6 +33,7 @@ export default {
                         v-if="isBack"
                         @click="onBack"
                     ></i>
+                    &nbsp;
                     <span v-html="title"></span>
                 </h4>
             </div>

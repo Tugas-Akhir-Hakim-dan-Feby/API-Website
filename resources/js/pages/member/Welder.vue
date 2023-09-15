@@ -311,7 +311,11 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Daftar Member Individu" :isBack="true" @onBack="onBack" />
+    <PageTitle
+        title="Registrasi Member Personal"
+        :isBack="true"
+        @onBack="onBack"
+    />
 
     <form
         @submit.prevent="handleSubmit"

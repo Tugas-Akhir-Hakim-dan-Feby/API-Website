@@ -27,6 +27,7 @@ class CostController extends Controller
     public function index()
     {
         $costs = $this->costRepository->all();
+        $costs->load(['benefits']);
 
         return new CostCollection($costs);
     }
@@ -37,6 +38,8 @@ class CostController extends Controller
         if (!$cost) {
             abort(404);
         }
+
+        $cost->load(['benefits']);
 
         return new CostDetail($cost);
     }

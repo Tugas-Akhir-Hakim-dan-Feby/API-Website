@@ -14,13 +14,31 @@ class RegencyController extends Controller
 
     public function index(Request $request)
     {
-        $regencies = Http::get($this->apiRegion() . "/regencies/$request->province_id.json");
-        return $this->successMessage("data berhasil diambil", $regencies->json());
+        try {
+            $regencies = Http::get($this->apiRegion() . "/regencies/$request->province_id.json");
+
+            if (!$regencies->successful() || $regencies->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $regencies->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 
     public function show($id)
     {
-        $regency = Http::get($this->apiRegion() . "/regency/$id.json");
-        return $this->successMessage("data berhasil diambil", $regency->json());
+        try {
+            $regency = Http::get($this->apiRegion() . "/regency/$id.json");
+
+            if (!$regency->successful() || $regency->status() != 200) {
+                return null;
+            }
+
+            return $this->successMessage("data berhasil diambil", $regency->json());
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Region\DistrictController;
+use App\Http\Controllers\Region\PostalCodeController;
 use App\Http\Controllers\Region\ProvinceController;
 use App\Http\Controllers\Region\RegencyController;
 use App\Http\Controllers\Region\VillageController;
@@ -24,4 +25,9 @@ Route::prefix('district')->group(function () {
 Route::prefix('village')->group(function () {
     Route::get('/', [VillageController::class, 'index'])->name('api.village.index');
     Route::get('/{id}', [VillageController::class, 'show'])->name('api.village.show');
+});
+
+Route::prefix('postal-code')->group(function () {
+    Route::get('/', [PostalCodeController::class, 'index'])->name('api.postal-code.index');
+    Route::get('/{id}', [PostalCodeController::class, 'show'])->name('api.postal-code.show');
 });
