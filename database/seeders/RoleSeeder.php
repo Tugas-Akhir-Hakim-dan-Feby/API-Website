@@ -61,6 +61,7 @@ class RoleSeeder extends Seeder
         $access[User::EXPERT]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
         $access[User::EXPERT]['Profile'] = ['index', 'update-password', 'update-expert'];
         $access[User::EXPERT]['Payment'] = ['history'];
+        $access[User::EXPERT]['JobVacancy'] = ['index', 'index-welder', 'info', 'show', 'history'];
 
         $access[User::MEMBER_COMPANY]['Dashboard'] = ['index'];
         $access[User::MEMBER_COMPANY]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
@@ -75,13 +76,13 @@ class RoleSeeder extends Seeder
         $access[User::MEMBER_INDIVIDUAL]['Exam'] = ['index', 'show', 'pagination'];
         $access[User::MEMBER_INDIVIDUAL]['Payment'] = ['history'];
         $access[User::MEMBER_INDIVIDUAL]['Member'] = ['expert'];
-        $access[User::MEMBER_INDIVIDUAL]['JobVacancy'] = ['index', 'index-welder', 'info', 'show'];
+        $access[User::MEMBER_INDIVIDUAL]['JobVacancy'] = ['index', 'index-welder', 'info', 'show', 'history'];
 
         $access[User::MEMBER_APPLICATION]['Dashboard'] = ['index'];
         $access[User::MEMBER_APPLICATION]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::MEMBER_APPLICATION]['Profile'] = ['index', 'update-password', 'update-welder-member'];
         $access[User::MEMBER_APPLICATION]['Member'] = ['index', 'company-member', 'welder-member'];
-        $access[User::MEMBER_APPLICATION]['JobVacancy'] = ['index', 'index-welder', 'info', 'show'];
+        $access[User::MEMBER_APPLICATION]['JobVacancy'] = ['index', 'index-welder', 'info', 'show', 'history'];
         $access[User::MEMBER_APPLICATION]['ExamPacket'] = ['index', 'show', 'pagination', 'register-packet', 'dashboard-member'];
         $access[User::MEMBER_APPLICATION]['Exam'] = ['index', 'show', 'pagination'];
 
@@ -111,7 +112,7 @@ class RoleSeeder extends Seeder
         $permission['Profile'] = ['index', 'update-password', 'update-admin-app', 'update-admin-hub', 'update-admin-branch', 'update-expert', 'update-company-member', 'update-welder-member', 'update-guest'];
         $permission['Payment'] = ['cost', 'invoice', 'history'];
         $permission['Member'] = ['index', 'company-member', 'welder-member', 'expert'];
-        $permission['JobVacancy'] = ['index', 'index-welder', 'index-admin', 'info', 'info-company', 'create', 'show', 'update', 'delete', 'approval'];
+        $permission['JobVacancy'] = ['index', 'index-welder', 'index-admin', 'info', 'info-company', 'create', 'show', 'update', 'delete', 'approval', 'history'];
 
         foreach ($permission as $key => $item) {
             foreach ($item as $permission) {

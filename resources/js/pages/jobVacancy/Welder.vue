@@ -15,7 +15,7 @@ export default {
             jobVacancies: [],
             pagination: {
                 page: 1,
-                perPage: 10,
+                perPage: 20,
             },
             filters: {
                 search: "",
@@ -78,15 +78,6 @@ export default {
             }
             return true;
         },
-        checkJobRegister(jobVacancyId) {
-            // let check = 0;
-            // this.$store
-            //     .dispatch("showData", ["register-job/check", jobVacancyId])
-            //     .then((response) => {
-            //         check = response;
-            //     });
-            // return check;
-        },
         redirectTo(page) {
             this.$router.push(page);
         },
@@ -130,7 +121,7 @@ export default {
     </div>
 
     <div class="row">
-        <div class="col-md-6 col-lg-3 col-sm mb-3">
+        <div class="col-lg-4 col-sm mb-3">
             <input
                 type="search"
                 class="form-control"
@@ -139,7 +130,7 @@ export default {
                 @input="onSearch()"
             />
         </div>
-        <div class="col-md-6 col-lg-3 col-sm mb-3">
+        <div class="col-lg-4 col-sm mb-3">
             <input
                 type="search"
                 class="form-control"
@@ -148,7 +139,7 @@ export default {
                 @input="onSearchRegion()"
             />
         </div>
-        <div class="col-md-6 col-lg-3 col-sm mb-3">
+        <div class="col-lg-4 col-sm mb-3">
             <select
                 class="form-select"
                 v-model="filters.skill"
@@ -165,18 +156,6 @@ export default {
                 ></option>
             </select>
         </div>
-        <div class="col-md-6 col-lg-3 col-sm mb-3">
-            <select
-                class="form-select"
-                v-model="filters.status"
-                @change="onSearchStatus()"
-            >
-                <option selected disabled value="">Status lamaran</option>
-                <option value="3">Terdaftar</option>
-                <option value="1">Diterima</option>
-                <option value="2">Ditolak</option>
-            </select>
-        </div>
     </div>
 
     <div class="alert alert-warning text-center" v-if="isLoading">
@@ -188,59 +167,70 @@ export default {
     >
         lowongan pekerjaan belum tersedia...
     </div>
-    <div v-for="(jobVacancy, index) in jobVacancies" :key="index">
+
+    <div class="row">
         <div
-            class="card border-start"
-            v-if="getCloseDeadline(jobVacancy.deadline)"
-            @click="
-                redirectTo({
-                    name: 'Job Vacancy Detail',
-                    params: { slug: jobVacancy.slug },
-                })
-            "
+            class="col-lg-4 col-md-6"
+            v-for="(jobVacancy, index) in jobVacancies"
+            :key="index"
         >
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <img
-                        :src="jobVacancy.companyMember?.companyLogo"
-                        :alt="jobVacancy.companyMember?.companyName"
-                        style="max-width: 300px; max-height: 75px"
-                    />
-                    <div>
-                        <p
-                            class="d-inline d-sm-none fw-bold"
-                            v-html="getDeadline(jobVacancy.deadline)"
-                        ></p>
-                        <p
-                            class="btn btn-sm btn-success"
-                            v-if="checkJobRegister(jobVacancy.uuid)"
-                        >
-                            {{ isRegistered }}
-                            Lamaran Terkirim
-                        </p>
-                        {{ checkJobRegister(jobVacancy.uuid) }}
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <h4>
-                            <router-link to="/">{{
-                                jobVacancy.welderSkill?.skillName
-                            }}</router-link>
-                            <small class="fw-normal d-inline d-sm-none"
-                                >&nbsp; ({{ jobVacancy.workType }})</small
-                            >
-                        </h4>
-                        <p v-html="jobVacancy.companyMember?.companyName"></p>
-                        <h5><b v-html="jobVacancy.placement"></b></h5>
-                        <p v-html="getCreatedAt(jobVacancy.createdAt)"></p>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6 d-none d-sm-block">
+            <div
+                class="card border-start"
+                v-if="getCloseDeadline(jobVacancy.deadline)"
+                @click="
+                    redirectTo({
+                        name: 'Job Vacancy Detail',
+                        params: { slug: jobVacancy.slug },
+                    })
+                "
+            >
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <img
+                            :src="jobVacancy.companyMember?.companyLogo"
+                            :alt="jobVacancy.companyMember?.companyName"
+                            style="max-width: 300px; max-height: 75px"
+                        />
                         <div>
-                            <h5><b>Jenis Pekerjaan</b></h5>
-                            <p v-html="jobVacancy.workType"></p>
-                            <h5><b>Waktu Penutupan</b></h5>
-                            <p v-html="getDeadline(jobVacancy.deadline)"></p>
+                            <p
+                                class="d-inline d-sm-none fw-bold"
+                                v-html="getDeadline(jobVacancy.deadline)"
+                            ></p>
+                        </div>
+                    </div>
+                    <h4 class="d-none d-sm-block mt-3">
+                        <router-link to="/">{{
+                            jobVacancy.welderSkill?.skillName
+                        }}</router-link>
+                    </h4>
+                    <div class="row mt-2">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <h4 class="d-block d-sm-none">
+                                <router-link to="/">{{
+                                    jobVacancy.welderSkill?.skillName
+                                }}</router-link>
+                                <small class="fw-normal d-inline d-sm-none"
+                                    >&nbsp; ({{ jobVacancy.workType }})</small
+                                >
+                            </h4>
+                            <p
+                                class="mt-1"
+                                v-html="jobVacancy.companyMember?.companyName"
+                            ></p>
+                            <h5><b v-html="jobVacancy.placement"></b></h5>
+                            <p v-html="getCreatedAt(jobVacancy.createdAt)"></p>
+                        </div>
+                        <div
+                            class="col-lg-6 col-md-6 col-sm-6 d-none d-sm-block"
+                        >
+                            <div>
+                                <h5><b>Jenis Pekerjaan</b></h5>
+                                <p v-html="jobVacancy.workType"></p>
+                                <h5><b>Waktu Penutupan</b></h5>
+                                <p
+                                    v-html="getDeadline(jobVacancy.deadline)"
+                                ></p>
+                            </div>
                         </div>
                     </div>
                 </div>

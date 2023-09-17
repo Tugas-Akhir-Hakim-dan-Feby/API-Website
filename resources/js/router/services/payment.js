@@ -12,6 +12,16 @@ export default [
         beforeEnter: checkPermission("payment", "cost"),
     },
     {
+        path: "/payment/cost/:id/edit",
+        name: "Payment Cost Edit",
+        component: () => import("../../pages/payment/CostEdit.vue"),
+        meta: {
+            requiresAuth: true,
+        },
+        beforeEnter: checkPermission("payment", "cost"),
+        props: true,
+    },
+    {
         path: "/payment/history",
         name: "Payment History",
         component: () => import("../../pages/payment/History.vue"),

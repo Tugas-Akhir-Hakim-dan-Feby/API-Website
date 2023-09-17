@@ -107,14 +107,15 @@ export default {
                                 <span v-else>-</span>
                             </td>
                             <td>
-                                <button
-                                    class="btn btn-warning text-white btn-sm me-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editCost"
-                                    @click="setCost(cost)"
+                                <router-link
+                                    :to="{
+                                        name: 'Payment Cost Edit',
+                                        params: { id: cost.uuid },
+                                    }"
+                                    class="btn btn-warning text-white btn-sm me-2 mb-2"
                                 >
                                     Edit
-                                </button>
+                                </router-link>
                             </td>
                         </tr>
                     </tbody>
@@ -124,6 +125,7 @@ export default {
     </div>
 
     <Success msg="data harga berhasil diperbaharui." />
+
     <div
         class="modal fade"
         id="editCost"

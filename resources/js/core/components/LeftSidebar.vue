@@ -197,6 +197,16 @@ export default {
                     </router-link>
                 </li>
 
+                <li class="side-nav-item" v-if="$can('history', 'Jobvacancy')">
+                    <router-link
+                        :to="{ name: 'Job History' }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-bookmark"></i>
+                        <span> Riwayat Lamaran </span>
+                    </router-link>
+                </li>
+
                 <li class="side-nav-item" v-if="$can('index', 'Exampacket')">
                     <router-link
                         :to="{ name: 'Exam Packet' }"

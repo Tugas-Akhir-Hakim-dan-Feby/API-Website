@@ -14,6 +14,7 @@ import invoice from "./services/invoice";
 import expert from "./services/expert";
 import payment from "./services/payment";
 import jobVacancy from "./services/jobVacancy";
+import jobHistory from "./services/jobHistory";
 import { checkPermission } from "../store/utils/middleware";
 import operator from "./services/user/operator";
 
@@ -34,6 +35,7 @@ const routes = [
     ...expert,
     ...payment,
     ...jobVacancy,
+    ...jobHistory,
     ...operator,
     {
         path: "/",
