@@ -22,25 +22,25 @@ export default {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">galat</h5>
+                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
                 </div>
                 <div class="modal-body" v-html="msg"></div>
                 <div class="modal-footer">
                     <button
                         type="button"
-                        class="btn btn-sm btn-primary"
+                        class="btn btn-sm btn-secondary"
                         data-bs-dismiss="modal"
                         v-if="!url"
                     >
-                        OK
+                        Tutup
                     </button>
                     <button
                         @click="handleOk"
                         type="button"
-                        class="btn btn-sm btn-primary"
+                        class="btn btn-sm btn-secondary"
                         v-else
                     >
-                        OK
+                        Tutup
                     </button>
                 </div>
             </div>

@@ -11,6 +11,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -24,6 +34,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -37,6 +57,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -50,6 +80,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -63,6 +103,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -76,6 +126,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -89,6 +149,16 @@ const process = {
                         resolve(response.data.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -102,6 +172,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error);
                     }
                 );
@@ -115,6 +195,16 @@ const process = {
                         resolve(response.data);
                     },
                     (error) => {
+                        if (error.response.status == 500) {
+                            $("#errorModal").modal("show");
+                            $("#errorModal #errorModalLabel").html(
+                                error.message
+                            );
+                            $("#errorModal .modal-body").html(
+                                error.response.data.message
+                            );
+                        }
+
                         reject(error.response);
                     }
                 );

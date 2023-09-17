@@ -5,12 +5,14 @@ import Navbar from "./components/Navbar.vue";
 import Cookie from "js-cookie";
 import { mapMutations } from "vuex";
 import { AbilityBuilder, Ability, defineAbility } from "@casl/ability";
+import Error from "../components/notifications/Error.vue";
 
 export default {
     data() {
         return {
             user: null,
             roles: {},
+            errorMessage: null,
         };
     },
     computed: {},
@@ -75,7 +77,7 @@ export default {
                 .join("");
         },
     },
-    components: { LeftSidebar, Navbar, Footer },
+    components: { LeftSidebar, Navbar, Footer, Error },
 };
 </script>
 <template>
@@ -92,6 +94,7 @@ export default {
             </div>
 
             <Footer />
+            <Error :msg="errorMessage" />
         </div>
     </div>
 </template>
