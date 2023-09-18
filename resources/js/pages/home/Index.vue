@@ -68,11 +68,18 @@ export default {
 </script>
 
 <template>
-    <PageTitle :title="'Dashboard'">
-        <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-    </PageTitle>
+    <div class="row mt-4 mb-3">
+        <div class="col-12">
+            <h4 class="p-0 m-0">
+                <span
+                    v-html="user.name"
+                    class="text-uppercase text-dark fw-bold"
+                    style="font-size: 20px"
+                ></span>
+            </h4>
+            <p>{{ roles[0] }}</p>
+        </div>
+    </div>
 
     <div
         class="alert alert-warning alert-dismissible"
