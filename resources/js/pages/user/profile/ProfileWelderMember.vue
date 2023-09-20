@@ -92,7 +92,7 @@ export default {
 
             this.document = {
                 id: user.uuid,
-                certificateSchool: user.welderMember?.certificateSchool,
+                curriculumVitae: user.personalData?.curriculumVitae,
                 pasPhoto: user.welderMember?.pasPhoto,
                 competencyCertificates: user.welderDocuments,
             };
@@ -267,6 +267,11 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.getUser();
+                    iziToast.success({
+                        title: "Selamat",
+                        message: "data anda berhasil diperbaharui",
+                        position: "topCenter",
+                    });
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -274,6 +279,11 @@ export default {
         },
         onSuccessUploadDocument(e) {
             this.getUser();
+            iziToast.success({
+                title: "Selamat",
+                message: "data anda berhasil diperbaharui",
+                position: "topCenter",
+            });
         },
     },
     components: { Success, UploadFileWelderMember, Multiselect, InputRowField },
@@ -442,7 +452,10 @@ export default {
                         <div class="row">
                             <label class="col-sm-3">&nbsp;</label>
                             <div class="col">
-                                <ul style="padding-left: 1.2rem; margin-top: 0">
+                                <ul
+                                    style="padding-left: 1.2rem; margin-top: 0"
+                                    id="listSkill"
+                                >
                                     <li
                                         v-for="(
                                             welderSkill, index
@@ -692,5 +705,14 @@ export default {
         </div>
     </div>
 
-    <UploadFileWelderMember :document="document" />
+    <UploadFileWelderMember
+        :document="document"
+        @onSuccess="onSuccessUploadDocument()"
+    />
 </template>
+
+<style scoped>
+#listSkill li:hover {
+    color: blue;
+}
+</style>

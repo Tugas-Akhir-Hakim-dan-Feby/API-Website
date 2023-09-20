@@ -32,28 +32,64 @@ export default {
         uploadPasPhoto(e) {
             this.dataPasPhoto = e.target.files[0];
         },
-        handleUploadDocument() {
-            let dataPasPhoto = document.getElementById("dataPasPhoto");
-            console.log(dataPasPhoto.value);
-            // this.isDisabled = true;
-            // this.errorMessage = {};
-            // this.$store
-            //     .dispatch("postDataUpload", [
-            //         "user/welder-member/update-document/" + this.document.id,
-            //         this.formData,
-            //     ])
-            //     .then((response) => {
-            //         this.isDisabled = false;
-            //         this.$emit("onSuccess", true);
-            //         this.dataPasPhoto = null;
-            //         $("#uploadPasPhoto").modal("hide");
+        handleUploadPasPhoto() {
+            this.isDisabled = true;
+            this.errorMessage = {};
 
-            //         document.getElementById("dataPasPhoto").value = "";
-            //     })
-            //     .catch((error) => {
-            //         this.isDisabled = false;
-            //         this.errorMessage = error.response.data.messages;
-            //     });
+            let formData = new FormData();
+
+            if (this.dataPasPhoto) {
+                formData.append("document_pas_photo", this.dataPasPhoto);
+            }
+            formData.append("_method", "PUT");
+
+            this.$store
+                .dispatch("postDataUpload", [
+                    "user/welder-member/update-pas-photo/" + this.document.id,
+                    formData,
+                ])
+                .then((response) => {
+                    this.isDisabled = false;
+                    this.$emit("onSuccess", true);
+                    this.dataPasPhoto = null;
+                    $("#uploadPasPhoto").modal("hide");
+
+                    document.getElementById("dataPasPhoto").value = "";
+                })
+                .catch((error) => {
+                    this.isDisabled = false;
+                    this.errorMessage = error.response.data.messages;
+                });
+        },
+        handleUploadCurriculumVitae() {
+            this.isDisabled = true;
+            this.errorMessage = {};
+
+            let formData = new FormData();
+
+            if (this.dataPasPhoto) {
+                formData.append("document_curriculum_vitae", this.dataPasPhoto);
+            }
+            formData.append("_method", "PUT");
+
+            this.$store
+                .dispatch("postDataUpload", [
+                    "user/welder-member/update-curriculum-vitae/" +
+                        this.document.id,
+                    formData,
+                ])
+                .then((response) => {
+                    this.isDisabled = false;
+                    this.$emit("onSuccess", true);
+                    this.dataPasPhoto = null;
+                    $("#uploadCurriculumVitae").modal("hide");
+
+                    document.getElementById("dataPasPhoto").value = "";
+                })
+                .catch((error) => {
+                    this.isDisabled = false;
+                    this.errorMessage = error.response.data.messages;
+                });
         },
     },
 };
@@ -80,13 +116,16 @@ export default {
                                     <td>Pas Foto Formal Berwarna</td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <!-- <a
+                                            <a
                                                 href="#"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#uploadPasPhoto"
+                                                v-if="
+                                                    checkFile(document.pasPhoto)
+                                                "
                                                 ><i class="mdi mdi-upload"></i>
                                                 Unggah</a
-                                            > -->
+                                            >
                                             <p
                                                 v-if="
                                                     checkFile(document.pasPhoto)
@@ -109,20 +148,25 @@ export default {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Ijazah Pendidikan Formal</td>
+                                    <td>Daftar Riwayat Hidup</td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <!-- <a
+                                            <a
                                                 href="#"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#uploadDocument"
+                                                data-bs-target="#uploadCurriculumVitae"
+                                                v-if="
+                                                    checkFile(
+                                                        document.curriculumVitae
+                                                    )
+                                                "
                                                 ><i class="mdi mdi-upload"></i>
                                                 Unggah</a
-                                            > -->
+                                            >
                                             <p
                                                 v-if="
                                                     checkFile(
-                                                        document.certificateSchool
+                                                        document.curriculumVitae
                                                     )
                                                 "
                                             >
@@ -130,12 +174,10 @@ export default {
                                             </p>
                                             <a
                                                 target="_blank"
-                                                :href="
-                                                    document.certificateSchool
-                                                "
+                                                :href="document.curriculumVitae"
                                                 v-if="
                                                     checkFile(
-                                                        document.certificateSchool
+                                                        document.curriculumVitae
                                                     )
                                                 "
                                                 ><i
@@ -230,7 +272,7 @@ export default {
                         Unggah Pas Foto
                     </h5>
                 </div>
-                <form @submit.prevent="handleUploadDocument" method="post">
+                <form @submit.prevent="handleUploadPasPhoto" method="post">
                     <div class="modal-body">
                         <div class="mb-0">
                             <label>Masukan Pas Foto</label>
@@ -240,14 +282,16 @@ export default {
                                 id="dataPasPhoto"
                                 @change="uploadPasPhoto"
                                 :class="{
-                                    'is-invalid': errorMessage.document,
+                                    'is-invalid': errorMessage.documentPasPhoto,
                                 }"
                                 :disabled="isDisabled"
                             />
                             <div
                                 class="invalid-feedback"
-                                v-if="errorMessage.document"
-                                v-for="(error, index) in errorMessage.document"
+                                v-if="errorMessage.documentPasPhoto"
+                                v-for="(
+                                    error, index
+                                ) in errorMessage.documentPasPhoto"
                                 :key="index"
                             >
                                 {{ error }}
@@ -258,17 +302,102 @@ export default {
                         <div>
                             <button
                                 type="button"
-                                class="btn btn-secondary me-2"
+                                class="btn btn-sm btn-secondary me-2"
                                 data-bs-dismiss="modal"
                                 :disabled="isDisabled"
                             >
                                 Batal
                             </button>
-                            <button class="btn btn-primary" v-if="!isDisabled">
+                            <button
+                                class="btn btn-sm btn-primary"
+                                v-if="!isDisabled"
+                            >
                                 Kirim
                             </button>
                             <button
-                                class="btn btn-primary"
+                                class="btn btn-sm btn-primary"
+                                type="button"
+                                disabled
+                                v-if="isDisabled"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="modal fade"
+        id="uploadCurriculumVitae"
+        tabindex="-1"
+        aria-labelledby="uploadCurriculumVitaeLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadCurriculumVitaeLabel">
+                        Unggah Daftar Riwayat Hidup
+                    </h5>
+                </div>
+                <form
+                    @submit.prevent="handleUploadCurriculumVitae"
+                    method="post"
+                >
+                    <div class="modal-body">
+                        <div class="mb-0">
+                            <label>Masukan Daftar Riwayat Hidup</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="dataCurriculumVitae"
+                                @change="uploadPasPhoto"
+                                :class="{
+                                    'is-invalid':
+                                        errorMessage.documentCurriculumVitae,
+                                }"
+                                :disabled="isDisabled"
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errorMessage.documentCurriculumVitae"
+                                v-for="(
+                                    error, index
+                                ) in errorMessage.documentCurriculumVitae"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-secondary me-2"
+                                data-bs-dismiss="modal"
+                                :disabled="isDisabled"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                class="btn btn-sm btn-primary"
+                                v-if="!isDisabled"
+                            >
+                                Kirim
+                            </button>
+                            <button
+                                class="btn btn-sm btn-primary"
                                 type="button"
                                 disabled
                                 v-if="isDisabled"

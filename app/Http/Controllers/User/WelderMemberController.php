@@ -27,12 +27,14 @@ use App\Repositories\UserWelderMember\UserWelderMemberRepository;
 use App\Repositories\WelderSkill\WelderSkillRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role as PermissionModelsRole;
@@ -343,6 +345,8 @@ class WelderMemberController extends Controller
 
     public function deleteSkill($id)
     {
+        DB::beginTransaction();
+
         $skill = $this->welderSkillRepository->findOrFail($id);
 
         $user = $this->userRepository->findOrFail(auth()->user()->uuid);
@@ -357,6 +361,90 @@ class WelderMemberController extends Controller
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updatePasPhoto(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'document_pas_photo' => 'required|image|mimes:png,jpg,jpeg'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'WARNING',
+                'messages' => $validator->errors(),
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->welderMember) {
+                if ($user->welderMember?->pas_photo) {
+                    $path = str_replace(url('storage') . '/', '', $user->welderMember?->pas_photo);
+                    Storage::delete($path);
+                }
+            }
+
+            $user->welderMember()->update([
+                "pas_photo" => $request->file('document_pas_photo')->store('pas_photo')
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateCurriculumVitae(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'document_curriculum_vitae' => 'required|file|mimes:pdf'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'WARNING',
+                'messages' => $validator->errors(),
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->personalData) {
+                if ($user->personalData?->curriculum_vitae) {
+                    $path = str_replace(url('storage') . '/', '', $user->personalData?->curriculum_vitae);
+                    Storage::delete($path);
+                }
+            }
+
+            $user->personalData()->update([
+                "curriculum_vitae" => $request->file('document_curriculum_vitae')->store('curriculum_vitae')
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

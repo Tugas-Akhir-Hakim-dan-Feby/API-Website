@@ -21,8 +21,9 @@ class PrintController extends Controller
         $payment = $this->paymentRepository->findByCriteria(["external_id" => $externalId]);
 
         $pdf = Pdf::loadView('print.invoice', compact('payment'));
-        return $pdf->download("$payment->external_id.pdf");
+        // return $pdf->download("$payment->external_id.pdf");
         // return view('print.invoice', compact('payment'));
+        return $pdf->stream();
     }
 
     public function chartSkill()
@@ -33,6 +34,6 @@ class PrintController extends Controller
 
         // return view('print.chartSkill', $data);
         $pdf = Pdf::loadView('print.chartSkill', $data);
-        return $pdf->download('coba.pdf');
+        return $pdf->stream();
     }
 }
