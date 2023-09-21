@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ParticipantExport;
 use App\Http\Filters\ExamPacket\CheckSchedule;
 use App\Http\Filters\ExamPacket\Search;
+use App\Http\Filters\ExamPacket\ShowByCompetence;
 use App\Http\Filters\ExamPacket\ShowByExpert;
 use App\Http\Filters\ExamPacket\ShowByOperator;
 use App\Http\Filters\ExamPacket\Sort;
@@ -49,7 +50,8 @@ class ExamPacketController extends Controller
                 Search::class,
                 Sort::class,
                 CheckSchedule::class,
-                ShowByOperator::class
+                ShowByOperator::class,
+                ShowByCompetence::class
             ])
             ->thenReturn()
             ->with(["exam", "competenceSchema", "examPacketHasWelders", "operator.logo"])

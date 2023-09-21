@@ -12,6 +12,7 @@ export default {
     data() {
         return {
             examPackets: [],
+            competences: [],
             examPacketDetail: {},
             errors: {},
             pagination: {
@@ -20,6 +21,7 @@ export default {
             },
             filters: {
                 search: "",
+                competenceId: 0,
             },
             metaPagination: {},
             roles: [],
@@ -45,6 +47,7 @@ export default {
     },
     mounted() {
         this.getExamPackets();
+        this.getCompetences();
         this.getUser();
     },
     methods: {
@@ -59,6 +62,16 @@ export default {
                 })
                 .catch((err) => {});
         },
+        getCompetences() {
+            const params = [`per_page=20`, `page=1`].join("&");
+
+            this.$store
+                .dispatch("getData", ["skill/welder", params])
+                .then((response) => {
+                    this.competences = response.data;
+                })
+                .catch((err) => {});
+        },
         getExamPackets() {
             this.isLoading = true;
 
@@ -66,6 +79,7 @@ export default {
                 `per_page=${this.pagination.perPage}`,
                 `page=${this.pagination.page}`,
                 `search=${this.filters.search}`,
+                `competence_id=${this.filters.competenceId}`,
             ];
 
             params.push([`sort_direction=desc`]);
@@ -107,6 +121,9 @@ export default {
             this.pagination.page = e;
             this.getExamPackets();
         },
+        onCompetenceChange() {
+            this.getExamPackets();
+        },
         checkSchedule(schedule, timing) {
             let now = dayjs();
             schedule = dayjs(schedule).locale("id");
@@ -129,9 +146,113 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Daftar Uji Kompetensi" :isBack="true" @onBack="onBack" />
+    <PageTitle
+        title="Daftar Uji Kompetensi"
+        :isBack="true"
+        @onBack="onBack"
+        class="mb-0"
+    />
 
-    <div class="card position-relative">
+    <div class="position-relative">
+        <Loader v-if="isLoading" />
+        <div
+            class="d-md-flex d-block justify-content-between align-items-center mb-2"
+        >
+            <div>
+                <select
+                    class="form-select"
+                    v-model="filters.competenceId"
+                    @change="onCompetenceChange"
+                >
+                    <option selected disabled>
+                        Pencarian berdasarkan kompetensi
+                    </option>
+                    <option value="0">Lihat semua data</option>
+                    <option
+                        v-for="(competence, index) in competences"
+                        :key="index"
+                        :value="competence.uuid"
+                        v-html="competence.skillName"
+                    ></option>
+                </select>
+            </div>
+
+            <div class="d-md-flex justify-content-between align-items-center">
+                <Pagination
+                    :pagination="metaPagination"
+                    @onPageChange="onPageChange($event)"
+                    v-if="$can('pagination', 'Exampacket')"
+                />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12" v-if="examPackets.length < 1">
+                <div class="alert alert-warning text-center">
+                    Data uji kompetensi tidak tersedia.
+                </div>
+            </div>
+            <div
+                v-else
+                class="col-lg-4 col-md-6 col-sm-6"
+                v-for="(examPacket, index) in examPackets"
+            >
+                <div class="card shadow-lg">
+                    <img
+                        :src="examPacket.operator?.logo?.documentPath"
+                        class="card-img-top"
+                        :alt="examPacket.competenceSchema?.skillName"
+                    />
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold" style="font-size: 18px">
+                            {{ examPacket.competenceSchema?.skillName }}
+                        </h4>
+                        <h5 class="fw-semibold" style="font-size: 14px">
+                            {{ examPacket.operator?.tukName }}
+                        </h5>
+                        <table class="table mb-0" style="font-size: 12px">
+                            <tr>
+                                <td>Penutupan Pendaftaran</td>
+                                <td>:</td>
+                                <td>
+                                    {{ getSchedule(examPacket.closeSchedule) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Jadwal Uji Kompetensi</td>
+                                <td>:</td>
+                                <td>
+                                    {{ getSchedule(examPacket.examSchedule) }}
+                                </td>
+                            </tr>
+                        </table>
+                        <p class="card-text"></p>
+                        <button
+                            class="badge border-0 btn-success ms-2"
+                            style="cursor: auto"
+                            v-if="examPacket.userRegistered"
+                        >
+                            Terdaftar
+                        </button>
+                        <button
+                            class="btn btn-sm btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#registerExam"
+                            @click="
+                                (idExamPacket = examPacket.uuid),
+                                    (examPacketDetail = examPacket)
+                            "
+                            v-else
+                        >
+                            Daftar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="card position-relative">
         <Loader v-if="isLoading" />
         <div class="card-body">
             <div
@@ -221,7 +342,7 @@ export default {
                 </table>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div
         class="modal fade"
