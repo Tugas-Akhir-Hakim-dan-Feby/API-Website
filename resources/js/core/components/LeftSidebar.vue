@@ -156,6 +156,21 @@ export default {
                     </router-link>
                 </li>
 
+                <li
+                    class="side-nav-item"
+                    v-if="$can('index-guest', 'Advertisement')"
+                >
+                    <router-link
+                        :to="{
+                            name: 'Advertisement',
+                        }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-google-ads"></i>
+                        <span> Data Iklan </span>
+                    </router-link>
+                </li>
+
                 <li class="side-nav-item" v-if="$can('cost', 'Payment')">
                     <a
                         data-bs-toggle="collapse"
@@ -173,6 +188,14 @@ export default {
                             <li>
                                 <router-link :to="{ name: 'Payment Cost' }"
                                     >Data Harga</router-link
+                                >
+                            </li>
+                            <li v-if="$can('index-admin', 'Advertisement')">
+                                <router-link
+                                    :to="{
+                                        name: 'Advertisement',
+                                    }"
+                                    >Data Iklan</router-link
                                 >
                             </li>
                             <li>

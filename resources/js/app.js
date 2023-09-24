@@ -3,6 +3,7 @@ import "./bootstrap";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import "izitoast/dist/css/iziToast.min.css";
 import "vue-multiselect/dist/vue-multiselect.min.css";
+import "../css/app.css";
 import IconTitle from "../images/api-iws.png";
 
 import { createApp } from "vue";

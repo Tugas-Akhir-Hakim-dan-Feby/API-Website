@@ -17,6 +17,7 @@ import jobVacancy from "./services/jobVacancy";
 import jobHistory from "./services/jobHistory";
 import { checkPermission } from "../store/utils/middleware";
 import operator from "./services/user/operator";
+import advertisement from "./services/advertisement";
 
 const routes = [
     ...auth,
@@ -37,6 +38,7 @@ const routes = [
     ...jobVacancy,
     ...jobHistory,
     ...operator,
+    ...advertisement,
     {
         path: "/",
         name: "Dashboard",
