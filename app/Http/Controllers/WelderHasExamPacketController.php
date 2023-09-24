@@ -17,6 +17,7 @@ use App\Models\WelderHasExamPacket;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\WelderHasExamPacket\WelderHasExamPacketRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -331,32 +332,34 @@ class WelderHasExamPacketController extends Controller
 
     public function downloadCertificate(string $id)
     {
-        $welderAnswer = $this->welderHasExamPacket->findByCriteria(["uuid" => $id])->first();
+        // $welderAnswer = $this->welderHasExamPacket->findByCriteria(["uuid" => $id])->first();
 
-        $template = new TemplateProcessor("./storage/" . $welderAnswer->examPacket->certificate);
-        $template->setValues([
-            "participant_name" => $welderAnswer->user->name,
-            "certificate_number" => $welderAnswer->certificate_number,
-            "schema" => $welderAnswer->examPacket->competenceSchema->skill_name,
-            "created_at" => Carbon::createFromFormat("Y-m-d H:i:s", $welderAnswer->created_at)->isoFormat("DD MMMM YY")
-        ]);
+        // $template = new TemplateProcessor("./storage/" . $welderAnswer->examPacket->certificate);
+        // $template->setValues([
+        //     "participant_name" => $welderAnswer->user->name,
+        //     "certificate_number" => $welderAnswer->certificate_number,
+        //     "schema" => $welderAnswer->examPacket->competenceSchema->skill_name,
+        //     "created_at" => Carbon::createFromFormat("Y-m-d H:i:s", $welderAnswer->created_at)->isoFormat("DD MMMM YY")
+        // ]);
 
-        $typeDoc = ".docx";
-        $pathSaveDocx = "archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_');
-        $template->saveAs($pathSaveDocx . $typeDoc);
+        // $typeDoc = ".docx";
+        // $pathSaveDocx = "archives/certificates/" . Str::slug($welderAnswer->examPacket->competenceSchema->skill_name, '_') . Str::slug($welderAnswer->user->name, '_');
+        // $template->saveAs($pathSaveDocx . $typeDoc);
 
-        $phpWord = IOFactory::load($pathSaveDocx . $typeDoc);
+        // $phpWord = IOFactory::load($pathSaveDocx . $typeDoc);
 
-        Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
-        Settings::setPdfRendererName('DomPDF');
+        // Settings::setPdfRendererPath(base_path('vendor/dompdf/dompdf'));
+        // Settings::setPdfRendererName('PDF');
 
-        $typeDoc = ".pdf";
-        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
-        $pdfWriter->save($pathSaveDocx . $typeDoc);
+        // $typeDoc = ".pdf";
+        // $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        // $pdfWriter->save($pathSaveDocx . $typeDoc);
 
-        unlink($pathSaveDocx . ".docx");
+        // unlink($pathSaveDocx . ".docx");
 
-        return response()->download($pathSaveDocx . $typeDoc);
+        // return response()->download($pathSaveDocx . $typeDoc);
+        $pdf = Pdf::loadView('print.certificate');
+        return $pdf->stream();
     }
 
     public function generateAbbreviation($fullName)

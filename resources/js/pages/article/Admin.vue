@@ -130,7 +130,6 @@ export default {
     <div class="card">
         <div class="card-body position-relative">
             <Loader v-if="isLoading" />
-
             <div
                 class="d-md-flex d-block justify-content-between align-items-center mb-2"
             >

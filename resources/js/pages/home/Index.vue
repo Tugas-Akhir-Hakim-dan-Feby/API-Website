@@ -68,7 +68,7 @@ export default {
 </script>
 
 <template>
-    <div class="row mt-4 mb-3">
+    <div class="row mt-4 mb-3" v-if="!checkRole()">
         <div class="col-12">
             <h4 class="p-0 m-0">
                 <span
@@ -78,6 +78,11 @@ export default {
                 ></span>
             </h4>
             <p>{{ roles[0] }}</p>
+        </div>
+    </div>
+    <div class="row mt-4 mb-3" v-if="checkRole()">
+        <div class="col-12">
+            <h4 class="p-0 m-0">Dashboard</h4>
         </div>
     </div>
 
@@ -112,7 +117,7 @@ export default {
         <strong>API-IWS</strong> !!!
     </div>
 
-    <WelderMember :user="user" />
+    <WelderMember :user="user" v-if="!checkRole()" />
 
     <Admin v-if="checkRole()" />
 
