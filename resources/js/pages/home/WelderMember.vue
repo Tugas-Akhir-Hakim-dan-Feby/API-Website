@@ -13,7 +13,7 @@ export default {
         <div class="card-body text-center">
             <div>
                 <img
-                    src="/assets/images/certificate.png"
+                    src="../../../images/certificate.png"
                     height="150"
                     width="150"
                     class="mb-3"
