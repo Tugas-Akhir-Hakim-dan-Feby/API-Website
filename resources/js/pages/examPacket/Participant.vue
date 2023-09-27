@@ -192,7 +192,7 @@ export default {
             }, 1000);
         },
         onBack(e) {
-            this.$router.push({ name: "Exam Packet" });
+            this.$router.push({ name: "Exam Packet Detail" });
         },
         uploadEvaluation(e) {
             this.documentEvaluation = e.target.files[0];
@@ -225,7 +225,7 @@ export default {
                         params: { id: id },
                     }"
                 >
-                    <span> Detail Paket </span>
+                    <span> Detail Ujian </span>
                 </router-link>
             </li>
             <li class="breadcrumb-item active">Peserta</li>
@@ -269,25 +269,24 @@ export default {
                     v-if="examPacket"
                     target="_blank"
                     :href="`/export/participant/${examPacket.uuid}`"
-                    class="btn btn-sm btn-success mb-3 me-2"
+                    class="btn btn-sm btn-primary mb-3 me-2"
                 >
                     Unduh Data Peserta
                 </a>
-                <a
+                <!-- <a
                     data-bs-toggle="modal"
                     data-bs-target="#uploadEvaluation"
                     class="btn btn-sm btn-primary mb-3"
                     v-if="$can('evaluation', 'Exampacket')"
                 >
                     Unggah Data Penilaian
-                </a>
+                </a> -->
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>No. Sertifikat</th>
                             <th>Nama Peserta</th>
                             <th>Nilai Ujian Teori</th>
                             <th>Penilaian Kompetensi</th>
@@ -311,7 +310,6 @@ export default {
                         </tr>
                         <tr v-else v-for="(user, index) in users" :key="index">
                             <th v-html="index + 1"></th>
-                            <td v-html="user.certificateNumber ?? '-'"></td>
                             <td v-html="user.user?.name"></td>
                             <td>
                                 <tr>

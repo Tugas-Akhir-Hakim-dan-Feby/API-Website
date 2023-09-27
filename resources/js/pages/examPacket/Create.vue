@@ -18,7 +18,6 @@ export default {
                 operatorId: "",
                 price: "",
                 accountNumber: "",
-                documentCertificate: "",
             },
             welderSkills: [],
             minDate: new Date().toISOString().split("T")[0],
@@ -40,10 +39,6 @@ export default {
             formData.append("price", this.form.price);
             formData.append("account_number", this.form.accountNumber);
             formData.append("operator_id", this.user.operator.uuid);
-            formData.append(
-                "document_certificate",
-                this.form.documentCertificate
-            );
 
             return formData;
         },
@@ -156,23 +151,6 @@ export default {
             <form @submit.prevent="handleSubmit" method="post">
                 <div class="card">
                     <div class="card-body">
-                        <!-- <div class="mb-2" v-if="user.roleId != 8">
-                            <label for="name">TUK</label>
-                            <select
-                                class="form-select form-validation select2-hidden-accessible"
-                                ref="tuk"
-                                :class="{ 'is-invalid': errors.operatorId }"
-                                :disabled="isLoading"
-                            ></select>
-                            <div
-                                class="invalid-feedback"
-                                v-if="errors.operatorId"
-                                v-for="(error, index) in errors.operatorId"
-                                :key="index"
-                            >
-                                {{ error }}
-                            </div>
-                        </div> -->
                         <div class="mb-2">
                             <label for="name">Skema Kompetensi</label>
                             <select
@@ -199,7 +177,9 @@ export default {
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label for="schedule">Jadwal Ujian</label>
+                            <label for="schedule"
+                                >Jadwal Pelaksanaan Ujian</label
+                            >
                             <input
                                 type="date"
                                 class="form-control form-validation"
@@ -322,35 +302,6 @@ export default {
                                 class="invalid-feedback"
                                 v-if="errors.accountNumber"
                                 v-for="(error, index) in errors.accountNumber"
-                                :key="index"
-                            >
-                                {{ error }}
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="">Unggah Sertifikat</label>
-                            <input
-                                type="file"
-                                class="form-control form-validation"
-                                id=""
-                                :class="{
-                                    'is-invalid': errors.documentCertificate,
-                                }"
-                                :disabled="isLoading"
-                                @change="uploadDocumentCertificate"
-                            />
-                            <small
-                                >unduh contoh penulisan
-                                <a href="/assets/files/example-certificate.docx"
-                                    >sertifikat</a
-                                ></small
-                            >.
-                            <div
-                                class="invalid-feedback"
-                                v-if="errors.documentCertificate"
-                                v-for="(
-                                    error, index
-                                ) in errors.documentCertificate"
                                 :key="index"
                             >
                                 {{ error }}

@@ -82,7 +82,7 @@ export default {
 
     <PageTitle
         v-if="examPacket"
-        :title="`Detail Paket ${examPacket.competenceSchema?.skillName}`"
+        :title="`Detail Ujian ${examPacket.competenceSchema?.skillName}`"
         :isBack="true"
         @onBack="onBack($event)"
     >
@@ -95,7 +95,7 @@ export default {
                     <span> Uji Kompetensi </span>
                 </router-link>
             </li>
-            <li class="breadcrumb-item active">Detail Paket</li>
+            <li class="breadcrumb-item active">Detail Ujian</li>
         </ol>
     </PageTitle>
 

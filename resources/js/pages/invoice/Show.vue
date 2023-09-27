@@ -150,17 +150,15 @@ export default {
                         <div class="text-end">
                             <a
                                 :href="`/print/invoice/${externalId}`"
-                                target="_blank"
                                 class="btn-sm btn btn-info"
                                 v-if="payment.status == $store.state.PAID"
                                 >Cetak</a
                             >
                             <a
                                 :href="payment.paymentLink"
-                                target="_blank"
                                 class="btn-sm btn btn-primary"
                                 v-else
-                                >Bayar</a
+                                >Bayar Sekarang</a
                             >
                         </div>
                     </div>

@@ -192,7 +192,9 @@ export default {
                             </div>
                         </div>
                         <div class="mb-2">
-                            <label for="schedule">Jadwal Ujian</label>
+                            <label for="schedule"
+                                >Jadwal Pelaksanaan Ujian</label
+                            >
                             <input
                                 type="date"
                                 class="form-control form-validation"

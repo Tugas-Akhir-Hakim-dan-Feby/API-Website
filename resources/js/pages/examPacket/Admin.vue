@@ -67,7 +67,7 @@ export default {
                 });
         },
         getSchedule(date) {
-            return dayjs(date).locale("id").format("dddd, DD MMMM YYYY");
+            return dayjs(date).locale("id").format("DD MMM YYYY");
         },
         getMinute(startTime, endTime) {
             const [startHours, startMinutes] = startTime.split(":");
@@ -87,6 +87,9 @@ export default {
             }
 
             return diff.toFixed(0);
+        },
+        getText(text) {
+            return text.replace(/\//g, " ");
         },
         handleDelete(uuid) {
             this.uuid = uuid;
@@ -120,10 +123,10 @@ export default {
             this.getExamPackets();
         },
         onDelete() {
+            $("#confirmModal").modal("hide");
             this.$store
                 .dispatch("deleteData", ["exam-packet", this.uuid])
                 .then((response) => {
-                    $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
                     this.msg = "data berhasil dihapus.";
                     this.getExamPackets();
@@ -163,143 +166,95 @@ export default {
             <li class="breadcrumb-item">
                 <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
             </li>
-            <li class="breadcrumb-item active">
-                Kumpulan Paket Uji Kompetensi
-            </li>
+            <li class="breadcrumb-item active">Kumpulan Uji Kompetensi</li>
         </ol>
     </PageTitle>
 
-    <div class="card position-relative">
+    <div class="row position-relative">
         <Loader v-if="isLoading" />
-        <div class="card-body">
-            <div
-                class="d-md-flex d-block justify-content-between align-items-center mb-2"
-            >
-                <div class="text-center">
-                    <router-link
-                        :to="{ name: 'Exam Packet Create' }"
-                        class="btn btn-sm btn-primary mb-2 me-3"
-                        v-if="$can('create', 'Exampacket')"
+        <div
+            class="col-lg-4 col-md-4 col-sm-6"
+            v-if="$can('create', 'Exampacket')"
+        >
+            <router-link :to="{ name: 'Exam Packet Create' }">
+                <div class="card shadow bg-primary">
+                    <div
+                        class="card-body text-white h-100 d-flex flex-column justify-content-center align-items-center"
                     >
-                        Tambah Paket
-                    </router-link>
+                        <i
+                            class="mdi mdi-file-plus-outline"
+                            style="font-size: 5rem"
+                        ></i>
+                        <p class="fw-bold fs-5">Tambah Uji Kompetensi</p>
+                    </div>
                 </div>
-
-                <div
-                    class="d-md-flex justify-content-between align-items-center"
-                >
-                    <Pagination
-                        :pagination="metaPagination"
-                        @onPageChange="onPageChange($event)"
-                        v-if="$can('pagination', 'Exampacket')"
-                    />
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th
-                                v-if="
-                                    checkRole($store.state.ADMIN_APP) ||
-                                    checkRole($store.state.ADMIN_HUB)
-                                "
-                            >
-                                Penyelenggara
-                            </th>
-                            <th>Skema Kompetensi</th>
-                            <th>Jadwal Ujian</th>
-                            <th>
-                                Jadwal Penutupan <br />
-                                Pendaftaran
-                            </th>
-                            <th>Tenggat Ujian</th>
-                            <th>Jumlah Peserta</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="examPackets.length < 1">
-                            <td
-                                :colspan="
-                                    checkRole($store.state.ADMIN_APP) ||
-                                    checkRole($store.state.ADMIN_HUB)
-                                        ? 8
-                                        : 7
-                                "
-                                class="text-center"
-                            >
-                                data paket uji kompetensi tidak ada
-                            </td>
-                        </tr>
-                        <tr
-                            v-else
-                            v-for="(examPacket, index) in examPackets"
-                            :key="index"
+            </router-link>
+        </div>
+        <div
+            class="col-lg-4 col-md-4 col-sm-6"
+            v-for="(examPacket, index) in examPackets"
+            :key="index"
+        >
+            <div class="card sahdow">
+                <img
+                    :src="
+                        '/print/image/' +
+                        getText(examPacket.competenceSchema?.skillName)
+                    "
+                    class="card-img-top"
+                    alt="..."
+                />
+                <div class="card-body">
+                    <h4 class="card-title">
+                        {{ examPacket.competenceSchema?.skillName }}
+                    </h4>
+                    <p class="small m-0">
+                        <span>
+                            <i class="mdi mdi-calendar"></i>
+                            {{ getSchedule(examPacket.closeSchedule) }}
+                        </span>
+                        |
+                        <span>
+                            <i class="mdi mdi-clock-outline"></i>
+                            {{ examPacket.startTime }} -
+                            {{ examPacket.endTime }} WIB
+                        </span>
+                        |
+                        <i class="dripicons-user-group"></i>&nbsp;
+                        <span class="badge bg-info">
+                            {{ examPacket.examPacketHasWelders }}
+                            Peserta</span
                         >
-                            <th v-html="iteration(index)"></th>
-                            <td
-                                v-if="
-                                    checkRole($store.state.ADMIN_APP) ||
-                                    checkRole($store.state.ADMIN_HUB)
-                                "
-                                v-html="examPacket.operator?.tukName"
-                            ></td>
-                            <td
-                                v-html="examPacket.competenceSchema?.skillName"
-                            ></td>
-                            <td
-                                v-html="getSchedule(examPacket.examSchedule)"
-                            ></td>
-                            <td
-                                v-html="getSchedule(examPacket.closeSchedule)"
-                            ></td>
-                            <td
-                                v-html="
-                                    `${examPacket.startTime} - ${
-                                        examPacket.endTime
-                                    } WIB <br> (${getMinute(
-                                        examPacket.startTime,
-                                        examPacket.endTime
-                                    )} Menit)`
-                                "
-                            ></td>
-                            <td>
-                                <router-link
-                                    :to="{
-                                        name: 'Exam Packet Participant',
-                                        params: { id: examPacket.uuid },
-                                    }"
-                                    class="badge btn-success"
-                                >
-                                    {{ examPacket.examPacketHasWelders }}
-                                    Peserta
-                                </router-link>
-                            </td>
-                            <td>
-                                <router-link
-                                    :to="{
-                                        name: 'Exam Packet Detail',
-                                        params: { id: examPacket.uuid },
-                                    }"
-                                    v-if="$can('show', 'Exampacket')"
-                                    class="btn btn-info btn-sm me-2 text-white"
-                                >
-                                    Detail
-                                </router-link>
-                                <button
-                                    class="btn btn-danger btn-sm"
-                                    @click="handleDelete(examPacket.uuid)"
-                                    v-if="$can('delete', 'Exampacket')"
-                                >
-                                    Hapus
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <span
+                            v-if="
+                                checkRole($store.state.ADMIN_APP) ||
+                                checkRole($store.state.ADMIN_HUB)
+                            "
+                        >
+                            | <i class="dripicons-location"></i>
+                            {{ examPacket.operator?.tukName }}</span
+                        >
+                    </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <router-link
+                        :to="{
+                            name: 'Exam Packet Detail',
+                            params: { id: examPacket.uuid },
+                        }"
+                        v-if="$can('show', 'Exampacket')"
+                        class="btn btn-info btn-sm me-2 text-white"
+                    >
+                        Detail
+                    </router-link>
+                    <button
+                        class="btn btn-danger btn-sm"
+                        @click="handleDelete(examPacket.uuid)"
+                        v-if="$can('delete', 'Exampacket')"
+                    >
+                        Hapus
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -307,3 +262,5 @@ export default {
     <Success :msg="msg" />
     <Confirm @onDelete="onDelete" />
 </template>
+
+<style scoped></style>

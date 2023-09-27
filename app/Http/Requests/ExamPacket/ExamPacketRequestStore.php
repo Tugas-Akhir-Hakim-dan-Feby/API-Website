@@ -35,11 +35,6 @@ class ExamPacketRequestStore extends FormRequest
             "welder_skill_id" => "required|exists:welder_skills,uuid",
         ];
 
-        if (request("method") != "put") {
-            $request["document_certificate"] = "required|file|mimes:doc,docx";
-            // $request["person_responsible"] = "required";
-        }
-
         if (request('is_period') == "true") {
             $request["period"] = "required|numeric";
         } else {
@@ -61,7 +56,6 @@ class ExamPacketRequestStore extends FormRequest
             "close_schedule" => "jadwal penutupan pendaftaran",
             "person_responsible" => "penanggung jawab",
             "price" => "harga ujian",
-            "document_certificate" => "sertifikat",
             "welder_skill_id" => "skema uji kompetensi"
         ];
     }

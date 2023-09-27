@@ -29,7 +29,6 @@ class ExamPacket extends Model
         "start_time",
         "end_time",
         "period",
-        "certificate",
         "account_number",
         "uuid",
     ];

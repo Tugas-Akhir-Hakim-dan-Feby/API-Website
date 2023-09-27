@@ -90,6 +90,9 @@ export default {
 
             return diff.toFixed(0);
         },
+        getText(text) {
+            return text.replace(/\//g, " ");
+        },
         handleDelete(uuid) {
             this.uuid = uuid;
             $("#confirmModal").modal("show");
@@ -176,201 +179,138 @@ export default {
 </script>
 
 <template>
-    <PageTitle title="Uji Kompetensi" />
-    <div class="card position-relative">
+    <PageTitle title="Uji Kompetensi">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item active">Uji Kompetensi</li>
+        </ol>
+    </PageTitle>
+
+    <div class="row position-relative">
         <Loader v-if="isLoading" />
-        <div class="card-body">
-            <div
-                class="d-md-flex d-block justify-content-between align-items-center mb-2"
-            >
-                <div class="text-center">
-                    <router-link
-                        :to="{ name: 'Exam Packet Create' }"
-                        class="btn btn-sm btn-primary mb-2 me-3"
-                        v-if="$can('create', 'Exampacket')"
+        <div class="col-lg-4 col-md-4 col-sm-6">
+            <router-link :to="{ name: 'Exam Packet Register' }">
+                <div class="card shadow bg-primary">
+                    <div
+                        class="card-body text-white h-100 d-flex flex-column justify-content-center align-items-center"
                     >
-                        Tambah Paket
-                    </router-link>
-                    <router-link
-                        :to="{ name: 'Exam Packet Register' }"
-                        class="btn btn-sm btn-primary mb-2 me-3"
-                        v-if="$can('register-packet', 'Exampacket')"
+                        <i
+                            class="mdi mdi-file-plus-outline"
+                            style="font-size: 5rem"
+                        ></i>
+                        <p class="fw-bold fs-5">Daftar Uji Kompetensi</p>
+                    </div>
+                </div>
+            </router-link>
+        </div>
+        <div
+            class="col-lg-4 col-md-4 col-sm-6"
+            v-for="(welderHasExamPacket, index) in welderHasExamPackets"
+            :key="index"
+        >
+            <div class="card shadow-lg position-relative">
+                <div class="position-absolute top-0 end-0">
+                    <span
+                        class="badge bg-success"
+                        v-if="welderHasExamPacket.validatedAt"
+                        >VALIDASI</span
                     >
-                        Daftar Uji Kompetensi
-                    </router-link>
+                    <span class="badge bg-warning" v-else>BELUM VALIDASI</span>
                 </div>
-
-                <div
-                    class="d-md-flex justify-content-between align-items-center"
-                >
-                    <Pagination
-                        :pagination="metaPagination"
-                        @onPageChange="onPageChange($event)"
-                        v-if="$can('pagination', 'Exampacket')"
-                    />
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered">
-                    <thead>
+                <img
+                    :src="
+                        '/print/image/' +
+                        getText(
+                            welderHasExamPacket.examPacket?.competenceSchema
+                                ?.skillName
+                        )
+                    "
+                    class="card-img-top"
+                    :alt="
+                        welderHasExamPacket.examPacket?.competenceSchema
+                            ?.skillName
+                    "
+                />
+                <div class="card-body">
+                    <h4 class="card-title fw-bold" style="font-size: 18px">
+                        {{
+                            welderHasExamPacket.examPacket?.competenceSchema
+                                ?.skillName
+                        }}
+                    </h4>
+                    <h5 class="fw-semibold" style="font-size: 14px">
+                        {{ welderHasExamPacket.examPacket?.operator?.tukName }}
+                    </h5>
+                    <table class="table mb-0" style="font-size: 12px">
                         <tr>
-                            <th>No.</th>
-                            <th>Skema Uji Kompetensi</th>
-                            <th>Jadwal Ujian</th>
-                            <th>Tenggat Ujian</th>
-                            <th>Status Validasi</th>
-                            <th>Penilaian</th>
-                            <th v-if="isSchedule || isAfterSchedule">Aksi</th>
+                            <td>Penutupan Pendaftaran</td>
+                            <td>:</td>
+                            <td>
+                                {{
+                                    getSchedule(
+                                        welderHasExamPacket.examPacket
+                                            ?.closeSchedule
+                                    )
+                                }}
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="(
-                                welderHasExamPacket, index
-                            ) in welderHasExamPackets"
-                            :key="index"
-                        >
-                            <th v-html="iteration(index)"></th>
-                            <td
-                                v-html="
-                                    welderHasExamPacket.examPacket
-                                        ?.competenceSchema?.skillName
-                                "
-                            ></td>
-                            <td
-                                v-html="
+                        <tr>
+                            <td>Jadwal Uji Kompetensi</td>
+                            <td>:</td>
+                            <td>
+                                {{
                                     getSchedule(
                                         welderHasExamPacket.examPacket
                                             ?.examSchedule
                                     )
-                                "
-                            ></td>
-                            <td
-                                v-html="
-                                    `${
-                                        welderHasExamPacket.examPacket
-                                            ?.startTime
-                                    } - ${
-                                        welderHasExamPacket.examPacket?.endTime
-                                    } WIB (${getMinute(
-                                        welderHasExamPacket.examPacket
-                                            ?.startTime,
-                                        welderHasExamPacket.examPacket?.endTime
-                                    )} Menit)`
-                                "
-                            ></td>
-                            <td>
-                                <span
-                                    class="badge bg-success"
-                                    v-if="welderHasExamPacket.validatedAt"
-                                    >VALIDASI</span
-                                >
-                                <span class="badge bg-warning" v-else
-                                    >BELUM VALIDASI</span
-                                >
-                            </td>
-                            <td>
-                                <span
-                                    class="badge bg-success"
-                                    v-if="welderHasExamPacket.certificateNumber"
-                                    >KOMPETEN</span
-                                >
-                                <span
-                                    class="badge bg-danger"
-                                    v-else-if="welderHasExamPacket.grade"
-                                    >TIDAK KOMPETEN</span
-                                >
-                                <span v-else class="badge bg-info"
-                                    >BELUM ADA PENILAIAN</span
-                                >
-                            </td>
-                            <td
-                                v-if="
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_APP
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.EXPERT
-                                    ) ||
-                                    checkRoleWelderMember(
-                                        $store.state.ADMIN_HUB
-                                    )
-                                "
-                            >
-                                <router-link
-                                    :to="{
-                                        name: 'Exam Packet Detail',
-                                        params: {
-                                            id: welderHasExamPacket.examPacket
-                                                ?.uuid,
-                                        },
-                                    }"
-                                    v-if="$can('show', 'Exampacket')"
-                                    class="btn btn-info btn-sm me-2 text-white"
-                                >
-                                    Detail
-                                </router-link>
-                                <button
-                                    class="btn btn-danger btn-sm"
-                                    @click="
-                                        handleDelete(
-                                            welderHasExamPacket.examPacket?.uuid
-                                        )
-                                    "
-                                    v-if="$can('delete', 'Exampacket')"
-                                >
-                                    Hapus
-                                </button>
-                            </td>
-                            <td v-else>
-                                <a
-                                    :href="`/attempt/${welderHasExamPacket.examPacket?.uuid}/execution/${welderHasExamPacket.examPacket?.exam?.uuid}`"
-                                    @click.native="reloadPage"
-                                    class="btn btn-primary btn-sm"
-                                    v-if="
-                                        checkSchedule(
-                                            welderHasExamPacket.examPacket
-                                                ?.examSchedule,
-                                            [
-                                                welderHasExamPacket.examPacket
-                                                    ?.startTime,
-                                                welderHasExamPacket.examPacket
-                                                    ?.endTime,
-                                            ]
-                                        )
-                                    "
-                                    >Kerjakan</a
-                                >
-                                <router-link
-                                    v-else-if="
-                                        checkAfterSchedule(
-                                            welderHasExamPacket.examPacket
-                                                ?.examSchedule,
-                                            welderHasExamPacket.examPacket
-                                                ?.endTime
-                                        ) && welderHasExamPacket.finishedAt
-                                    "
-                                    :to="{
-                                        name: 'Exam Packet Success',
-                                        params: {
-                                            examPacketId:
-                                                welderHasExamPacket.examPacket
-                                                    ?.uuid,
-                                        },
-                                    }"
-                                    class="btn btn-sm btn-info"
-                                    >Lihat Hasil</router-link
-                                >
-                                <span
-                                    v-else
-                                    class="badge bg-warning text-uppercase text-white"
-                                    >Belum Mulai</span
-                                >
+                                }}
                             </td>
                         </tr>
-                    </tbody>
-                </table>
+                    </table>
+                    <p class="card-text"></p>
+                </div>
+                <div class="card-footer">
+                    <a
+                        :href="`/attempt/${welderHasExamPacket.examPacket?.uuid}/execution/${welderHasExamPacket.examPacket?.exam?.uuid}`"
+                        @click.native="reloadPage"
+                        class="btn btn-primary btn-sm"
+                        v-if="
+                            checkSchedule(
+                                welderHasExamPacket.examPacket?.examSchedule,
+                                [
+                                    welderHasExamPacket.examPacket?.startTime,
+                                    welderHasExamPacket.examPacket?.endTime,
+                                ]
+                            )
+                        "
+                        >Kerjakan</a
+                    >
+                    <router-link
+                        v-else-if="
+                            checkAfterSchedule(
+                                welderHasExamPacket.examPacket?.examSchedule,
+                                welderHasExamPacket.examPacket?.endTime
+                            ) && welderHasExamPacket.finishedAt
+                        "
+                        :to="{
+                            name: 'Exam Packet Success',
+                            params: {
+                                examPacketId:
+                                    welderHasExamPacket.examPacket?.uuid,
+                            },
+                        }"
+                        class="btn btn-sm btn-info"
+                        >Lihat Hasil</router-link
+                    >
+                    <span
+                        v-else
+                        class="btn btn-sm btn-warning text-uppercase text-white"
+                        style="cursor: default"
+                        >Belum Mulai</span
+                    >
+                </div>
             </div>
         </div>
     </div>

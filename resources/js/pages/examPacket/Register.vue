@@ -98,6 +98,9 @@ export default {
         getSchedule(date) {
             return dayjs(date).locale("id").format("DD MMMM YYYY");
         },
+        getText(text) {
+            return text.replace(/\//g, " ");
+        },
         handleSubmit() {
             this.isLoading = true;
             this.errors = {};
@@ -151,7 +154,19 @@ export default {
         :isBack="true"
         @onBack="onBack"
         class="mb-0"
-    />
+    >
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Dashboard' }">Dashboard</router-link>
+            </li>
+            <li class="breadcrumb-item">
+                <router-link :to="{ name: 'Exam Packet' }"
+                    >Uji Kompetensi</router-link
+                >
+            </li>
+            <li class="breadcrumb-item active">Pendaftaran</li>
+        </ol></PageTitle
+    >
 
     <div class="position-relative">
         <Loader v-if="isLoading" />
@@ -199,7 +214,10 @@ export default {
             >
                 <div class="card shadow-lg">
                     <img
-                        :src="examPacket.operator?.logo?.documentPath"
+                        :src="
+                            '/print/image/' +
+                            getText(examPacket.competenceSchema?.skillName)
+                        "
                         class="card-img-top"
                         :alt="examPacket.competenceSchema?.skillName"
                     />
@@ -228,7 +246,7 @@ export default {
                         </table>
                         <p class="card-text"></p>
                         <button
-                            class="badge border-0 btn-success ms-2"
+                            class="badge border-0 btn-success"
                             style="cursor: auto"
                             v-if="examPacket.userRegistered"
                         >

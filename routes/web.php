@@ -4,6 +4,7 @@ use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ActivationAccountController;
 use App\Http\Controllers\ExamPacketController;
+use App\Http\Controllers\GenerateController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\User\AdminAppController;
 use App\Http\Controllers\WelderHasExamPacketController;
@@ -24,6 +25,8 @@ Route::get('/{any}', [PageController::class, 'app'])->where('any', '^(?!auth|lar
 Route::get('/attempt/{any}', [PageController::class, 'attempt'])->where('any', '^(?!activation-account).*$')->name('web.attempt');
 Route::get('/auth/{any}', [PageController::class, 'auth'])->where('any', '^(?!activation-account).*$')->name('web.auth');
 Route::get('/print/invoice/{externalId}', [PrintController::class, 'invoice'])->name('web.print.invoice');
+
+Route::get('/print/image/{text}', [GenerateController::class, 'image'])->name('web.print.image');
 
 Route::get('/auth/activation-account', ActivationAccountController::class);
 

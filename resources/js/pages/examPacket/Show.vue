@@ -211,101 +211,15 @@ export default {
                                         name: 'Exam Packet Edit',
                                         params: { id: examPacket.uuid },
                                     }"
-                                    class="btn btn-sm btn-light me-2 mb-2"
+                                    class="btn btn-sm btn-light mb-2"
                                     v-if="$can('update', 'Exampacket') && edit"
                                 >
                                     Edit Paket
                                 </router-link>
-                                <a
-                                    href="#"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#updateCertificate"
-                                    class="btn btn-sm btn-light mb-2"
-                                    v-if="$can('update', 'Exampacket') && edit"
-                                >
-                                    Edit Sertifikat
-                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div
-        class="modal fade"
-        id="updateCertificate"
-        tabindex="-1"
-        aria-labelledby="updateCertificateLabel"
-        aria-hidden="true"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-    >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateCertificateLabel">
-                        perbaharui sertifikat
-                    </h5>
-                </div>
-                <form method="post" @submit.prevent="handleSubmit">
-                    <div class="modal-body">
-                        <label for="">Unggah Sertifikat</label>
-                        <input
-                            type="file"
-                            class="form-control form-validation"
-                            id=""
-                            :class="{
-                                'is-invalid': errors.documentCertificate,
-                            }"
-                            :disabled="isLoading"
-                            @change="uploadDocumentCertificate"
-                        />
-                        <small
-                            >unduh contoh penulisan
-                            <a href="/assets/files/example-certificate.docx"
-                                >sertifikat</a
-                            ></small
-                        >.
-                        <div
-                            class="invalid-feedback"
-                            v-if="errors.documentCertificate"
-                            v-for="(error, index) in errors.documentCertificate"
-                            :key="index"
-                        >
-                            {{ error }}
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-secondary"
-                            data-bs-dismiss="modal"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            class="btn btn-sm btn-primary"
-                            v-if="!isLoading"
-                        >
-                            Kirim
-                        </button>
-                        <button
-                            class="btn btn-sm btn-primary"
-                            type="button"
-                            disabled
-                            v-if="isLoading"
-                        >
-                            <span
-                                class="spinner-border spinner-border-sm me-1"
-                                role="status"
-                                aria-hidden="true"
-                            ></span>
-                            Harap Tunggu...
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

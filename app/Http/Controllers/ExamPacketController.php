@@ -103,10 +103,6 @@ class ExamPacketController extends Controller
 
         try {
             $request->merge([
-                'certificate' => $request->file('document_certificate')->store('certificate')
-            ]);
-
-            $request->merge([
                 'operator_id' => $operator->id,
                 'uuid' => Str::uuid(),
                 'year' => date("Y"),

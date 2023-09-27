@@ -240,7 +240,7 @@ export default {
                     </router-link>
                 </li>
 
-                <li class="side-nav-item">
+                <!-- <li class="side-nav-item">
                     <router-link
                         :to="{ name: 'Check Certificate' }"
                         class="side-nav-link"
@@ -248,7 +248,7 @@ export default {
                         <i class="mdi mdi-file-search"></i>
                         <span> Cek Sertifikat </span>
                     </router-link>
-                </li>
+                </li> -->
             </ul>
         </div>
     </div>

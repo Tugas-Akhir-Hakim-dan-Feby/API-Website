@@ -148,18 +148,6 @@ export default {
                         <p class="">TK = Tidak Kompeten</p>
                     </div>
                 </div>
-                <div
-                    class="card-footer"
-                    v-if="examPacket.evaluation?.status == 3"
-                >
-                    <a
-                        :href="`/download/certificate/${examPacket.evaluation?.uuid}`"
-                        target="_blank"
-                        class="btn btn-sm btn-primary float-end"
-                    >
-                        Unduh Sertifikat
-                    </a>
-                </div>
             </div>
         </div>
     </div>
