@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\Advertisement\ByAuth;
+use App\Http\Filters\Advertisement\ByExpired;
 use App\Http\Filters\Advertisement\ByRecovery;
+use App\Http\Filters\Advertisement\ByStatus;
 use App\Http\Requests\Advertisement\AdvertisementRequestStore;
 use App\Http\Resources\Advertisement\AdvertisementCollection;
 use App\Http\Traits\MessageFixer;
@@ -30,6 +32,21 @@ class AdvertisementController extends Controller
     {
         $this->advertisementRepository = $advertisementRepository;
         $this->costRepository = $costRepository;
+    }
+
+    public function all(Request $request)
+    {
+        $advertisements = app(Pipeline::class)
+            ->send($this->advertisementRepository->query())
+            ->through([
+                ByStatus::class,
+                ByExpired::class
+            ])
+            ->thenReturn()
+            ->with(['user', 'document'])
+            ->paginate($request->per_page);
+
+        return new AdvertisementCollection($advertisements);
     }
 
     public function index(Request $request)
@@ -66,6 +83,10 @@ class AdvertisementController extends Controller
 
             $this->pay(Cost::ADVERTISEMENT, true, null, url('advertisement'));
             $this->upload($request->banner, $advertisement->document(), 'banner');
+
+            $advertisement->update([
+                "external_id" => $this->external_id
+            ]);
 
             $advertisement->payment_link = $this->payment_link;
 

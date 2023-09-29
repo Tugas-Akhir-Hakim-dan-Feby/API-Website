@@ -10,6 +10,7 @@ use App\Http\Filters\Payment\Sort;
 use App\Http\Resources\Payment\PaymentCollection;
 use App\Http\Resources\Payment\PaymentDetail;
 use App\Http\Traits\MessageFixer;
+use App\Models\Advertisement;
 use App\Models\Payment;
 use App\Models\User;
 use App\Repositories\Payment\PaymentRepository;
@@ -58,6 +59,10 @@ class PaymentController extends Controller
         try {
             $this->assignRoles($payment, $role, $request);
 
+            if ($payment->advertisement) {
+                $this->updateStatusAds($payment->advertisement);
+            }
+
             MessagePayment::dispatch($payment, $request->external_id);
 
             DB::commit();
@@ -83,6 +88,13 @@ class PaymentController extends Controller
         $payment->load('user');
 
         return new PaymentDetail($payment);
+    }
+
+    protected function updateStatusAds($advertisement)
+    {
+        return $advertisement->update([
+            "is_active" => Advertisement::ACTIVE
+        ]);
     }
 
     protected function assignRoles($payment, $role, $request)

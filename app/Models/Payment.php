@@ -35,6 +35,11 @@ class Payment extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function advertisement(): BelongsTo
+    {
+        return $this->belongsTo(Advertisement::class, 'external_id', 'external_id');
+    }
+
     public function isRecreated()
     {
         return $this->recreated_at !== null;
