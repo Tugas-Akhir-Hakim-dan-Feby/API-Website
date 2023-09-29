@@ -1,5 +1,6 @@
 <script>
 import Loader from "../../components/Loader.vue";
+import Pagination from "../../components/Pagination.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import Confirm from "../../components/notifications/Confirm.vue";
 import Success from "../../components/notifications/Success.vue";
@@ -10,14 +11,22 @@ export default {
     data() {
         return {
             examPacket: null,
+            exams: [],
+            pagination: {
+                page: 1,
+                perPage: 10,
+            },
+            metaPagination: {},
             errors: {},
             date: null,
             isLoading: false,
+            isLoadingExam: false,
             examId: null,
             msg: "",
         };
     },
     beforeMount() {
+        this.getExam();
         this.getExamPacket();
     },
     mounted() {},
@@ -40,18 +49,38 @@ export default {
                     this.isLoading = false;
                 });
         },
+        getExam() {
+            this.isLoadingExam = true;
+
+            const params = [
+                `exam_packet_id=${this.id}`,
+                `page=${this.pagination.page}`,
+                `per_page=${this.pagination.perPage}`,
+            ].join("&");
+
+            this.$store
+                .dispatch("getData", ["exam", params])
+                .then((response) => {
+                    this.isLoadingExam = false;
+                    this.exams = response.data;
+                    this.metaPagination = response.meta;
+                })
+                .catch((err) => {
+                    this.isLoadingExam = false;
+                });
+        },
         handleDeleteExam(id) {
             this.examId = id;
             $("#confirmModal").modal("show");
         },
         onDeleteExam() {
+            $("#confirmModal").modal("hide");
             this.$store
                 .dispatch("deleteData", ["exam", this.examId])
                 .then((response) => {
                     this.isLoading = false;
                     this.msg = "data berhasil dihapus.";
                     this.getExamPacket();
-                    $("#confirmModal").modal("hide");
                     $("#successModal").modal("show");
                 })
                 .catch((error) => {
@@ -67,11 +96,15 @@ export default {
         onBack(e) {
             this.$router.push({ name: "Exam Packet" });
         },
+        onPageChange(e) {
+            this.pagination.page = e;
+            this.getExam();
+        },
         formatDate(date) {
             return dayjs(date).locale("id").format("YYYY-MM-DD");
         },
     },
-    components: { PageTitle, Success, Show, Confirm, Loader },
+    components: { PageTitle, Success, Show, Confirm, Loader, Pagination },
 };
 </script>
 
@@ -125,30 +158,40 @@ export default {
             </div>
         </div>
         <div class="card-body position-relative">
-            <Loader v-if="isLoading" />
+            <Loader v-if="isLoadingExam" />
+
+            <div class="d-flex justify-content-end">
+                <Pagination
+                    :pagination="metaPagination"
+                    @onPageChange="onPageChange($event)"
+                />
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>No.</th>
                             <th>Pertanyaan</th>
+                            <th>Jenis Pertanyaan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="examPacket.exams?.length < 1">
+                        <tr v-if="exams.length < 1">
                             <td colspan="3" class="text-center">
                                 data pertanyaan tidak ada
                             </td>
                         </tr>
-                        <tr
-                            v-else
-                            v-for="(exam, index) in examPacket.exams"
-                            :key="index"
-                        >
-                            <th v-html="index + 1"></th>
+                        <tr v-else v-for="(exam, index) in exams" :key="index">
                             <td v-html="exam.question"></td>
+                            <td
+                                v-html="
+                                    exam.answerType ==
+                                    $store.state.QUESTION_TYPE.TRUE_FALSE
+                                        ? 'Benar/Salah'
+                                        : 'Pilihan Ganda'
+                                "
+                            ></td>
                             <td>
                                 <router-link
                                     :to="{

@@ -2,10 +2,8 @@
 
 namespace App\Repositories\Exam;
 
-use LaravelEasyRepository\Repository;
+use App\Http\Facades\Firestore\Firestore;
 
-interface ExamRepository extends Repository
+interface ExamRepository extends Firestore
 {
-    public function query();
-    public function where(array $data);
 }
