@@ -25,12 +25,12 @@ class CostSeeder extends Seeder
 
         $costs = [
             [
-                'type_price' => 'Harga Welder Member',
+                'type_price' => 'Harga Member Personal',
                 'nominal_price' => '150000',
                 'uuid' => Str::uuid()
             ],
             [
-                'type_price' => 'Harga Perusahaan Member',
+                'type_price' => 'Harga Member Perusahaan',
                 'nominal_price' => '5000000',
                 'uuid' => Str::uuid()
             ],
@@ -40,7 +40,7 @@ class CostSeeder extends Seeder
                 'uuid' => Str::uuid()
             ],
             [
-                'type_price' => 'Harga LPK',
+                'type_price' => 'Harga Member TUK',
                 'nominal_price' => '100000',
                 'uuid' => Str::uuid()
             ],

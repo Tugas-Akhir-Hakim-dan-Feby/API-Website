@@ -103,7 +103,7 @@ class UserSeeder extends Seeder
             'company_address' => "Jl. Lohbener Lama No.08, Lohbener, Legok, Indramayu, Kabupaten Indramayu, Jawa Barat",
             'company_profile' => fake()->text(),
             'company_email' => $companyMember->email,
-            'company_legality' => fake()->image(storage_path("app/public/company_legality")),
+            'company_legality' => fake()->uuid(),
             'phone' => fake()->phoneNumber(),
             'facsmile' => fake()->phoneNumber(),
         ]);
@@ -135,7 +135,7 @@ class UserSeeder extends Seeder
             "working_status" => 1,
             "status" => 1,
             // "certificate_school" => fake()->image(storage_path("app/public/certificate_school")),
-            "pas_photo" => fake()->image(storage_path("app/public/pas_photo")),
+            "pas_photo" => fake()->uuid(),
             "uuid" => Str::uuid(),
         ]);
 
@@ -166,17 +166,17 @@ class UserSeeder extends Seeder
             "working_status" => 1,
             "status" => 1,
             // "certificate_school" => fake()->image(storage_path("app/public/certificate_school")),
-            "pas_photo" => fake()->image(storage_path("app/public/pas_photo")),
+            "pas_photo" => fake()->uuid(),
             "uuid" => Str::uuid(),
         ]);
 
         $expert->expert()->create([
             "status" => "APPROVED",
             "instance" => "Politeknik Negeri Indramayu",
-            "certificate_competency" => fake()->image(storage_path("app/public/certificate_competency")),
-            "certificate_profession" => fake()->image(storage_path("app/public/certificate_profession")),
-            "working_mail" => fake()->image(storage_path("app/public/working_mail")),
-            "career" => fake()->image(storage_path("app/public/career")),
+            "certificate_competency" => fake()->uuid(),
+            "certificate_profession" => fake()->uuid(),
+            "working_mail" => fake()->uuid(),
+            "career" => fake()->uuid(),
             "uuid" => Str::uuid(),
         ]);
 

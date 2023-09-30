@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 trait PaymentFixer
 {
+    protected $external_id = "";
     protected $payment_link = "";
     protected $invoice_success = "";
 
@@ -25,11 +26,11 @@ trait PaymentFixer
         }
 
         $secret_key = 'Basic ' . config('xendit.key_auth');
-        $external_id = Str::random(10);
+        $this->external_id = Str::random(10);
         $data_request = Http::withHeaders([
             'Authorization' => $secret_key
         ])->post('https://api.xendit.co/v2/invoices', [
-            'external_id' => $external_id,
+            'external_id' => $this->external_id,
             'amount' => $cost->nominal_price,
             'success_redirect_url' => $this->invoice_success
         ]);
@@ -39,7 +40,7 @@ trait PaymentFixer
             Payment::create([
                 'uuid' => Str::uuid(),
                 'user_id' => Auth::user()->id,
-                'external_id' => $external_id,
+                'external_id' => $this->external_id,
                 'description' => $description,
                 'amount' => $cost->nominal_price,
                 'payment_link' => $response->invoice_url,
@@ -49,7 +50,7 @@ trait PaymentFixer
             Payment::create([
                 'uuid' => Str::uuid(),
                 'user_id' => $user->id,
-                'external_id' => $external_id,
+                'external_id' => $this->external_id,
                 'description' => $description,
                 'amount' => $cost->nominal_price,
                 'payment_link' => $response->invoice_url,

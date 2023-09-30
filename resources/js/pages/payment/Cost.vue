@@ -39,23 +39,6 @@ export default {
         setCost(cost) {
             this.cost = cost;
         },
-        handleSubmit() {
-            this.errors = {};
-            this.isLoading = true;
-            this.$store
-                .dispatch("updateData", ["cost", this.cost.uuid, this.form])
-                .then((response) => {
-                    this.isLoading = false;
-                    this.getCosts();
-                    this.form = {};
-                    $("#editCost").modal("hide");
-                    $("#successModal").modal("show");
-                })
-                .catch((error) => {
-                    this.isLoading = false;
-                    this.errors = error.response.data.messages;
-                });
-        },
     },
     components: { PageTitle, Pagination, Loader, Success },
 };
@@ -110,7 +93,7 @@ export default {
                                 <router-link
                                     :to="{
                                         name: 'Payment Cost Edit',
-                                        params: { id: cost.uuid },
+                                        params: { id: cost.id },
                                     }"
                                     class="btn btn-warning text-white btn-sm me-2 mb-2"
                                 >
@@ -125,88 +108,4 @@ export default {
     </div>
 
     <Success msg="data harga berhasil diperbaharui." />
-
-    <div
-        class="modal fade"
-        id="editCost"
-        tabindex="-1"
-        aria-labelledby="editCostLabel"
-        aria-hidden="true"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-    >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCostLabel">Edit Harga</h5>
-                </div>
-                <form @submit.prevent="handleSubmit" method="post">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>Jenis Harga</label>
-                            <input
-                                type="text"
-                                disabled
-                                class="form-control"
-                                :value="cost.typePrice"
-                            />
-                        </div>
-                        <div class="mb-3">
-                            <label>Nominal Harga</label>
-                            <input
-                                type="number"
-                                class="form-control"
-                                v-model="form.nominalPrice"
-                                :class="{ 'is-invalid': errors.nominalPrice }"
-                                :disabled="isLoading"
-                            />
-                            <div
-                                class="invalid-feedback"
-                                v-if="errors.nominalPrice"
-                                v-for="(error, index) in errors.nominalPrice"
-                                :key="index"
-                            >
-                                {{ error }}
-                            </div>
-                            <p>
-                                harga sebelumnya
-                                <strong>{{
-                                    getRupiah(cost.nominalPrice)
-                                }}</strong>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-secondary"
-                            data-bs-dismiss="modal"
-                            :disabled="isLoading"
-                        >
-                            Kembali
-                        </button>
-                        <button
-                            class="btn btn-sm btn-primary"
-                            v-if="!isLoading"
-                        >
-                            Kirim
-                        </button>
-                        <button
-                            class="btn btn-sm btn-primary"
-                            type="button"
-                            disabled
-                            v-if="isLoading"
-                        >
-                            <span
-                                class="spinner-border spinner-border-sm me-1"
-                                role="status"
-                                aria-hidden="true"
-                            ></span>
-                            Harap Tunggu...
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </template>
