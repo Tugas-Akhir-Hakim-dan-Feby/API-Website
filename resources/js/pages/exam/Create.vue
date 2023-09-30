@@ -16,10 +16,31 @@ export default {
                 correctAnswer: "",
                 answers: [],
                 answerType: AnswerQuestion.MULTIPLE_CHOICE,
+                file: null,
             },
             errors: {},
             isLoading: false,
         };
+    },
+    computed: {
+        formData() {
+            let formData = new FormData();
+
+            formData.append("exam_packet_id", this.form.examPacketId);
+            formData.append("question", this.form.question);
+            formData.append("correct_answer", this.form.correctAnswer);
+            formData.append("answer_type", this.form.answerType);
+
+            for (let index = 0; index < this.form.answers.length; index++) {
+                formData.append(`answers[${index}]`, this.form.answers[index]);
+            }
+
+            if (this.form.file) {
+                formData.append("file", this.form.file);
+            }
+
+            return formData;
+        },
     },
     methods: {
         getMultipleChoiceData() {
@@ -34,7 +55,7 @@ export default {
         handleSubmit() {
             this.isLoading = true;
             this.$store
-                .dispatch("postData", ["exam", this.form])
+                .dispatch("postDataUpload", ["exam", this.formData])
                 .then((response) => {
                     this.isLoading = false;
                     $("#successModal").modal("show");
@@ -51,6 +72,9 @@ export default {
         answerMultipleChoice(e) {
             this.form.answers = e[0];
             this.form.correctAnswer = e[1];
+        },
+        onUploadFile(e) {
+            this.form.file = e.target.files[0];
         },
     },
     components: { PageTitle, Success, MultipleChoice, TrueFalse },
@@ -127,6 +151,14 @@ export default {
                     :errors="errors"
                     :is-loading="isLoading"
                 />
+                <div class="mb-2">
+                    <label>Unggah File/Foto Pendukung</label>
+                    <input
+                        type="file"
+                        class="form-control"
+                        @change="onUploadFile"
+                    />
+                </div>
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <router-link

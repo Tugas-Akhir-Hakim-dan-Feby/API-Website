@@ -22,7 +22,7 @@ export default {
             isLoading: false,
             isLoadingExam: false,
             examId: null,
-            msg: "",
+            message: "",
         };
     },
     beforeMount() {
@@ -75,12 +75,13 @@ export default {
         },
         onDeleteExam() {
             $("#confirmModal").modal("hide");
+            this.message = "";
             this.$store
                 .dispatch("deleteData", ["exam", this.examId])
                 .then((response) => {
                     this.isLoading = false;
-                    this.msg = "data berhasil dihapus.";
-                    this.getExamPacket();
+                    this.message = "data berhasil dihapus.";
+                    this.getExam();
                     $("#successModal").modal("show");
                 })
                 .catch((error) => {
@@ -90,7 +91,7 @@ export default {
         },
         onSuccessEdit() {
             this.getExamPacket();
-            this.msg = "data berhasil diperbaharui.";
+            this.message = "data berhasil diperbaharui.";
             $("#successModal").modal("show");
         },
         onBack(e) {
@@ -198,7 +199,7 @@ export default {
                                         name: 'Exam Edit',
                                         params: {
                                             id: examPacket.uuid,
-                                            examId: exam.uuid,
+                                            examId: index,
                                         },
                                     }"
                                     v-if="$can('update', 'Exam')"
@@ -209,7 +210,7 @@ export default {
                                 <button
                                     class="btn btn-danger btn-sm"
                                     v-if="$can('delete', 'Exam')"
-                                    @click="handleDeleteExam(exam.uuid)"
+                                    @click="handleDeleteExam(index)"
                                 >
                                     Hapus
                                 </button>
@@ -221,6 +222,6 @@ export default {
         </div>
     </div>
 
-    <Success :msg="msg" />
+    <Success :msg="message" />
     <Confirm @onDelete="onDeleteExam" />
 </template>

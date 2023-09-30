@@ -30,7 +30,8 @@ class ExamRequest extends FormRequest
             "exam_packet_id" => "required|exists:exam_packets,uuid",
             "question" => "required",
             "answers" => "required|array",
-            "answers.*" => "required"
+            "answers.*" => "required",
+            "file" => "file|image|mimes:png,jpg,jpeg,pdf,mp4,mkv,xlsx,docx",
         ];
     }
 
