@@ -283,7 +283,7 @@ export default {
                                     welderHasExamPacket.examPacket?.startTime,
                                     welderHasExamPacket.examPacket?.endTime,
                                 ]
-                            )
+                            ) && !welderHasExamPacket.finishedAt
                         "
                         >Kerjakan</a
                     >

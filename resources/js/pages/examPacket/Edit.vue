@@ -224,7 +224,6 @@ export default {
                                 :class="{ 'is-invalid': errors.closeSchedule }"
                                 v-model="form.closeSchedule"
                                 :disabled="isLoading"
-                                :min="minDate"
                             />
                             <div
                                 class="invalid-feedback"

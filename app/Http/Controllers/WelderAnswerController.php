@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Facades\Firestore\FirestoreRepository;
 use App\Http\Filters\WelderAnswer\ExamId;
 use App\Http\Requests\WelderAnswer\WelderAnswerCreateRequest;
 use App\Http\Resources\WelderAnswer\WelderAnswerCollection;
 use App\Http\Resources\WelderAnswer\WelderAnswerCorrection;
 use App\Http\Resources\WelderAnswer\WelderAnswerDetail;
 use App\Http\Traits\MessageFixer;
+use App\Models\Firebase;
 use App\Models\WelderAnswer;
 use App\Models\WelderHasExamPacket;
 use App\Repositories\Answer\AnswerRepository;
@@ -25,18 +27,21 @@ class WelderAnswerController extends Controller
 {
     use MessageFixer;
 
-    protected $answerRepository, $welderAnswerRepository, $examRepository, $examPacketRepository;
+    protected $answerRepository, $welderAnswerRepository, $examRepository, $examPacketRepository, $firestoreRepository;
 
     public function __construct(
         AnswerRepository $answerRepository,
         WelderAnswerRepository $welderAnswerRepository,
         ExamRepository $examRepository,
-        ExamPacketRepository $examPacketRepository
+        ExamPacketRepository $examPacketRepository,
+        FirestoreRepository $firestoreRepository
+
     ) {
         $this->answerRepository = $answerRepository;
         $this->welderAnswerRepository = $welderAnswerRepository;
         $this->examRepository = $examRepository;
         $this->examPacketRepository = $examPacketRepository;
+        $this->firestoreRepository = $firestoreRepository;
     }
 
     public function index(Request $request)
@@ -73,31 +78,32 @@ class WelderAnswerController extends Controller
     {
         DB::beginTransaction();
 
-        $answer = $this->answerRepository->where([["uuid", $request->answer_id]])->first();
-        $exam = $this->examRepository->where([["uuid", $request->exam_id]])->first();
+        $welderAnswerId = null;
+        $examPacket = null;
 
         $request->merge([
             "user_id" => Auth::user()->id,
-            "answer_id" => $answer->id,
-            "exam_id" => $exam->id,
-            "uuid" => Str::uuid()
         ]);
 
-        try {
-            $welderAnswer = $this->welderAnswerRepository->where([
-                "user_id" => Auth::user()->id, "exam_id" => $exam->id,
-            ])->first();
+        $welderAnswer = $this->firestoreRepository->query(Firebase::WELDER_ANSWER)->where('user_id', '=', auth()->user()->id)->where('exam_id', '=', $request->exam_id)->documents();
 
-            if ($welderAnswer) {
-                $welderAnswer->update([
-                    "answer_id" => $answer->id
-                ]);
+        foreach ($welderAnswer as $answer) {
+            $welderAnswerId = $answer->id();
+        }
+
+        if ($request->has('exam_packet_id')) {
+            $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+        }
+
+        try {
+            if (!$welderAnswerId) {
+                $answer = $this->firestoreRepository->create(Firebase::WELDER_ANSWER, $request->except(['status', 'exam_packet_id']));
             } else {
-                $this->welderAnswerRepository->create($request->all());
+                $answer = $this->firestoreRepository->update(Firebase::WELDER_ANSWER, $welderAnswerId, $request->except(['status', 'exam_packet_id']));
             }
 
             if ($request->has('status')) {
-                $exam->examPacket->examPacketHasWelder()->welderAuth()->update([
+                $examPacket->examPacketHasWelder()->welderAuth()->update([
                     "status" => WelderHasExamPacket::FINISH,
                     "finished_at" => Carbon::now()
                 ]);
@@ -113,9 +119,15 @@ class WelderAnswerController extends Controller
 
     public function show(string $id)
     {
-        $welderAnswer = $this->welderAnswerRepository->where(["uuid" => $id])->first();
+        $data = null;
 
-        return new WelderAnswerDetail($welderAnswer);
+        $welderAnswer = $this->firestoreRepository->query(Firebase::WELDER_ANSWER)->where('user_id', '=', auth()->user()->id)->where('exam_id', '=', $id)->documents();
+
+        foreach ($welderAnswer as $answer) {
+            $data = $answer->data();
+        }
+
+        return new WelderAnswerDetail($data);
     }
 
     public function edit(WelderAnswer $welderAnswer)
