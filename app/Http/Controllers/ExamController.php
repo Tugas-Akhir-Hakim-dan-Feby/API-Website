@@ -10,6 +10,7 @@ use App\Http\Requests\Exam\ExamRequest;
 use App\Http\Resources\Exam\ExamCollection;
 use App\Http\Resources\Exam\ExamDetail;
 use App\Http\Traits\MessageFixer;
+use App\Imports\ExamImport;
 use App\Models\Exam;
 use App\Models\Firebase;
 use App\Repositories\Exam\ExamRepository;
@@ -18,8 +19,10 @@ use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Kreait\Firebase\Contract\Firestore;
 use Kreait\Firebase\Factory;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExamController extends Controller
 {
@@ -59,6 +62,31 @@ class ExamController extends Controller
         }
 
         return new ExamCollection(PaginationHelper::paginate(collect($data), $perPage));
+    }
+
+    public function import(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
+            'exam_packet_id' => 'required|exists:exam_packets,uuid'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->warningMessage($validator->errors());
+        }
+
+        try {
+            DB::commit();
+
+            Excel::import(new ExamImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function store(ExamRequest $request)
