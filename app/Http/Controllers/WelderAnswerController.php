@@ -83,6 +83,7 @@ class WelderAnswerController extends Controller
 
         $request->merge([
             "user_id" => Auth::user()->id,
+            "exam_id" => Str::lower($request->exam_id)
         ]);
 
         $welderAnswer = $this->firestoreRepository->query(Firebase::WELDER_ANSWER)->where('user_id', '=', auth()->user()->id)->where('exam_id', '=', $request->exam_id)->documents();

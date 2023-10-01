@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\ExamPacket;
 
+use App\Http\Facades\Firestore\FirestoreRepository;
+use App\Models\Firebase;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class WelderHasExamPacketCollection extends ResourceCollection
@@ -29,10 +31,10 @@ class WelderHasExamPacketCollection extends ResourceCollection
                 "status" => $examPacket->status,
                 "payment" => $examPacket->payment,
                 "notes" => $examPacket->notes,
-                "correct_answer" => $this->getCorrectAnswer($examPacket->examPacket->exams),
-                "wrong_answer" => $this->getWrongAnswer($examPacket->examPacket->exams),
-                "correct_precentage" => $this->getCorrectPrecentage($examPacket->examPacket->exams),
-                "wrong_precentage" => $this->getWrongPrecentage($examPacket->examPacket->exams),
+                "correct_answer" => $this->getCorrectAnswer($examPacket->examPacket, $examPacket->user),
+                "wrong_answer" => $this->getWrongAnswer($examPacket->examPacket, $examPacket->user),
+                "correct_precentage" => $this->getCorrectPrecentage($examPacket->examPacket, $examPacket->user),
+                "wrong_precentage" => $this->getWrongPrecentage($examPacket->examPacket, $examPacket->user),
                 "created_at" => $examPacket->created_at,
                 "updated_at" => $examPacket->updated_at,
                 "validated_at" => $examPacket->validated_at,
@@ -43,38 +45,70 @@ class WelderHasExamPacketCollection extends ResourceCollection
         return $data;
     }
 
-    protected function getCorrectAnswer($exams)
+    protected function getCorrectAnswer($examPacket, $user)
     {
         $value = 0;
+        $dataAnswer = null;
+
+        $firestoreRepository = new FirestoreRepository();
+        $exams = $firestoreRepository->query(Firebase::EXAMS)
+            ->where('exam_packet_id', '=', $examPacket->id)->documents();
 
         foreach ($exams as $exam) {
-            if ($exam->welderAnswer && $exam->welderAnswer->answer_id == $exam->answer_id) {
-                $value++;
+            $welderAnswers = $firestoreRepository->query(Firebase::WELDER_ANSWER)
+                ->where('exam_id', '=', $exam->id())
+                ->where('user_id', '=', $user->id)
+                ->documents();
+            $answers = $firestoreRepository->query(Firebase::ANSWERS)->where('uuid', '=', $exam->data()["uuid"])->documents();
+
+            foreach ($answers as $answer) {
+                $dataAnswer = $answer->data();
+            }
+
+            foreach ($welderAnswers as $welderAnswer) {
+                if ($welderAnswer->data()["answer_id"] == $dataAnswer["correct_answer"]) {
+                    $value += 1;
+                }
             }
         }
 
         return $value;
     }
 
-    protected function getWrongAnswer($exams)
+    protected function getWrongAnswer($examPacket, $user)
     {
         $value = 0;
+        $dataAnswer = null;
+
+        $firestoreRepository = new FirestoreRepository();
+        $exams = $firestoreRepository->query(Firebase::EXAMS)
+            ->where('exam_packet_id', '=', $examPacket->id)
+            ->documents();
 
         foreach ($exams as $exam) {
-            if ($exam->welderAnswer && $exam->welderAnswer?->answer_id != $exam->answer_id) {
-                $value++;
+            $welderAnswers = $firestoreRepository->query(Firebase::WELDER_ANSWER)->where('exam_id', '=', $exam->id())->where('user_id', '=', $user->id)->documents();
+            $answers = $firestoreRepository->query(Firebase::ANSWERS)->where('uuid', '=', $exam->data()["uuid"])->documents();
+
+            foreach ($answers as $answer) {
+                $dataAnswer = $answer->data();
+            }
+
+            foreach ($welderAnswers as $welderAnswer) {
+                if ($welderAnswer->data()["answer_id"] != $dataAnswer["correct_answer"]) {
+                    $value += 1;
+                }
             }
         }
 
         return $value;
     }
 
-    protected function getCorrectPrecentage($exams)
+    protected function getCorrectPrecentage($examPacket, $user)
     {
-        $total = $this->getCorrectAnswer($exams) + $this->getWrongAnswer($exams);
+        $total = $this->getCorrectAnswer($examPacket, $user) + $this->getWrongAnswer($examPacket, $user);
 
-        if ($this->getCorrectAnswer($exams) != 0) {
-            $precentage = ($this->getCorrectAnswer($exams) / $total) * 100;
+        if ($this->getCorrectAnswer($examPacket, $user) != 0) {
+            $precentage = ($this->getCorrectAnswer($examPacket, $user) / $total) * 100;
         } else {
             $precentage = 0;
         }
@@ -82,12 +116,12 @@ class WelderHasExamPacketCollection extends ResourceCollection
         return number_format($precentage, 2);
     }
 
-    protected function getWrongPrecentage($exams)
+    protected function getWrongPrecentage($examPacket, $user)
     {
-        $total = $this->getCorrectAnswer($exams) + $this->getWrongAnswer($exams);
+        $total = $this->getCorrectAnswer($examPacket, $user) + $this->getWrongAnswer($examPacket, $user);
 
-        if ($this->getWrongAnswer($exams) != 0) {
-            $precentage = ($this->getWrongAnswer($exams) / $total) * 100;
+        if ($this->getWrongAnswer($examPacket, $user) != 0) {
+            $precentage = ($this->getWrongAnswer($examPacket, $user) / $total) * 100;
         } else {
             $precentage = 0;
         }
