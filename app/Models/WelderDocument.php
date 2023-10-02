@@ -12,7 +12,7 @@ class WelderDocument extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $hidden = ['id', 'documentable_type', 'documentable_id'];
+    protected $hidden = ['documentable_type', 'documentable_id'];
 
     public function documentable()
     {

@@ -22,7 +22,7 @@ export default {
     },
     data() {
         return {
-            answers: [1, 0],
+            answers: [0, 1],
             correctAnswer: "",
         };
     },
@@ -57,8 +57,13 @@ export default {
             :disabled="isLoading"
         >
             <option value="" selected disabled></option>
-            <option value="1">Benar</option>
-            <option value="0">Salah</option>
+            <option
+                :value="index"
+                v-for="(answer, index) in answers"
+                :key="index"
+            >
+                {{ answer == 1 ? "Benar" : "Salah" }}
+            </option>
         </select>
         <div
             class="invalid-feedback"

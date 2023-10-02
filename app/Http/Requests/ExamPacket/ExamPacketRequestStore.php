@@ -31,6 +31,7 @@ class ExamPacketRequestStore extends FormRequest
             "exam_schedule" => "required",
             "close_schedule" => "required",
             "price" => "required",
+            "account_number" => "required",
             "operator_id" => "required|exists:user_operators,uuid",
             "welder_skill_id" => "required|exists:welder_skills,uuid",
         ];
@@ -56,6 +57,7 @@ class ExamPacketRequestStore extends FormRequest
             "close_schedule" => "jadwal penutupan pendaftaran",
             "person_responsible" => "penanggung jawab",
             "price" => "harga ujian",
+            "account_number" => "nomor rekening",
             "welder_skill_id" => "skema uji kompetensi"
         ];
     }

@@ -2,44 +2,91 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Facades\Firestore\FirestoreRepository;
+use App\Http\Facades\PaginationHelper;
 use App\Http\Filters\Exam\ByExamPacketId;
 use App\Http\Filters\Exam\Search;
 use App\Http\Requests\Exam\ExamRequest;
 use App\Http\Resources\Exam\ExamCollection;
 use App\Http\Resources\Exam\ExamDetail;
 use App\Http\Traits\MessageFixer;
+use App\Imports\ExamImport;
 use App\Models\Exam;
+use App\Models\Firebase;
 use App\Repositories\Exam\ExamRepository;
 use App\Repositories\ExamPacket\ExamPacketRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Contract\Firestore;
+use Kreait\Firebase\Factory;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExamController extends Controller
 {
     use MessageFixer;
 
-    protected $examRepository, $examPacketRepository;
+    protected $firestoreRepsitory, $examPacketRepository;
 
-    public function __construct(ExamRepository $examRepository, ExamPacketRepository $examPacketRepository)
-    {
-        $this->examRepository = $examRepository;
+    public function __construct(
+        FirestoreRepository $firestoreRepsitory,
+        ExamPacketRepository $examPacketRepository,
+        Firestore $firestore
+    ) {
+        $this->firestoreRepsitory = $firestoreRepsitory;
         $this->examPacketRepository = $examPacketRepository;
     }
 
     public function index(Request $request)
     {
-        $exams = app(Pipeline::class)
-            ->send($this->examRepository->query())
-            ->through([
-                Search::class,
-                ByExamPacketId::class,
-            ])
-            ->thenReturn()
-            ->paginate($request->per_page);
+        $perPage = 15;
+        $firestore = $this->firestoreRepsitory->query(Firebase::EXAMS);
 
-        return new ExamCollection($exams);
+        if ($request->exam_packet_id) {
+            $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+            $firestore = $firestore->where('exam_packet_id', '=', $examPacket->id);
+        }
+
+        if ($request->per_page) {
+            $perPage = $request->per_page;
+        }
+
+        $firestore = $firestore->documents();
+
+        $data = [];
+
+        foreach ($firestore as $index => $exam) {
+            $data[$exam->id()] = $exam->data();
+        }
+
+        return new ExamCollection(PaginationHelper::paginate(collect($data), $perPage));
+    }
+
+    public function import(Request $request)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
+            'exam_packet_id' => 'required|exists:exam_packets,uuid'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->warningMessage($validator->errors());
+        }
+
+        try {
+            DB::commit();
+
+            Excel::import(new ExamImport, $request->file('file'));
+
+            return $this->successMessage('data berhasil ditambahkan', []);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
     }
 
     public function store(ExamRequest $request)
@@ -48,28 +95,27 @@ class ExamController extends Controller
 
         $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
 
-        try {
-            $exam = $examPacket->exams()->create([
-                "uuid" => Str::uuid(),
-                "question" => $request->question,
-                "type" => $request->answer_type
-            ]);
+        $request->merge([
+            "exam_packet_id" => $examPacket->id,
+            "uuid" => Str::random(12),
+        ]);
 
-            foreach ($request->answers as $answer) {
-                $exam->answers()->create([
-                    "uuid" => Str::uuid(),
-                    "answer" => $answer
+        try {
+            if ($request->hasFile('file')) {
+                $examFile = $request->file('file')->store('exam_files');
+                $request->merge([
+                    "document" => url('storage/' . $examFile)
                 ]);
             }
 
-            $correctAnswer = $exam->answers()->where("answer", $request->correct_answer)->first();
+            $firestore = $this->firestoreRepsitory->create(Firebase::EXAMS, $request->except(['correct_answer', 'file']));
 
-            $exam->update([
-                "answer_id" => $correctAnswer->id
+            $this->firestoreRepsitory->create(Firebase::ANSWERS, [
+                "correct_answer" => $request->correct_answer,
+                "uuid" => $request->uuid
             ]);
 
-            DB::commit();
-            return $this->successMessage("data berhasil ditambahkan", $exam);
+            return $this->successMessage("data berhasil ditambahkan", $firestore);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
@@ -78,16 +124,17 @@ class ExamController extends Controller
 
     public function show($id)
     {
-        $exam = $this->examRepository->findOrFail($id);
-        $exam->load(["answers", "welderAnswer.answer"]);
+        $id = Str::lower($id);
+        $data = null;
 
-        if (
-            auth()->user()->isAdminApp() ||
-            auth()->user()->isAdminHub() ||
-            auth()->user()->isExpert()
-        ) {
-            $exam->load(["correctAnswer"]);
+        $exam = $this->firestoreRepsitory->show(Firebase::EXAMS, $id);
+        $answers = $this->firestoreRepsitory->query(Firebase::ANSWERS)->where('uuid', '=', $exam['uuid'])->documents();
+
+        foreach ($answers as $index => $answer) {
+            $data = $answer->data();
         }
+
+        $exam["correct_answer"] = $data;
 
         return new ExamDetail($exam);
     }
@@ -96,23 +143,25 @@ class ExamController extends Controller
     {
         DB::beginTransaction();
 
-        $exam = $this->examRepository->findOrFail($id);
+        $id = Str::lower($id);
+        $correctAnswerId = null;
+
+        $examPacket = $this->examPacketRepository->findOrFail($request->exam_packet_id);
+
+        $request->merge([
+            "exam_packet_id" => $examPacket->id,
+        ]);
+
+        $exam = $this->firestoreRepsitory->show(Firebase::EXAMS, $id);
+        $answers = $this->firestoreRepsitory->query(Firebase::ANSWERS)->where('uuid', '=', $exam['uuid'])->documents();
+
+        foreach ($answers as $key => $answer) {
+            $correctAnswerId = $answer->id();
+        }
 
         try {
-            foreach ($exam->answers as $key => $answer) {
-                $answer->update([
-                    "answer" => $request->answers[$key]
-                ]);
-            }
+            $this->firestoreRepsitory->update(Firebase::EXAMS, $id, $request->except(['correct_answer', 'file']));
 
-            $correctAnswer = $exam->answers()->where("answer", $request->correct_answer)->first();
-
-            $exam->update([
-                "answer_id" => $correctAnswer->id,
-                "question" => $request->question
-            ]);
-
-            DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $exam);
         } catch (\Throwable $th) {
             DB::rollback();
@@ -123,17 +172,18 @@ class ExamController extends Controller
     public function destroy($id)
     {
         DB::beginTransaction();
-
-        $exam = $this->examRepository->findOrFail($id);
+        $id = Str::lower($id);
 
         try {
-            if ($exam->answers) {
-                $exam->answers()->delete();
+            $exam = $this->firestoreRepsitory->show(Firebase::EXAMS, $id);
+            $answers = $this->firestoreRepsitory->query(Firebase::ANSWERS)->where('uuid', '=', $exam['uuid'])->documents();
+
+            foreach ($answers as $index => $answer) {
+                $this->firestoreRepsitory->delete(Firebase::ANSWERS, $answer->id());
             }
 
-            $exam->delete();
+            $this->firestoreRepsitory->delete(Firebase::EXAMS, $id);
 
-            DB::commit();
             return $this->successMessage("data berhasil dihapus", $exam);
         } catch (\Throwable $th) {
             DB::rollback();

@@ -211,7 +211,11 @@ class WelderMemberController extends Controller
             $user->welderMember()->update($fillableWelderMember);
 
             $fillablePersonalData = $this->onlyFillables($request->all(), $this->personalDataRepository->getFillable());
-            $user->personalData()->update($fillablePersonalData);
+            if ($user->personalData) {
+                $user->personalData()->update($fillablePersonalData);
+            } else {
+                $user->personalData()->create($fillablePersonalData);
+            }
 
             if ($request->welder_skill_ids) {
                 $welderSkillIds = $request->welder_skill_ids;

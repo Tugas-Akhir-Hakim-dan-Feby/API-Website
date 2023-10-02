@@ -27,7 +27,7 @@ class WelderAnswerCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            "answer_id" => "required|exists:answers,uuid"
+            "answer_id" => "required"
         ];
     }
 

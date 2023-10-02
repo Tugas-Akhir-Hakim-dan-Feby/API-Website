@@ -24,6 +24,7 @@ export default {
         return {
             answers: [],
             correctAnswer: "",
+            indents: ["A", "B", "C", "D", "E"],
         };
     },
     beforeMount() {
@@ -161,9 +162,9 @@ export default {
             <option
                 v-for="(answer, index) in answers"
                 :key="index"
-                :value="answer"
+                :value="index"
             >
-                {{ answer }}
+                {{ indents[index] + ". " + answer }}
             </option>
         </select>
         <div

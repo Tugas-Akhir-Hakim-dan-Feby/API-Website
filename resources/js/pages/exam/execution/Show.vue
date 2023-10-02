@@ -167,22 +167,21 @@ export default {
                     this.isLoading = false;
                     this.exams = response.data;
                     this.metaPagination = response.meta;
-                    this.getExam(response.data[0].uuid);
+                    this.getAnswer(Object.keys(response.data)[0]);
                 })
                 .catch((err) => {
                     this.isLoading = false;
                 });
         },
-        getExam(examUuid) {
+        getAnswer(examUuid) {
             this.$store
-                .dispatch("showData", ["exam", examUuid])
+                .dispatch("showData", ["welder-answer", examUuid])
                 .then((response) => {
                     this.isLoading = false;
                     this.examAnswer = response.data;
 
-                    if (response.data.welderAnswer) {
-                        this.participantAnswer =
-                            response.data.welderAnswer?.answer.uuid;
+                    if (response.data) {
+                        this.participantAnswer = response.data.answerId;
                     }
                 })
                 .catch((err) => {
@@ -221,40 +220,43 @@ export default {
         },
         onDisabled(e) {
             e.preventDefault();
-            this.isOk = true;
+            // this.isOk = true;
 
-            if (
-                (e.key == "p" && (e.ctrlKey || e.metaKey)) ||
-                (e.key == "w" && (e.ctrlKey || e.metaKey)) ||
-                (e.key == "i" && (e.ctrlKey || e.metaKey)) ||
-                (e.key == "i" && e.shiftKey && (e.ctrlKey || e.metaKey)) ||
-                (e.key == "p" && e.shiftKey && (e.ctrlKey || e.metaKey))
-            ) {
-                e.preventDefault();
-                this.handlePenalty(
-                    "anda melakukan percobaan kombinasi keyboard yang dilarang! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
-                );
-            }
+            // if (
+            //     (e.key == "p" && (e.ctrlKey || e.metaKey)) ||
+            //     (e.key == "w" && (e.ctrlKey || e.metaKey)) ||
+            //     (e.key == "i" && (e.ctrlKey || e.metaKey)) ||
+            //     (e.key == "i" && e.shiftKey && (e.ctrlKey || e.metaKey)) ||
+            //     (e.key == "p" && e.shiftKey && (e.ctrlKey || e.metaKey))
+            // ) {
+            //     e.preventDefault();
+            //     this.handlePenalty(
+            //         "anda melakukan percobaan kombinasi keyboard yang dilarang! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
+            //     );
+            // }
         },
         onVisibleChange(e) {
-            if (document.visibilityState != "visible") {
-                this.isOk = true;
-                this.handlePenalty(
-                    "anda melakukan percobaan pindah halaman dari halaman ujian! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
-                );
-            }
+            // if (document.visibilityState != "visible") {
+            //     this.isOk = true;
+            //     this.handlePenalty(
+            //         "anda melakukan percobaan pindah halaman dari halaman ujian! <br /> ujian anda dibekukan sementara silahkan hubungi operator."
+            //     );
+            // }
         },
         handleSubmit() {
             this.isLoading = true;
-
             let formData = {
                 answerId: this.participantAnswer,
-                examId: this.exams[0].uuid,
+                examId: Object.keys(this.exams)[0],
             };
-
             this.$store
                 .dispatch("postData", ["welder-answer", formData])
                 .then((response) => {
+                    iziToast.success({
+                        message: "jawaban berhasil disimpan!",
+                        position: "topCenter",
+                    });
+
                     this.isLoading = false;
                     this.participantAnswer = null;
                     localStorage.setItem(
@@ -276,7 +278,7 @@ export default {
 
             let formData = {
                 answerId: this.participantAnswer,
-                examId: this.exams[0].uuid,
+                examId: Object.keys(this.exams)[0],
                 status: "finish",
                 examPacketId: this.examPacketId,
             };
@@ -380,6 +382,7 @@ export default {
                 </ul>
             </div>
         </div>
+
         <div class="content-page">
             <div class="content">
                 <div class="navbar-custom">
@@ -440,28 +443,27 @@ export default {
                                             <p
                                                 class="m-0"
                                                 v-if="
-                                                    exam.type == 'MutipleChoice'
+                                                    exam.answerType ==
+                                                    'TrueFalse'
                                                 "
                                             >
                                                 {{
-                                                    answer.answer == 1
+                                                    answer == 1
                                                         ? "Benar"
                                                         : "Salah"
                                                 }}
                                             </p>
-                                            <p v-else>
-                                                {{ answer.answer }}
+                                            <p v-else class="mb-0 pb-0">
+                                                {{ answer }}
                                             </p>
                                             <input
                                                 type="radio"
-                                                :value="answer.uuid"
+                                                :value="index"
                                                 :name="`answer_${index}`"
-                                                :checked="
-                                                    answer.uuid ==
-                                                    examAnswer.welderAnswer
-                                                        ?.answer?.uuid
-                                                "
                                                 v-model="participantAnswer"
+                                                :checked="
+                                                    index == examAnswer.answerId
+                                                "
                                             />
                                         </li>
                                     </ul>

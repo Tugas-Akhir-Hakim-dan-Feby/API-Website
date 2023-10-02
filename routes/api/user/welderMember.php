@@ -28,6 +28,8 @@ Route::prefix('user')->group(function () {
         Route::get('/me', [UserController::class, 'me'])->name('api.user.me');
         Route::get('/{id}', [UserController::class, 'show'])->name('api.user.show');
         Route::post('/update-password', UpdatePasswordController::class)->name('api.user.update.password');
+        Route::post('/upload-certificate', [UserController::class, 'uploadCertificate'])->name('api.user.upload.certificate');
+        Route::delete('/delete-certificate/{id}', [UserController::class, 'deleteCertificate'])->name('api.user.delete.certificate');
         Route::put('/upload-image/{id}', [UserController::class, 'uploadImage'])->name('api.user.upload.image');
     });
 });

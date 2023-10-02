@@ -28,6 +28,10 @@ const store = createStore({
             ADVERTISEMENT: 3,
             EXAM_INSTITUTE: 4,
         },
+        QUESTION_TYPE: {
+            TRUE_FALSE: "TrueFalse",
+            MULTIPLE_CHOICE: "MultipleChoice",
+        },
     },
     mutations: {
         setUser(state, user) {

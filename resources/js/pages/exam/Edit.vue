@@ -38,12 +38,13 @@ export default {
         },
         setForm(exam) {
             this.form.examPacketId = this.id;
+            this.form.uuid = exam.uuid;
             this.form.question = exam.question;
-            this.form.correctAnswer = exam.correctAnswer?.answer;
-            this.form.answerType = exam.type;
+            this.form.correctAnswer = exam.correctAnswer?.correctAnswer;
+            this.form.answerType = exam.answerType;
 
             exam.answers.forEach((answer, key) => {
-                this.form.answers[key] = answer.answer;
+                this.form.answers[key] = answer;
             });
         },
         getExam() {
@@ -108,7 +109,7 @@ export default {
             <li class="breadcrumb-item active">Edit Pertanyaan</li>
         </ol>
     </PageTitle>
-
+    {{ form }}
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">
             <div class="card-body">
@@ -171,11 +172,11 @@ export default {
                 >
                     Batal
                 </router-link>
-                <button class="btn btn-sm btn-success" v-if="!isLoading">
+                <button class="btn btn-sm btn-primary" v-if="!isLoading">
                     Simpan
                 </button>
                 <button
-                    class="btn btn-sm btn-success"
+                    class="btn btn-sm btn-primary"
                     type="button"
                     disabled
                     v-if="isLoading"
