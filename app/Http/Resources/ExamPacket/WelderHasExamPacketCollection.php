@@ -8,6 +8,8 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class WelderHasExamPacketCollection extends ResourceCollection
 {
+    protected $correctAnswer, $wrongAnswer;
+
     /**
      * Transform the resource collection into an array.
      *
@@ -72,6 +74,7 @@ class WelderHasExamPacketCollection extends ResourceCollection
             }
         }
 
+        $this->correctAnswer = $value;
         return $value;
     }
 
@@ -100,15 +103,16 @@ class WelderHasExamPacketCollection extends ResourceCollection
             }
         }
 
+        $this->wrongAnswer = $value;
         return $value;
     }
 
     protected function getCorrectPrecentage($examPacket, $user)
     {
-        $total = $this->getCorrectAnswer($examPacket, $user) + $this->getWrongAnswer($examPacket, $user);
+        $total = $this->correctAnswer + $this->wrongAnswer;
 
-        if ($this->getCorrectAnswer($examPacket, $user) != 0) {
-            $precentage = ($this->getCorrectAnswer($examPacket, $user) / $total) * 100;
+        if ($this->correctAnswer != 0) {
+            $precentage = ($this->correctAnswer / $total) * 100;
         } else {
             $precentage = 0;
         }
@@ -118,10 +122,10 @@ class WelderHasExamPacketCollection extends ResourceCollection
 
     protected function getWrongPrecentage($examPacket, $user)
     {
-        $total = $this->getCorrectAnswer($examPacket, $user) + $this->getWrongAnswer($examPacket, $user);
+        $total = $this->correctAnswer + $this->wrongAnswer;
 
-        if ($this->getWrongAnswer($examPacket, $user) != 0) {
-            $precentage = ($this->getWrongAnswer($examPacket, $user) / $total) * 100;
+        if ($this->wrongAnswer != 0) {
+            $precentage = ($this->wrongAnswer / $total) * 100;
         } else {
             $precentage = 0;
         }

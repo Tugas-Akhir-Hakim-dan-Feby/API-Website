@@ -30,6 +30,7 @@ export default {
             documentEvaluation: null,
             date: null,
             isLoading: false,
+            isLoadingWelder: false,
             examId: null,
             keyPacket: "",
             msg: "",
@@ -57,7 +58,7 @@ export default {
                 });
         },
         getWelderHasExamPacket() {
-            this.isLoading = true;
+            this.isLoadingWelder = true;
 
             let params = [
                 `per_page=${this.pagination.perPage}`,
@@ -69,12 +70,12 @@ export default {
             this.$store
                 .dispatch("getData", ["user-exam-packet", params.join("&")])
                 .then((response) => {
-                    this.isLoading = false;
+                    this.isLoadingWelder = false;
                     this.users = response.data;
                     this.metaPagination = response.meta;
                 })
                 .catch((error) => {
-                    this.isLoading = false;
+                    this.isLoadingWelder = false;
                 });
         },
         handleSubmit() {
@@ -239,7 +240,7 @@ export default {
     />
 
     <div class="card position-relative">
-        <Loader v-if="isLoading" />
+        <Loader v-if="isLoadingWelder" />
         <div
             class="card-header d-flex justify-content-between align-items-center"
         >
