@@ -141,10 +141,6 @@ export default {
                 },
             });
 
-            select2
-                .val("04ba5888-22c5-4123-8042-c769e6a905ee")
-                .trigger("change");
-
             select2.on("change", () => {
                 this.form.welderSkillIds = select2.val();
                 $(".select2-hidden-accessible").removeClass("is-invalid");
@@ -708,6 +704,7 @@ export default {
     <UploadFileWelderMember
         :document="document"
         @onSuccess="onSuccessUploadDocument()"
+        :isLoading="isLoading"
     />
 </template>
 

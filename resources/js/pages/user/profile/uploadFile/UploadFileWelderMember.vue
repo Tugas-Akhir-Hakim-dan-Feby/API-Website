@@ -1,6 +1,8 @@
 <script>
+import Loader from "../../../../components/Loader.vue";
+
 export default {
-    props: ["document"],
+    props: ["document", "isLoading"],
     data() {
         return {
             dataPasPhoto: null,
@@ -31,6 +33,9 @@ export default {
         },
         uploadPasPhoto(e) {
             this.dataPasPhoto = e.target.files[0];
+        },
+        uploadCertificates(e) {
+            this.dataPasPhoto = e.target.files;
         },
         handleUploadPasPhoto() {
             this.isDisabled = true;
@@ -91,7 +96,54 @@ export default {
                     this.errorMessage = error.response.data.messages;
                 });
         },
+        handleUploadCertificate() {
+            this.isDisabled = true;
+            this.errorMessage = {};
+
+            let formData = new FormData();
+
+            if (this.dataPasPhoto) {
+                for (let index = 0; index < this.dataPasPhoto.length; index++) {
+                    formData.append(
+                        `files[${index}]`,
+                        this.dataPasPhoto[index]
+                    );
+                }
+            }
+
+            this.$store
+                .dispatch("postDataUpload", [
+                    "user/upload-certificate",
+                    formData,
+                ])
+                .then((response) => {
+                    this.isDisabled = false;
+                    this.$emit("onSuccess", true);
+                    this.dataPasPhoto = null;
+                    $("#uploadCertificates").modal("hide");
+
+                    document.getElementById("dataPasPhoto").value = "";
+                })
+                .catch((error) => {
+                    this.isDisabled = false;
+                    this.errorMessage = error.response.data.message;
+                });
+        },
+        handleDeleteCertificate(id) {
+            this.isDisabled = true;
+
+            this.$store
+                .dispatch("deleteData", ["user/delete-certificate", id])
+                .then((response) => {
+                    this.isDisabled = false;
+                    this.$emit("onSuccess", true);
+                })
+                .catch((error) => {
+                    this.isDisabled = false;
+                });
+        },
     },
+    components: { Loader },
 };
 </script>
 <template>
@@ -102,6 +154,16 @@ export default {
         </div>
         <div class="col-lg-8">
             <div class="card">
+                <Loader v-if="isDisabled" />
+                <div class="card-header">
+                    <button
+                        class="btn btn-sm btn-primary float-end"
+                        data-bs-toggle="modal"
+                        data-bs-target="#uploadCertificates"
+                    >
+                        Tambah Sertifikat
+                    </button>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-centered mb-0">
@@ -158,7 +220,8 @@ export default {
                                                 v-if="
                                                     checkFile(
                                                         document.curriculumVitae
-                                                    )
+                                                    ) ||
+                                                    !document.curriculumVitae
                                                 "
                                                 ><i class="mdi mdi-upload"></i>
                                                 Unggah</a
@@ -213,25 +276,11 @@ export default {
                                     ) in document.competencyCertificates"
                                     :key="index"
                                 >
-                                    <td>Sertifikat Kompetensi</td>
+                                    <td>
+                                        Sertifikat Kompetensi {{ index + 1 }}
+                                    </td>
                                     <td>
                                         <div class="d-flex gap-2">
-                                            <a
-                                                href="#"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#uploadDocument"
-                                                ><i class="mdi mdi-upload"></i>
-                                                Unggah</a
-                                            >
-                                            <p
-                                                v-if="
-                                                    checkFile(
-                                                        certificate.documentPath
-                                                    )
-                                                "
-                                            >
-                                                |
-                                            </p>
                                             <a
                                                 target="_blank"
                                                 :href="certificate.documentPath"
@@ -244,6 +293,32 @@ export default {
                                                     class="mdi mdi-download"
                                                 ></i>
                                                 Unduh</a
+                                            >
+                                            <p
+                                                v-if="
+                                                    checkFile(
+                                                        certificate.documentPath
+                                                    )
+                                                "
+                                            >
+                                                |
+                                            </p>
+                                            <a
+                                                href="#"
+                                                v-if="
+                                                    checkFile(
+                                                        certificate.documentPath
+                                                    )
+                                                "
+                                                @click="
+                                                    handleDeleteCertificate(
+                                                        certificate.id
+                                                    )
+                                                "
+                                                ><i
+                                                    class="mdi mdi-trash-can"
+                                                ></i>
+                                                Hapus</a
                                             >
                                         </div>
                                     </td>
@@ -374,6 +449,88 @@ export default {
                                 v-for="(
                                     error, index
                                 ) in errorMessage.documentCurriculumVitae"
+                                :key="index"
+                            >
+                                {{ error }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <div>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-secondary me-2"
+                                data-bs-dismiss="modal"
+                                :disabled="isDisabled"
+                            >
+                                Batal
+                            </button>
+                            <button
+                                class="btn btn-sm btn-primary"
+                                v-if="!isDisabled"
+                            >
+                                Kirim
+                            </button>
+                            <button
+                                class="btn btn-sm btn-primary"
+                                type="button"
+                                disabled
+                                v-if="isDisabled"
+                            >
+                                <span
+                                    class="spinner-border spinner-border-sm me-1"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
+                                Harap Tunggu...
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="modal fade"
+        id="uploadCertificates"
+        tabindex="-1"
+        aria-labelledby="uploadCertificatesLabel"
+        aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadCertificatesLabel">
+                        Unggah Sertifikat
+                    </h5>
+                </div>
+                <form @submit.prevent="handleUploadCertificate" method="post">
+                    <div class="modal-body">
+                        <div class="mb-0">
+                            <label
+                                >Masukan Sertifikat
+                                <span class="small fw-normal"
+                                    >(sertifikat bisa lebih dari satu)</span
+                                ></label
+                            >
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="dataPasPhoto"
+                                @change="uploadCertificates"
+                                :class="{
+                                    'is-invalid': errorMessage.files,
+                                }"
+                                :disabled="isDisabled"
+                                multiple
+                            />
+                            <div
+                                class="invalid-feedback"
+                                v-if="errorMessage.files"
+                                v-for="(error, index) in errorMessage.files"
                                 :key="index"
                             >
                                 {{ error }}
