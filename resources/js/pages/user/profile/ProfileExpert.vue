@@ -3,6 +3,7 @@ import Success from "../../../components/notifications/Success.vue";
 import iziToast from "izitoast";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import jsCookie from "js-cookie";
 import UploadFileExpert from "./uploadFile/UploadFileExpert.vue";
 
 export default {
@@ -33,7 +34,6 @@ export default {
             this.form = {
                 name: user.name,
                 email: user.email,
-                welderSkillId: user.welderMember?.welderSkill?.uuid,
                 residentIdCard: user.welderMember?.residentIdCard,
                 dateBirth: this.getDateBirth(user.welderMember?.dateBirth),
                 birthPlace: user.welderMember?.birthPlace,
@@ -49,20 +49,50 @@ export default {
                 id: user.uuid,
             };
 
+            this.form.welderHasSkills = user.welderHasSkills;
             this.document = {
                 id: user.uuid,
-                certificateSchool: user.welderMember?.certificateSchool,
                 pasPhoto: user.welderMember?.pasPhoto,
+                career: user.expert?.career,
+                workingMail: user.expert?.workingMail,
+                certificateProfession: user.expert?.certificateProfession,
+                certificateCompetency: user.expert?.certificateCompetency,
                 competencyCertificates: user.welderDocuments,
+                curriculumVitae: user.personalData?.curriculumVitae,
             };
         },
         getWelderSkills() {
-            this.$store
-                .dispatch("getData", ["skill/welder", {}])
-                .then((response) => {
-                    this.welderSkills = response.data;
-                })
-                .catch((error) => {});
+            let select2 = $(this.$refs.welderSkill);
+            select2.select2({
+                ajax: {
+                    url: `${this.$store.state.BASE_URL}/api/v1/skill/welder`,
+                    dataType: "json",
+                    headers: {
+                        Authorization: "Bearer " + jsCookie.get("token"),
+                    },
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                            per_page: 20,
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response.data.map((skill) => ({
+                                id: skill.uuid,
+                                text: skill.skill_name,
+                            })),
+                        };
+                    },
+                    cache: true,
+                },
+            });
+
+            select2.on("change", () => {
+                this.form.welderSkillIds = select2.val();
+                $(".select2-hidden-accessible").removeClass("is-invalid");
+            });
         },
         getUser() {
             this.isLoading = true;
@@ -141,6 +171,7 @@ export default {
                 .then((response) => {
                     this.isLoading = false;
                     this.getUser();
+                    this.form.welderSkillIds = [];
                     iziToast.success({
                         title: "Selamat",
                         message: "data anda berhasil diperbaharui",
@@ -152,7 +183,27 @@ export default {
                     this.errors = error.response.data.messages;
                 });
         },
-        onSuccessUploadDocument(e) {
+        handleDeleteSkill(skillId) {
+            this.isLoading = true;
+            this.$store
+                .dispatch("deleteData", [
+                    "user/welder-member/delete-skill",
+                    skillId,
+                ])
+                .then((response) => {
+                    this.isLoading = false;
+                    this.getUser();
+                    iziToast.success({
+                        title: "Selamat",
+                        message: "data anda berhasil diperbaharui",
+                        position: "topCenter",
+                    });
+                })
+                .catch((error) => {
+                    this.isLoading = false;
+                });
+        },
+        onSuccess(e) {
             this.getUser();
         },
     },
@@ -368,29 +419,20 @@ export default {
                             <label class="col-sm-3">Jenis Kompetensi</label>
                             <div class="col">
                                 <select
-                                    class="form-select"
-                                    v-model="form.welderSkillId"
+                                    class="select2-hidden-accessible form-select"
+                                    ref="welderSkill"
                                     :class="{
-                                        'is-invalid': errors.welderSkillId,
+                                        'is-invalid': errors.welderSkillIds,
                                     }"
                                     :disabled="isLoading"
-                                >
-                                    <option disabled selected></option>
-                                    <option
-                                        v-for="(
-                                            welderSkill, index
-                                        ) in welderSkills"
-                                        :key="index"
-                                        :value="welderSkill.uuid"
-                                        v-html="welderSkill.skillName"
-                                    ></option>
-                                </select>
+                                    multiple
+                                ></select>
                                 <div
                                     class="invalid-feedback"
-                                    v-if="errors.welderSkillId"
+                                    v-if="errors.welderSkillIds"
                                     v-for="(
                                         error, index
-                                    ) in errors.welderSkillId"
+                                    ) in errors.welderSkillIds"
                                     :key="index"
                                 >
                                     {{ error }}
@@ -400,6 +442,50 @@ export default {
                                     v-if="typeof errors == 'string'"
                                     v-html="errors"
                                 ></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3">&nbsp;</label>
+                            <div class="col">
+                                <ul
+                                    style="padding-left: 1.2rem; margin-top: 0"
+                                    id="listSkill"
+                                >
+                                    <li
+                                        v-for="(
+                                            welderSkill, index
+                                        ) in form.welderHasSkills"
+                                        :key="index"
+                                    >
+                                        <div
+                                            class="d-flex align-items-center justify-content-between"
+                                        >
+                                            {{
+                                                welderSkill.welderSkill
+                                                    .skillName
+                                            }}
+                                            <span
+                                                v-if="
+                                                    form.welderHasSkills
+                                                        .length > 1
+                                                "
+                                                style="
+                                                    font-size: 1.4em;
+                                                    cursor: pointer;
+                                                "
+                                                class="text-danger"
+                                                @click="
+                                                    handleDeleteSkill(
+                                                        welderSkill.welderSkill
+                                                            .uuid
+                                                    )
+                                                "
+                                            >
+                                                &times;
+                                            </span>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -631,13 +717,13 @@ export default {
                     </div>
                     <div class="card-footer d-flex justify-content-end">
                         <button
-                            class="btn btn-sm btn-success"
+                            class="btn btn-sm btn-primary"
                             v-if="!isLoading"
                         >
                             Simpan
                         </button>
                         <button
-                            class="btn btn-success btn-sm"
+                            class="btn btn-primary btn-sm"
                             type="button"
                             disabled
                             v-if="isLoading"
@@ -655,5 +741,5 @@ export default {
         </div>
     </div>
 
-    <UploadFileExpert :document="document" />
+    <UploadFileExpert :document="document" @onSuccess="onSuccess($event)" />
 </template>

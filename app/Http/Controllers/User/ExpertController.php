@@ -11,32 +11,46 @@ use App\Http\Requests\User\Expert\ExpertRequestUpdate;
 use App\Http\Requests\User\Expert\UploadFileRequest;
 use App\Http\Resources\User\Expert\ExpertCollection;
 use App\Http\Resources\User\Expert\ExpertDetail;
+use App\Http\Traits\FillableFixer;
 use App\Http\Traits\MessageFixer;
 use App\Http\Traits\UploadDocument;
 use App\Imports\User\ExpertImport;
+use App\Models\PersonalData;
 use App\Models\User;
 use App\Models\User\Expert;
+use App\Models\User\WelderMember;
+use App\Models\WelderSkill;
 use App\Repositories\User\UserRepository;
 use App\Repositories\UserExpert\UserExpertRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExpertController extends Controller
 {
-    use MessageFixer, UploadDocument;
+    use MessageFixer, UploadDocument, FillableFixer;
 
-    protected $userRepository, $userExpertRepository;
+    protected $userRepository, $userExpertRepository, $welderMember, $personalData, $welderSkill;
 
-    public function __construct(UserRepository $userRepository, UserExpertRepository $userExpertRepository)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        UserExpertRepository $userExpertRepository,
+        WelderMember $welderMember,
+        PersonalData $personalData,
+        WelderSkill $welderSkill
+    ) {
         $this->userRepository = $userRepository;
         $this->userExpertRepository = $userExpertRepository;
+        $this->welderMember = $welderMember;
+        $this->personalData = $personalData;
+        $this->welderSkill = $welderSkill;
     }
 
     public function index(Request $request)
@@ -165,31 +179,57 @@ class ExpertController extends Controller
         }
 
         try {
-            $user->update([
-                "name" => $request->name,
-                "email" => $request->email
-            ]);
+            $fillableUser = $this->onlyFillables($request->all(), $this->userRepository->getFillable());
+            $user->update($fillableUser);
 
-            $user->welderMember()->update([
-                "resident_id_card" => $request->resident_id_card,
-                "date_birth" => $request->date_birth,
-                "birth_place" => $request->birth_place,
-                "working_status" => $request->working_status,
-            ]);
+            $fillableWelderMember = $this->onlyFillables($request->all(), $this->welderMember->getFillable());
+            if ($user->welderMember) {
+                $user->welderMember()->update($fillableWelderMember);
+            } else {
+                $user->welderMember()->create($fillableWelderMember);
+            }
 
-            $user->personalData()->update([
-                "province" => $request->province,
-                "regency" => $request->regency,
-                "district" => $request->district,
-                "village" => $request->village,
-                "citizenship" => $request->citizenship,
-                "zip_code" => $request->zip_code,
-                "phone" => $request->phone,
-            ]);
+            $fillablePersonalData = $this->onlyFillables($request->all(), $this->personalData->getFillable());
+            if ($user->personalData) {
+                $user->personalData()->update($fillablePersonalData);
+            } else {
+                $user->personalData()->create($fillablePersonalData);
+            }
 
-            $user->expert()->update([
-                "instance" => $request->instance
-            ]);
+            if ($user->expert) {
+                $user->expert()->update([
+                    "instance" => $request->instance
+                ]);
+            } else {
+                $user->expert()->update([
+                    "instance" => $request->instance
+                ]);
+            }
+
+            if ($request->welder_skill_ids) {
+                $welderSkillIds = $request->welder_skill_ids;
+                $welderSkillIds = $this->welderSkill->whereIn('uuid', $welderSkillIds)->get();
+                $welderSkillIds = $welderSkillIds->pluck('id')->toArray();
+
+                $existingWelderSkills = $user->welderHasSkills()
+                    ->whereIn('welder_skill_id', $welderSkillIds)
+                    ->pluck('welder_skill_id')
+                    ->toArray();
+
+                $newSkillIds = array_diff($welderSkillIds, $existingWelderSkills);
+
+                if (!empty($newSkillIds)) {
+                    $skillsToCreate = [];
+                    foreach ($newSkillIds as $skillId) {
+                        $skillsToCreate[] = [
+                            'welder_skill_id' => $skillId,
+                            'user_id' => auth()->user()->id
+                        ];
+                    }
+
+                    $user->welderHasSkills()->insert($skillsToCreate);
+                }
+            }
 
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $user);
@@ -288,6 +328,132 @@ class ExpertController extends Controller
 
             DB::commit();
             return $this->successMessage("data berhasil dihapus", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateCertificateProfession(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'document_certificate_profession' => 'required|file|mimes:pdf'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'WARNING',
+                'messages' => $validator->errors(),
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->expert) {
+                if ($user->expert?->certificate_profession) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->certificate_profession);
+                    Storage::delete($path);
+                }
+            }
+
+            $user->expert()->update([
+                "certificate_profession" => $request->file('document_certificate_profession')->store('certificate_profession')
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateWorkingMail(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'document_working_mail' => 'required|file|mimes:pdf'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'WARNING',
+                'messages' => $validator->errors(),
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->expert) {
+                if ($user->expert?->working_mail) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->working_mail);
+                    Storage::delete($path);
+                }
+            }
+
+            $user->expert()->update([
+                "working_mail" => $request->file('document_working_mail')->store('working_mail')
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorMessage($th->getMessage());
+        }
+    }
+
+    public function updateCareer(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'document_career' => 'required|file|mimes:pdf'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'WARNING',
+                'messages' => $validator->errors(),
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = $this->userRepository->findOrFail(auth()->user()->uuid);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        try {
+            if ($user->expert) {
+                if ($user->expert?->career) {
+                    $path = str_replace(url('storage') . '/', '', $user->expert?->career);
+                    Storage::delete($path);
+                }
+            }
+
+            $user->expert()->update([
+                "career" => $request->file('document_career')->store('career')
+            ]);
+
+            DB::commit();
+            return $this->successMessage("data berhasil diperbaharui", $user);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
