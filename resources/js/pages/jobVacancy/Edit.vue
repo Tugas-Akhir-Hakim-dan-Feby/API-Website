@@ -35,6 +35,7 @@ export default {
             formData.append("deadline", this.form.deadline);
             formData.append("description", this.form.description);
             formData.append("contact", this.form.contact);
+            formData.append("contact_name", this.form.contactName);
 
             if (this.form.documentPamphlet) {
                 formData.append(
@@ -60,6 +61,7 @@ export default {
                 placement: jobVacancy.placement,
                 salary: jobVacancy.salary,
                 contact: jobVacancy.contact,
+                contactName: jobVacancy.contactName,
                 deadline: this.getDeadline(jobVacancy.deadline),
                 description: jobVacancy.description,
                 pamphlet: jobVacancy.pamphlet,
@@ -197,6 +199,24 @@ export default {
                         class="invalid-feedback"
                         v-if="errors.contact"
                         v-for="(error, index) in errors.contact"
+                        :key="index"
+                    >
+                        {{ error }}
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label>Nama Kontak Yang Dihubungi</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        v-model="form.contactName"
+                        :class="{ 'is-invalid': errors.contactName }"
+                        :disabled="isLoading"
+                    />
+                    <div
+                        class="invalid-feedback"
+                        v-if="errors.contactName"
+                        v-for="(error, index) in errors.contactName"
                         :key="index"
                     >
                         {{ error }}

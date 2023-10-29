@@ -39,6 +39,9 @@ export default {
 <template>
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
+            {{
+                user.document
+            }}
             <li class="notification-list pt-1" v-if="checkRole()">
                 <router-link
                     class="btn btn-primary btn-sm"
