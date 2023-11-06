@@ -245,6 +245,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadDocumentCompanyLegality"
+                        accept=".pdf"
                     />
                     <div
                         class="invalid-feedback"
@@ -265,6 +266,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadDocumentCompanyLogo"
+                        accept="image/png, image/jpg, image/jpeg"
                     />
                     <div
                         class="invalid-feedback"

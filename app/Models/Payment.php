@@ -14,9 +14,12 @@ class Payment extends Model
 
     const PENDING = "PENDING";
 
+    const EXPIRED = "EXPIRED";
+
     protected $fillable = [
         'user_id',
         'external_id',
+        'cost_id',
         'status',
         'amount',
         'payment_link',

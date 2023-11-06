@@ -54,6 +54,15 @@ export default {
         getRupiah(amount) {
             return util.getRupiah(amount);
         },
+        getBackground(status) {
+            if (status == this.$store.state.PAID) {
+                return "bg-success";
+            } else if (status == this.$store.state.PENDING) {
+                return "bg-warning";
+            } else {
+                return "bg-secondary";
+            }
+        },
         onSearch() {
             setTimeout(() => {
                 this.getInovices();
@@ -130,11 +139,7 @@ export default {
                             <td>
                                 <span
                                     class="badge"
-                                    :class="
-                                        invoice.status == 'PAID'
-                                            ? 'bg-success'
-                                            : 'bg-warning'
-                                    "
+                                    :class="getBackground(invoice.status)"
                                     style="font-size: 0.8em"
                                     >{{ invoice.status }}</span
                                 >
@@ -153,12 +158,12 @@ export default {
                                     Detail
                                 </router-link>
                                 <a
-                                    v-if="invoice.status == 'PENDING'"
+                                    v-else-if="invoice.status == 'PENDING'"
                                     :href="invoice.paymentLink"
-                                    target="_blank"
                                     class="btn btn-primary text-white btn-sm me-2"
                                     >Bayar</a
                                 >
+                                <span v-else>-</span>
                             </td>
                         </tr>
                     </tbody>

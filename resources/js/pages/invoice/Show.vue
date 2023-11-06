@@ -1,4 +1,5 @@
 <script>
+import Loader from "../../components/Loader.vue";
 import PageTitle from "../../components/PageTitle.vue";
 import PusherUtil from "../../store/utils/pusher";
 
@@ -8,6 +9,7 @@ export default {
         return {
             user: {},
             payment: {},
+            isLoading: false,
         };
     },
     created() {},
@@ -37,12 +39,17 @@ export default {
                 .catch((err) => {});
         },
         getPayment() {
+            this.isLoading = true;
             this.$store
                 .dispatch("showData", ["payment", this.externalId])
                 .then((response) => {
+                    this.isLoading = false;
+
                     this.payment = response.data;
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    this.isLoading = false;
+                });
         },
         formatRupiah(number) {
             const formatter = new Intl.NumberFormat("id-ID", {
@@ -56,7 +63,7 @@ export default {
             this.$router.push({ name: "Invoice Success" });
         },
     },
-    components: { PageTitle },
+    components: { PageTitle, Loader },
 };
 </script>
 <template>
@@ -64,7 +71,8 @@ export default {
 
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card position-relative">
+                <Loader v-if="isLoading" />
                 <div class="card-body">
                     <div class="clearfix">
                         <div class="float-start mb-3">

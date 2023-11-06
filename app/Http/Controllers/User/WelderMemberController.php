@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Facades\PaymentFacade;
 use App\Http\Filters\User\WelderMember\Role;
 use App\Http\Filters\User\WelderMember\Search;
 use App\Http\Filters\User\WelderMember\WelderSkillId;
@@ -20,6 +21,7 @@ use App\Imports\User\WelderMemberImport;
 use App\Models\Cost;
 use App\Models\User;
 use App\Models\User\WelderMember;
+use App\Repositories\Cost\CostRepository;
 use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\PersonalData\PersonalDataRepository;
 use App\Repositories\User\UserRepository;
@@ -41,22 +43,32 @@ use Spatie\Permission\Models\Role as PermissionModelsRole;
 
 class WelderMemberController extends Controller
 {
-    use MessageFixer, UploadDocument, PaymentFixer, FillableFixer;
+    use MessageFixer, UploadDocument, FillableFixer;
 
-    protected $welderMemberRepository, $userRepository, $welderSkillRepository, $paymentRepository, $personalDataRepository;
+    protected $welderMemberRepository,
+        $userRepository,
+        $welderSkillRepository,
+        $paymentRepository,
+        $personalDataRepository,
+        $costRepository,
+        $paymentFacade;
 
     public function __construct(
         UserWelderMemberRepository $welderMemberRepository = null,
         UserRepository $userRepository = null,
         WelderSkillRepository $welderSkillRepository = null,
         PaymentRepository $paymentRepository = null,
-        PersonalDataRepository $personalDataRepository
+        PersonalDataRepository $personalDataRepository,
+        CostRepository $costRepository,
+        PaymentFacade $paymentFacade
     ) {
         $this->welderMemberRepository = $welderMemberRepository;
         $this->userRepository = $userRepository;
         $this->welderSkillRepository = $welderSkillRepository;
         $this->paymentRepository = $paymentRepository;
         $this->personalDataRepository = $personalDataRepository;
+        $this->costRepository = $costRepository;
+        $this->paymentFacade = $paymentFacade;
     }
 
     public function index(Request $request)
@@ -83,6 +95,7 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
+        $cost = $this->costRepository->find(Cost::WELDER_MEMBER);
         $role = PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api');
 
         $request->merge([
@@ -120,15 +133,15 @@ class WelderMemberController extends Controller
             $personalData = $this->onlyFillables($request->all(), $this->personalDataRepository->getFillable());
             $user->personalData()->create($personalData);
 
-            $this->pay(Cost::WELDER_MEMBER);
+            $payment = $this->paymentFacade->payToPersonalMember($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,
-                'membership_card' => "MC-" . date('Ymd') . $user->id
+                'membership_card' => $this->numberMembership($user->id)
             ]);
 
             DB::commit();
-            return $this->createMessage("data berhasil ditambahkan", $user->payment);
+            return $this->createMessage("data berhasil ditambahkan", $payment);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
@@ -144,18 +157,19 @@ class WelderMemberController extends Controller
             abort(404);
         }
 
+        $cost = $this->costRepository->find(Cost::WELDER_MEMBER);
         $role = PermissionModelsRole::findById(User::MEMBER_INDIVIDUAL, 'api');
 
         try {
-            $this->pay(Cost::WELDER_MEMBER);
+            $payment = $this->paymentFacade->payToPersonalMember($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,
-                'membership_card' => "MC-" . date('Ymd') . $user->id
+                'membership_card' => $this->numberMembership($user->id)
             ]);
 
             DB::commit();
-            return $this->createMessage("data berhasil ditambahkan", $user->payment);
+            return $this->createMessage("data berhasil ditambahkan", $payment);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

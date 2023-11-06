@@ -181,7 +181,6 @@ export default {
                     />
                 </div>
             </div>
-
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-sm">
                     <thead>
@@ -232,10 +231,15 @@ export default {
                                     />
                                 </a>
                             </td>
-                            <td
-                                data-label="Sisa Durasi"
-                                v-html="getExpiredAt(advertisement.expiredAt)"
-                            ></td>
+                            <td data-label="Sisa Durasi">
+                                <span
+                                    v-if="advertisement.isActive == 1"
+                                    v-html="
+                                        getExpiredAt(advertisement.expiredAt)
+                                    "
+                                />
+                                <span v-else v-html="'-'" />
+                            </td>
                             <td data-label="Status">
                                 <div
                                     v-if="advertisement.isActive == 1"
@@ -252,6 +256,22 @@ export default {
                             </td>
                             <td data-label="Aksi">
                                 <div>
+                                    <span
+                                        v-if="
+                                            advertisement.payment?.status ==
+                                            $store.state.PENDING
+                                        "
+                                    >
+                                        <a
+                                            class="btn btn-primary text-white btn-sm me-2"
+                                            :href="
+                                                advertisement.payment
+                                                    ?.paymentLink
+                                            "
+                                        >
+                                            Bayar
+                                        </a>
+                                    </span>
                                     <span>
                                         <button
                                             class="btn btn-danger btn-sm"
@@ -297,6 +317,7 @@ export default {
                             @change="onUploadBanner"
                             :class="{ 'is-invalid': errors.banner }"
                             :disabled="isLoading"
+                            accept="image/png, image/jpg, image/jpeg"
                         />
                         <div
                             class="invalid-feedback"

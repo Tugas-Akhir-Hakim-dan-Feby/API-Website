@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Facades\PaymentFacade;
 use App\Http\Filters\User\Operator\Role as OperatorRole;
 use App\Http\Filters\User\Operator\Search;
 use App\Http\Requests\User\Operator\OperatorRequestStore;
@@ -13,6 +14,7 @@ use App\Http\Traits\PaymentFixer;
 use App\Http\Traits\UploadDocument;
 use App\Models\Cost;
 use App\Models\User;
+use App\Repositories\Cost\CostRepository;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -25,11 +27,13 @@ class OperatorController extends Controller
 {
     use PaymentFixer, MessageFixer, UploadDocument;
 
-    protected $userRepository;
+    protected $userRepository, $costRepository, $paymentFacade;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, CostRepository $costRepository, PaymentFacade $paymentFacade)
     {
         $this->userRepository = $userRepository;
+        $this->costRepository = $costRepository;
+        $this->paymentFacade = $paymentFacade;
     }
 
     public function index(Request $request)
@@ -52,14 +56,16 @@ class OperatorController extends Controller
 
         $user = $this->userRepository->findOrFail(auth()->user()->uuid);
 
+
         $role = Role::findById(User::OPERATOR, 'api');
+        $cost = $this->costRepository->find(Cost::TEST_INSTITUTION);
 
         $request->merge([
             'uuid' => Str::uuid(),
         ]);
 
         try {
-            $this->pay(Cost::TEST_INSTITUTION);
+            $this->paymentFacade->payToOperator($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,

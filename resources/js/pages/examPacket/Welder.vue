@@ -190,9 +190,9 @@ export default {
 
     <div class="row position-relative">
         <Loader v-if="isLoading" />
-        <div class="col-lg-4 col-md-4 col-sm-6">
+        <div class="col-lg-3 col-md-4 col-sm-6">
             <router-link :to="{ name: 'Exam Packet Register' }">
-                <div class="card shadow bg-primary">
+                <div class="card shadow bg-primary h-100">
                     <div
                         class="card-body text-white h-100 d-flex flex-column justify-content-center align-items-center"
                     >
@@ -206,7 +206,7 @@ export default {
             </router-link>
         </div>
         <div
-            class="col-lg-4 col-md-4 col-sm-6"
+            class="col-lg-3 col-md-4 col-sm-6"
             v-for="(welderHasExamPacket, index) in welderHasExamPackets"
             :key="index"
         >

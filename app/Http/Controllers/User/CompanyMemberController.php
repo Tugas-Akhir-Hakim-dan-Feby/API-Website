@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Facades\PaymentFacade;
 use App\Http\Filters\User\CompanyMember\Role as CompanyMemberRole;
 use App\Http\Filters\User\CompanyMember\Search;
 use App\Http\Requests\User\CompanyMember\CompanyRequestStore;
@@ -18,6 +19,7 @@ use App\Http\Traits\UploadDocument;
 use App\Imports\User\CompanyMemberImport;
 use App\Models\Cost;
 use App\Models\User;
+use App\Repositories\Cost\CostRepository;
 use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
@@ -32,11 +34,13 @@ class CompanyMemberController extends Controller
 {
     use MessageFixer, UploadDocument, PaymentFixer;
 
-    protected $userRepository;
+    protected $userRepository, $paymentFacade, $costRepository;
 
-    public function __construct(UserRepository $userRepository = null)
+    public function __construct(UserRepository $userRepository = null, PaymentFacade $paymentFacade, CostRepository $costRepository)
     {
         $this->userRepository = $userRepository;
+        $this->paymentFacade = $paymentFacade;
+        $this->costRepository = $costRepository;
     }
 
     public function index(Request $request)
@@ -81,6 +85,7 @@ class CompanyMemberController extends Controller
             return $this->warningMessage("pengguna sudah terdaftar menjadi perusahaan member");
         }
 
+        $cost = $this->costRepository->find(Cost::COMPANY_MEMBER);
         $role = Role::findById(User::MEMBER_COMPANY, 'api');
 
         $request->merge([
@@ -100,11 +105,11 @@ class CompanyMemberController extends Controller
                 ]);
             }
 
-            $this->pay(Cost::COMPANY_MEMBER);
+            $this->paymentFacade->payToCompanyMember($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,
-                'membership_card' => "MW-" . date('Ymd') . $user->id
+                'membership_card' => $this->numberMembership($user->id)
             ]);
             $user->companyMember()->create($request->all());
 

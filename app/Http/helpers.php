@@ -3,6 +3,24 @@
 use Illuminate\Support\Str;
 use Modules\Auth\Models\User;
 
+if (!function_exists('format_number_with_leading_zero')) {
+    /**
+     * @param [type] $number
+     * @param integer $digits
+     * @return void
+     */
+    function format_number_with_leading_zero($number, $digits = 4)
+    {
+        $numberStr = (string)$number;
+
+        $padding = $digits - strlen($numberStr);
+
+        $formattedNumber = str_pad($numberStr, $digits, '0', STR_PAD_LEFT);
+
+        return $formattedNumber;
+    }
+}
+
 if (!function_exists('base64url_encode')) {
     /**
      * @param mixed $data

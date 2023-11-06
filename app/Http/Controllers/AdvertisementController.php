@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Facades\PaymentFacade;
 use App\Http\Filters\Advertisement\ByAuth;
 use App\Http\Filters\Advertisement\ByExpired;
 use App\Http\Filters\Advertisement\ByRecovery;
@@ -24,14 +25,17 @@ use Illuminate\Support\Facades\DB;
 
 class AdvertisementController extends Controller
 {
-    use MessageFixer, UploadDocument, PaymentFixer;
+    use MessageFixer, UploadDocument;
 
-    protected $advertisementRepository, $costRepository;
+    protected $advertisementRepository, $costRepository, $paymentFacade;
 
-    public function __construct(AdvertisementRepository $advertisementRepository, CostRepository $costRepository)
-    {
+    public function __construct(
+        AdvertisementRepository $advertisementRepository,
+        CostRepository $costRepository
+    ) {
         $this->advertisementRepository = $advertisementRepository;
         $this->costRepository = $costRepository;
+        $this->paymentFacade = new PaymentFacade();
     }
 
     public function all(Request $request)
@@ -58,7 +62,7 @@ class AdvertisementController extends Controller
                 ByRecovery::class
             ])
             ->thenReturn()
-            ->with(['user', 'document'])
+            ->with(['user', 'document', 'payment'])
             ->paginate($request->per_page);
 
         return new AdvertisementCollection($advertisements);
@@ -81,14 +85,15 @@ class AdvertisementController extends Controller
         try {
             $advertisement = $this->advertisementRepository->create($request->all());
 
-            $this->pay(Cost::ADVERTISEMENT, true, null, url('advertisement'));
+            $cost = $this->costRepository->find(Cost::ADVERTISEMENT);
+            $payment = $this->paymentFacade->payToAdvertisement($cost, url('advertisement'));
             $this->upload($request->banner, $advertisement->document(), 'banner');
 
             $advertisement->update([
-                "external_id" => $this->external_id
+                "external_id" => $payment->external_id
             ]);
 
-            $advertisement->payment_link = $this->payment_link;
+            $advertisement->payment_link = $payment->payment_link;
 
             DB::commit();
             return $this->createMessage("data berhasil ditambahkan", $advertisement);
@@ -118,6 +123,8 @@ class AdvertisementController extends Controller
             $advertisement->update([
                 "is_active" => Advertisement::DELETED
             ]);
+
+            $advertisement->payment()->delete();
 
             $advertisement->delete();
 
