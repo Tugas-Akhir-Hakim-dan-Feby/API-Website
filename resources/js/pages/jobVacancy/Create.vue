@@ -270,6 +270,7 @@ export default {
                     <input
                         type="number"
                         class="form-control"
+                        min="1000"
                         v-model="form.salary"
                         :class="{ 'is-invalid': errors.salary }"
                         :disabled="isLoading"

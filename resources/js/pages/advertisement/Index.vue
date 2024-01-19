@@ -254,7 +254,13 @@ export default {
                                     PENDING
                                 </div>
                             </td>
-                            <td data-label="Aksi">
+                            <td
+                                data-label="Aksi"
+                                v-if="
+                                    $store.state.USER.email ==
+                                    advertisement.payment?.user?.email
+                                "
+                            >
                                 <div>
                                     <span
                                         v-if="
@@ -286,6 +292,9 @@ export default {
                                         </button>
                                     </span>
                                 </div>
+                            </td>
+                            <td data-label="Aksi" v-else>
+                                <div>-</div>
                             </td>
                         </tr>
                     </tbody>

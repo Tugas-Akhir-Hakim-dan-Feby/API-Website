@@ -15,6 +15,10 @@ class AuthenticatedController extends Controller
 
         $user = User::where('uuid', $user->uuid)->first();
 
+        if ($user->isAdminBranch()) {
+            $user->load("adminBranch.branch");
+        }
+
         return response()->json([
             'user' => $user,
             'permission' => $this->permissionGenerate($user),

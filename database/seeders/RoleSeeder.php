@@ -54,6 +54,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_HUB]['Advertisement'] = ['index-admin', 'show', 'delete'];
 
         $access[User::ADMIN_BRANCH]['Dashboard'] = ['index'];
+        $access[User::ADMIN_BRANCH]['Branch'] = ['dashboard'];
         $access[User::ADMIN_BRANCH]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
         $access[User::ADMIN_BRANCH]['Profile'] = ['index', 'update-password', 'update-admin-branch'];
 
@@ -106,7 +107,7 @@ class RoleSeeder extends Seeder
         $this->truncate('permissions');
 
         $permission["Dashboard"] = ['index'];
-        $permission['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination'];
+        $permission['Branch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'dashboard'];
         $permission['AdminHub'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
         $permission['AdminBranch'] = ['index', 'create', 'update', 'delete', 'search', 'pagination', 'update-status'];
         $permission['Expert'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'upload-excel', 'confirmation'];

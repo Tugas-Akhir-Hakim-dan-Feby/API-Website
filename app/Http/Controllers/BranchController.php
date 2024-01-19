@@ -7,15 +7,17 @@ use App\Http\Requests\Branch\BranchRequestStore;
 use App\Http\Resources\Branch\BranchCollection;
 use App\Http\Resources\Branch\BranchDetail;
 use App\Http\Traits\MessageFixer;
+use App\Http\Traits\UploadDocument;
 use Illuminate\Http\Request;
 use App\Repositories\Branch\BranchRepository;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BranchController extends Controller
 {
-    use MessageFixer;
+    use MessageFixer, UploadDocument;
 
     protected $branchRepository;
 
@@ -70,6 +72,17 @@ class BranchController extends Controller
         $branch = $this->branchRepository->findOrFail($id);
 
         try {
+            if ($request->hasFile('file')) {
+                if ($branch->branch_structure) {
+                    $path = str_replace(url('storage') . '/', '', $branch->branch_structure);
+                    Storage::delete($path);
+                }
+                $filename = $request->file('file')->store('branch');
+                $request->merge([
+                    "branch_structure" => url("storage/$filename")
+                ]);
+            }
+
             $branch->update($request->all());
             DB::commit();
             return $this->successMessage("data berhasil diperbaharui", $branch);

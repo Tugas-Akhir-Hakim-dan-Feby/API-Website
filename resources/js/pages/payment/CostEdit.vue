@@ -53,6 +53,7 @@ export default {
                     this.getCost();
                     $("#addBenefit").modal("hide");
                     $("#successModal").modal("show");
+                    this.onBack();
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -154,6 +155,7 @@ export default {
                             <input
                                 type="number"
                                 class="form-control"
+                                min="1000"
                                 v-model="cost.nominalPrice"
                                 :disabled="isLoading"
                                 :class="{ 'is-invalid': errors.nominalPrice }"

@@ -15,6 +15,7 @@ class Branch extends Model
         'branch_name',
         'branch_address',
         'branch_phone',
+        'branch_structure',
     ];
 
     protected $hidden = [

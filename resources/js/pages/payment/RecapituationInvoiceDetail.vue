@@ -156,7 +156,7 @@ export default {
                         </div>
                     </div>
 
-                    <div class="d-print-none mt-4">
+                    <!-- <div class="d-print-none mt-4">
                         <div class="text-end">
                             <a
                                 href=""
@@ -165,7 +165,7 @@ export default {
                                 >Cetak</a
                             >
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

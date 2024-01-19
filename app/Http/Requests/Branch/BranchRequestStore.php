@@ -30,6 +30,7 @@ class BranchRequestStore extends FormRequest
             'branch_name' => 'required',
             'branch_address' => 'required',
             'branch_phone' => 'required|numeric',
+            'file' => 'image|mimes:png,jpg,jpeg'
         ];
     }
 

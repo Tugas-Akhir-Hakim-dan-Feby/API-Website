@@ -65,6 +65,16 @@ export default {
                     </router-link>
                 </li>
 
+                <li class="side-nav-item" v-if="$can('dashboard', 'Branch')">
+                    <router-link
+                        :to="{ name: 'Branch Dashboard' }"
+                        class="side-nav-link"
+                    >
+                        <i class="mdi mdi-family-tree"></i>
+                        <span> Data Cabang </span>
+                    </router-link>
+                </li>
+
                 <li
                     class="side-nav-item"
                     v-if="
