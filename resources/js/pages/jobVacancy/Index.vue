@@ -51,8 +51,11 @@ export default {
     />
     <Welder
         v-if="
-            checkRoleAccess([$store.state.MEMBER_WELDER, $store.state.GUEST]) &&
-            $store.state.USER.roleId != 5
+            checkRoleAccess([
+                $store.state.MEMBER_WELDER,
+                $store.state.GUEST,
+                $store.state.EXPERT,
+            ]) && $store.state.USER.roleId != 5
         "
     />
 </template>

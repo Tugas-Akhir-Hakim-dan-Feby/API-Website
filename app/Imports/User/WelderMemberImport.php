@@ -33,6 +33,9 @@ class WelderMemberImport implements ToCollection, WithHeadingRow, WithValidation
             $dateBirth = ($collect['date_birth'] - 25569) * 86400;
 
             $welderSkill = WelderSkill::where('skill_name', 'like', "%$collect[skill]%")->first();
+            if (!$welderSkill) {
+                $welderSkill = WelderSkill::first();
+            }
 
             $user = User::create([
                 "uuid" => Str::uuid(),

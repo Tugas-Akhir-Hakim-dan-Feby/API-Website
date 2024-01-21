@@ -13,7 +13,7 @@ export default [
     },
     // {
     //     path: "/user/company/create",
-    //     component: import("../../../pages/user/company/Create.vue"),
+    //     component: import("../../../pages/user/company/Test.vue"),
     //     name: "User Company Create",
     //     meta: {
     //         // requiresAuth: true,
@@ -21,7 +21,7 @@ export default [
     // },
     {
         path: "/user/company/:id",
-        component: import("../../../pages/user/company/Show.vue"),
+        component: () => import("../../../pages/user/company/Show.vue"),
         name: "User Company Show",
         meta: {
             requiresAuth: true,

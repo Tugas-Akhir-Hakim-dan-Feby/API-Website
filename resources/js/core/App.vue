@@ -16,49 +16,51 @@ export default {
         };
     },
     computed: {},
+    mounted() {
+        this.checkAuthenticated();
+
+        if (!Cookie.get("token")) {
+            window.location.replace("/auth/login");
+        }
+
+        this.checkPayment();
+    },
     watch: {
         "$route.params.search": {
-            handler: function (search) {
-                this.$store
-                    .dispatch("postData", ["/auth/check", {}])
-                    .then((response) => {
-                        this.user = response.user;
-                        this.roles = response.roles;
-
-                        var permission = response.permission;
-                        const { can, rules } = new AbilityBuilder(Ability);
-                        for (var prop in permission) {
-                            if (permission.hasOwnProperty(prop)) {
-                                can(
-                                    permission[prop],
-                                    prop.charAt(0).toUpperCase() + prop.slice(1)
-                                );
-                            }
-                        }
-                        this.$ability.update(rules);
-
-                        this.$store.commit("setUser", response.user);
-                        this.$store.commit(
-                            "setPermission",
-                            response.permission
-                        );
-                    })
-                    .catch((error) => {
-                        this.error = error.response.data;
-                        Cookie.remove("token");
-                        window.location.replace("/auth/login");
-                    });
-                if (!Cookie.get("token")) {
-                    window.location.replace("/auth/login");
-                }
-
-                this.checkPayment();
-            },
+            handler: function (search) {},
             deep: true,
             immediate: true,
         },
     },
     methods: {
+        checkAuthenticated() {
+            this.$store
+                .dispatch("postData", ["/auth/check", {}])
+                .then((response) => {
+                    this.user = response.user;
+                    this.roles = response.roles;
+
+                    var permission = response.permission;
+                    const { can, rules } = new AbilityBuilder(Ability);
+                    for (var prop in permission) {
+                        if (permission.hasOwnProperty(prop)) {
+                            can(
+                                permission[prop],
+                                prop.charAt(0).toUpperCase() + prop.slice(1)
+                            );
+                        }
+                    }
+                    this.$ability.update(rules);
+
+                    this.$store.commit("setUser", response.user);
+                    this.$store.commit("setPermission", response.permission);
+                })
+                .catch((error) => {
+                    this.error = error.response.data;
+                    Cookie.remove("token");
+                    window.location.replace("/auth/login");
+                });
+        },
         checkPayment() {
             this.$store
                 .dispatch("showData", ["user", "check-payment"])

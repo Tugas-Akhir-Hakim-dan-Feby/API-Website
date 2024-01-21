@@ -12,6 +12,15 @@ export default {
             isLoading: false,
         };
     },
+    watch: {
+        "$route.params.search": {
+            handler: function (search) {
+                this.getUser();
+            },
+            deep: true,
+            immediate: true,
+        },
+    },
     mounted() {
         this.getUser();
     },

@@ -145,7 +145,12 @@ export default {
             <div class="card-body">
                 <div
                     class="mb-2"
-                    v-if="checkRoleAccess([$store.state.ADMIN_APP])"
+                    v-if="
+                        checkRoleAccess([
+                            $store.state.ADMIN_APP,
+                            $store.state.ADMIN_HUB,
+                        ])
+                    "
                 >
                     <label>Pilih Perusahaan</label>
                     <select
