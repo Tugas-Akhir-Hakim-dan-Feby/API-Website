@@ -77,7 +77,6 @@ export default {
                     this.isLoading = false;
                     this.getAdvertisement();
                     $("#addAds").modal("hide");
-                    window.location.href = response.data.paymentLink;
                 })
                 .catch((error) => {
                     this.isLoading = false;
@@ -258,7 +257,7 @@ export default {
                                 data-label="Aksi"
                                 v-if="
                                     $store.state.USER.email ==
-                                    advertisement.payment?.user?.email
+                                    advertisement.user?.email
                                 "
                             >
                                 <div>
@@ -288,7 +287,7 @@ export default {
                                                 $can('delete', 'Advertisement')
                                             "
                                         >
-                                            Hapus
+                                            Batal
                                         </button>
                                     </span>
                                 </div>
@@ -370,7 +369,10 @@ export default {
         </div>
     </div>
     <Success :msg="msg" />
-    <Confirm @onDelete="onDelete" />
+    <Confirm
+        @onDelete="onDelete"
+        msg="apakah anda yakin iklan ini dibatalkan?"
+    />
 </template>
 
 <style scoped>

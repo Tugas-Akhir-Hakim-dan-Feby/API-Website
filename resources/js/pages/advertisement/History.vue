@@ -261,7 +261,7 @@ export default {
                                     v-else-if="advertisement.isActive == 2"
                                     class="btn btn-sm btn__danger btn-status"
                                 >
-                                    DIHAPUS
+                                    DIBATALKAN
                                 </div>
                             </td>
                         </tr>

@@ -59,9 +59,7 @@ class RoleSeeder extends Seeder
         $access[User::ADMIN_BRANCH]['Profile'] = ['index', 'update-password', 'update-admin-branch'];
 
         $access[User::EXPERT]['Dashboard'] = ['index'];
-        $access[User::EXPERT]['Article'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination'];
-        $access[User::EXPERT]['ExamPacket'] = ['index', 'create', 'show', 'update', 'delete', 'search', 'pagination', 'update-status', 'dashboard-admin'];
-        $access[User::EXPERT]['Exam'] = ['index', 'create', 'show', 'update', 'delete', 'pagination'];
+        $access[User::EXPERT]['Article'] = ['index', 'index-guest', 'show', 'search', 'pagination'];
         $access[User::EXPERT]['Profile'] = ['index', 'update-password', 'update-expert'];
         $access[User::EXPERT]['Payment'] = ['history'];
         $access[User::EXPERT]['JobVacancy'] = ['index', 'index-welder', 'info', 'show', 'history'];
