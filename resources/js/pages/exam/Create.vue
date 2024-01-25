@@ -151,14 +151,14 @@ export default {
                     :errors="errors"
                     :is-loading="isLoading"
                 />
-                <div class="mb-2">
+                <!-- <div class="mb-2">
                     <label>Unggah File/Foto Pendukung</label>
                     <input
                         type="file"
                         class="form-control"
                         @change="onUploadFile"
                     />
-                </div>
+                </div> -->
             </div>
             <div class="card-footer d-flex justify-content-between">
                 <router-link

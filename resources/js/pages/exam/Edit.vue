@@ -109,7 +109,7 @@ export default {
             <li class="breadcrumb-item active">Edit Pertanyaan</li>
         </ol>
     </PageTitle>
-    {{ form }}
+
     <form @submit.prevent="handleSubmit" method="post">
         <div class="card">
             <div class="card-body">
