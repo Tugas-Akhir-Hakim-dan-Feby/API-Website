@@ -23,7 +23,7 @@ export default {
             window.location.replace("/auth/login");
         }
 
-        this.checkPayment();
+        // this.checkPayment();
     },
     watch: {
         "$route.params.search": {
