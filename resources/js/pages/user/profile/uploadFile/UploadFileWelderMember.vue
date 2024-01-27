@@ -359,6 +359,7 @@ export default {
                                 :class="{
                                     'is-invalid': errorMessage.documentPasPhoto,
                                 }"
+                                accept="image/jpg, image/png, image/jpeg"
                                 :disabled="isDisabled"
                             />
                             <div
@@ -442,6 +443,7 @@ export default {
                                         errorMessage.documentCurriculumVitae,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -526,6 +528,7 @@ export default {
                                 }"
                                 :disabled="isDisabled"
                                 multiple
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"

@@ -507,6 +507,7 @@ export default {
                                 }"
                                 :disabled="isLoading"
                                 @change="uploadPasPhoto"
+                                accept="image/jpg, image/png, image/jpeg"
                             />
                             <div
                                 class="invalid-feedback"
@@ -534,6 +535,7 @@ export default {
                                 }"
                                 :disabled="isLoading"
                                 @change="uploadCertificateCompetency"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -559,6 +561,7 @@ export default {
                                 }"
                                 :disabled="isLoading"
                                 @change="uploadCurriculumVitae"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"

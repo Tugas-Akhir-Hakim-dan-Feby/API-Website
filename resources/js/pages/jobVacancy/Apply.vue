@@ -242,6 +242,7 @@ export default {
                                     type="file"
                                     class="form-control"
                                     @change="uploadPoliceRecord"
+                                    accept=".pdf"
                                 />
                                 <div
                                     class="invalid-feedback"

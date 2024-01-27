@@ -210,6 +210,7 @@ export default {
                         @change="uploadDocumentLogo"
                         :class="{ 'is-invalid': errors.documentLogo }"
                         :disabled="isLoading"
+                        accept="image/jpg, image/png, image/jpeg"
                     />
                     <div
                         class="invalid-feedback"

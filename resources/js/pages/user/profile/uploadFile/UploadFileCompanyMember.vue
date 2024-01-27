@@ -215,6 +215,7 @@ export default {
                                     'is-invalid': errorMessage.document,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -290,6 +291,7 @@ export default {
                                     'is-invalid': errorMessage.logo,
                                 }"
                                 :disabled="isDisabled"
+                                accept="image/jpg, image/png, image/jpeg"
                             />
                             <div
                                 class="invalid-feedback"

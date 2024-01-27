@@ -519,6 +519,7 @@ export default {
                                 class="form-control"
                                 id="dataPasPhoto"
                                 @change="uploadPasPhoto"
+                                accept="image/jpg, image/png, image/jpeg"
                                 :class="{
                                     'is-invalid': errorMessage.documentPasPhoto,
                                 }"
@@ -605,6 +606,7 @@ export default {
                                         errorMessage.documentCurriculumVitae,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -689,6 +691,7 @@ export default {
                                 }"
                                 :disabled="isDisabled"
                                 multiple
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -772,6 +775,7 @@ export default {
                                         errorMessage.documentCertificateProfession,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -853,6 +857,7 @@ export default {
                                         errorMessage.documentWorkingMail,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
@@ -931,6 +936,7 @@ export default {
                                     'is-invalid': errorMessage.documentCareer,
                                 }"
                                 :disabled="isDisabled"
+                                accept=".pdf"
                             />
                             <div
                                 class="invalid-feedback"
