@@ -65,7 +65,7 @@ class OperatorController extends Controller
         ]);
 
         try {
-            $this->paymentFacade->payToOperator($cost, url('invoice/success'));
+            $payment = $this->paymentFacade->payToOperator($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,
@@ -75,7 +75,7 @@ class OperatorController extends Controller
             $this->upload($request->file('document_logo'), $user->operator->logo(), 'tuk_logo');
 
             DB::commit();
-            return $this->createMessage("data berhasil ditambahkan", $user->payment);
+            return $this->createMessage("data berhasil ditambahkan", $payment);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());

@@ -45,7 +45,7 @@ class Payment extends Model
 
     public function isRecreated()
     {
-        return $this->recreated_at !== null;
+        return $this->recreated_at != null;
     }
 
     public function markAsRecreated()

@@ -45,6 +45,7 @@ trait PaymentFixer
                 'amount' => $cost->nominal_price,
                 'payment_link' => $response->invoice_url,
                 'status' => $response->status,
+                'cost_id' => $costId,
             ]);
         } else {
             Payment::create([
@@ -55,6 +56,7 @@ trait PaymentFixer
                 'amount' => $cost->nominal_price,
                 'payment_link' => $response->invoice_url,
                 'status' => $response->status,
+                'cost_id' => $costId,
             ]);
         }
 

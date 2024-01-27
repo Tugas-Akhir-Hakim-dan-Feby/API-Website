@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Facades\PaymentFacade;
 use App\Http\Traits\PaymentFixer;
 use App\Mail\SendReminderPayment;
 use App\Models\Cost;

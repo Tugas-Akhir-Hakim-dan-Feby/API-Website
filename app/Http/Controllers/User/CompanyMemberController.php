@@ -105,7 +105,7 @@ class CompanyMemberController extends Controller
                 ]);
             }
 
-            $this->paymentFacade->payToCompanyMember($cost, url('invoice/success'));
+            $payment = $this->paymentFacade->payToCompanyMember($cost, url('invoice/success'));
 
             $user->update([
                 "role_id" => $role->id,
@@ -114,7 +114,7 @@ class CompanyMemberController extends Controller
             $user->companyMember()->create($request->all());
 
             DB::commit();
-            return $this->createMessage("data berhasil ditambahkan", $user->payment);
+            return $this->createMessage("data berhasil ditambahkan", $payment);
         } catch (\Throwable $th) {
             DB::rollback();
             return $this->errorMessage($th->getMessage());
