@@ -9,8 +9,10 @@ use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Role;
 
 class CheckPaymentRenewal extends Command
 {
@@ -37,34 +39,52 @@ class CheckPaymentRenewal extends Command
      */
     public function handle()
     {
-        $payments = Payment::all();
+        DB::beginTransaction();
 
-        foreach ($payments as $payment) {
-            $expirationDate = Carbon::parse($payment->created_at)->addMonth();
+        try {
+            DB::commit();
 
-            if (Carbon::now()->gt($expirationDate) && $payment->status == Payment::PAID) {
-                if ($payment->user->onlyRoles([User::MEMBER_INDIVIDUAL, User::EXPERT]) && !$payment->isRecreated()) {
-                    $this->pay(Cost::WELDER_MEMBER, false, $payment->user);
-                    Mail::to($payment->user->email)->send(new SendReminderPayment());
-                    $payment->markAsRecreated();
+            $payments = Payment::all();
+
+            foreach ($payments as $payment) {
+                $expirationDate = Carbon::parse($payment->created_at)->addMonth();
+                $downRoleDate = Carbon::parse($payment->created_at)->addWeeks(2);
+
+                if (Carbon::now()->gt($expirationDate) && $payment->status == Payment::PAID) {
+                    if ($payment->user->onlyRoles([User::MEMBER_INDIVIDUAL, User::EXPERT]) && !$payment->isRecreated()) {
+                        $this->pay(Cost::WELDER_MEMBER, false, $payment->user);
+                        Mail::to($payment->user->email)->send(new SendReminderPayment());
+                        $payment->markAsRecreated();
+                    }
+
+                    if ($payment->user->onlyRoles([User::MEMBER_COMPANY]) && !$payment->isRecreated()) {
+                        $this->pay(Cost::COMPANY_MEMBER, false, $payment->user);
+                        Mail::to($payment->user->email)->send(new SendReminderPayment());
+                        $payment->markAsRecreated();
+                    }
+
+                    if ($payment->user->onlyRoles([User::OPERATOR]) && !$payment->isRecreated()) {
+                        $this->pay(Cost::TEST_INSTITUTION, false, $payment->user);
+                        Mail::to($payment->user->email)->send(new SendReminderPayment());
+                        $payment->markAsRecreated();
+                    }
+
+                    $msg = "User {$payment->user->name} belum melakukan pembayaran ulang!";
+                    $this->info($msg);
+                    Log::channel('renewal')->info($msg);
                 }
 
-                if ($payment->user->onlyRoles([User::MEMBER_COMPANY]) && !$payment->isRecreated()) {
-                    $this->pay(Cost::COMPANY_MEMBER, false, $payment->user);
-                    Mail::to($payment->user->email)->send(new SendReminderPayment());
-                    $payment->markAsRecreated();
-                }
+                if (Carbon::now()->gt($downRoleDate) && $payment->status == Payment::PENDING) {
+                    $payment->user->syncRoles(Role::findById(User::MEMBER_APPLICATION, 'api'));
 
-                if ($payment->user->onlyRoles([User::OPERATOR]) && !$payment->isRecreated()) {
-                    $this->pay(Cost::TEST_INSTITUTION, false, $payment->user);
-                    Mail::to($payment->user->email)->send(new SendReminderPayment());
-                    $payment->markAsRecreated();
+                    $msg = "User {$payment->user->name} ubah role menjadi member aplikasi!";
+                    $this->info($msg);
+                    Log::channel('renewal')->info($msg);
                 }
-
-                $msg = "User {$payment->user->name} belum melakukan pembayaran ulang!";
-                $this->info($msg);
-                Log::channel('renewal')->info($msg);
             }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th->getMessage());
         }
     }
 }
