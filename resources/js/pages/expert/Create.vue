@@ -141,6 +141,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadCertificateCompetency"
+                        accept=".pdf"
                     />
                     <div
                         class="invalid-feedback"
@@ -165,6 +166,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadCareer"
+                        accept=".pdf"
                     />
                     <div
                         class="invalid-feedback"
@@ -186,6 +188,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadWorkingMail"
+                        accept=".pdf"
                     />
                     <div
                         class="invalid-feedback"
@@ -208,6 +211,7 @@ export default {
                         }"
                         :disabled="isLoading"
                         @change="uploadCertificateProfession"
+                        accept=".pdf"
                     />
                     <div
                         class="invalid-feedback"
