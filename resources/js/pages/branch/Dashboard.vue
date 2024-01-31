@@ -23,7 +23,9 @@ export default {
             formData.append("branch_name", this.form.branchName);
             formData.append("branch_phone", this.form.branchPhone);
             formData.append("branch_address", this.form.branchAddress);
-            formData.append("file", this.form.branchStructure);
+            if (this.form.branchStructure) {
+                formData.append("file", this.form.branchStructure);
+            }
             formData.append("_method", "put");
 
             return formData;
